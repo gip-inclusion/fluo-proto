@@ -166,7 +166,7 @@ Copied from `les-emplois/itou/static/`:
 ```
 fluo-proto/
 ├── app.py                          # FastAPI app, all routes
-├── models.py                       # DB init, queries
+├── db.py                           # SQLite init, schema, query helpers
 ├── seed.py                         # Populate with mock data
 ├── requirements.txt                # fastapi, uvicorn, jinja2, aiosqlite
 ├── templates/
