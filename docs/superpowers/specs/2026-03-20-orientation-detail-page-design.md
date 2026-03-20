@@ -69,12 +69,12 @@ Two-column layout (8/4 on xxl, full-width on mobile) matching les-emplois respon
    - Last updated date and agent info at the bottom
 
 **Sidebar:**
-- Quick message form — standard HTML form POST to `/orientation/{id}/message`, redirects back to detail page. Author name is hardcoded to the current "service" user (no auth, just a constant like "ETTI Une nouvelle chance").
+- Quick message form — standard HTML form POST to `/orientation/{id}/message`, redirects back to detail page. Author name is hardcoded to the current "service" user (no auth, just a constant like "PLIE Lille Avenir").
 - Latest messages list (most recent 3)
 
 ### Tab 2: Messages
 
-- Form to add a new message (author name hardcoded to "ETTI Une nouvelle chance", textarea for content)
+- Form to add a new message (author name hardcoded to "PLIE Lille Avenir", textarea for content)
 - List of all messages, newest first
 - Messages are visible to all parties (shared between referrer and receiving service)
 
@@ -85,6 +85,19 @@ Two-column layout (8/4 on xxl, full-width on mobile) matching les-emplois respon
   - `"created"` → "Nouvelle demande"
   - `"accepted"` → "Demande acceptée"
   - `"refused"` → "Demande refusée"
+
+### Orienteur Reply Page
+
+A simple standalone page at `/orientation/{id}/orienteur` that lets the orienteur (the person who made the referral) send messages back. This simulates a second user without requiring authentication.
+
+- Minimal layout: same `base.html` but no action bar, no tabs
+- Shows the orientation title and status badge at the top
+- Shows the full message thread (all messages, newest first)
+- A form at the top to post a new message (author name hardcoded to the orienteur's name from `sender_name`, e.g. "Jean-Marc Lefèvre")
+- POST to the same `/orientation/{id}/message` endpoint, but with the orienteur's name as author
+- Redirects back to `/orientation/{id}/orienteur` after posting
+
+This page is intentionally bare — just enough to test the two-way messaging flow.
 
 ## Data Model
 
@@ -132,10 +145,11 @@ Two-column layout (8/4 on xxl, full-width on mobile) matching les-emplois respon
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/orientation/{id}` | Render detail page |
+| GET | `/orientation/{id}` | Render detail page (receiving service view) |
 | POST | `/orientation/{id}/accept` | Accept → update status, add history event, redirect |
 | POST | `/orientation/{id}/refuse` | Refuse → update status, add history event, redirect |
-| POST | `/orientation/{id}/message` | Add message → redirect back |
+| GET | `/orientation/{id}/orienteur` | Orienteur reply page (simple message view) |
+| POST | `/orientation/{id}/message` | Add message → redirect back (to referrer based on `author` param) |
 | GET | `/static/{path}` | Serve static files |
 
 ## Static Assets
@@ -157,7 +171,8 @@ fluo-proto/
 ├── requirements.txt                # fastapi, uvicorn, jinja2, aiosqlite
 ├── templates/
 │   ├── base.html                   # Base layout (simplified header)
-│   ├── orientation_detail.html     # Main detail page
+│   ├── orientation_detail.html     # Main detail page (receiving service)
+│   ├── orienteur_reply.html        # Simple reply page (orienteur)
 │   └── includes/
 │       ├── personal_info.html
 │       ├── sender_info.html
