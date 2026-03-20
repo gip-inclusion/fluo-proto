@@ -54,6 +54,22 @@ def init_db():
     conn.close()
 
 
+def get_all_orientations(status_filter: list[str] | None = None) -> list[dict]:
+    conn = get_db()
+    if status_filter:
+        placeholders = ",".join("?" for _ in status_filter)
+        rows = conn.execute(
+            f"SELECT * FROM orientation WHERE status IN ({placeholders}) ORDER BY created_at DESC",
+            status_filter,
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT * FROM orientation ORDER BY created_at DESC"
+        ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
 def get_orientation(orientation_id: int) -> dict | None:
     conn = get_db()
     row = conn.execute(
