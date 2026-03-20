@@ -1,1 +1,60 @@
-<div class="c-box mb-3 mb-md-4"><h3>Messages</h3><p>TODO</p></div>
+<h2>Messages</h2>
+
+{# Message form #}
+<div class="c-form mb-3 mb-md-4">
+    <form method="post" action="/orientation/{{ o.id }}/message">
+        <input type="hidden" name="author_name" value="{{ service_name }}">
+        <input type="hidden" name="redirect_to" value="/orientation/{{ o.id }}#messages">
+        <div class="form-group">
+            <label class="form-label" for="tab-message">Envoyer un message</label>
+            <textarea name="content" id="tab-message" rows="4"
+                      class="form-control" required></textarea>
+            <div class="form-text">
+                Les messages sont visibles par tous les intervenants de cette orientation.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr class="mb-3">
+                <div class="form-row align-items-center justify-content-end gx-3">
+                    <div class="form-group col col-lg-auto">
+                        <button type="submit" class="btn btn-block btn-primary">
+                            <span>Envoyer</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{# Messages list #}
+<div class="c-form mb-3 mb-md-4">
+    <h3>Liste des messages ({{ messages|length }})</h3>
+    <ul class="list-note">
+        {% for msg in messages %}
+        <li{% if msg.author_name == service_name %} class="is-current-user"{% endif %}>
+            <div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <time class="fs-xs text-muted">
+                            {{ msg.created_at[:16]|replace("T", " à ") }}
+                        </time>
+                        <strong class="d-block">
+                            {{ msg.author_name }}
+                            {% if msg.author_name == service_name %} (vous){% endif %}
+                        </strong>
+                    </div>
+                </div>
+                <blockquote class="blockquote mt-1 mb-0">
+                    <p>{{ msg.content }}</p>
+                </blockquote>
+            </div>
+        </li>
+        {% else %}
+        <li>
+            <div class="text-muted fs-sm">Aucun message</div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
