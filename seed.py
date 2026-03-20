@@ -335,7 +335,7 @@ def seed():
             "prescripteur",
             "FT Agence Cahors",
             "jean-marc.lefevre@francetravail.fr",
-            "Sophie souhaite se reconvertir comme assistante de vie. "
+            "Mme Martin souhaite se reconvertir comme assistante de vie. "
             "Elle a besoin d'un accompagnement pour lever ses freins "
             "de mobilité et de garde d'enfant.",
             "accompagnement_emploi",
@@ -371,7 +371,7 @@ def seed():
             "prescripteur",
             "Mission Locale Lille",
             "n.dupont@ml-lille.fr",
-            "Karim est en recherche active d'emploi dans le secteur de la logistique. "
+            "M. Benali est en recherche active d'emploi dans le secteur de la logistique. "
             "Il a besoin d'un accompagnement renforcé.",
             "accompagnement_emploi",
             json.dumps(DIAGNOSTIC_DATA_2, ensure_ascii=False),
@@ -409,7 +409,7 @@ def seed():
             "orienteur",
             "CCAS Roubaix",
             "p.moreau@ccas-roubaix.fr",
-            "Amina souhaite une formation en comptabilité. "
+            "Mme Diallo souhaite une formation en comptabilité. "
             "Orientation vers un accompagnement adapté.",
             "accompagnement_emploi",
             json.dumps(DIAGNOSTIC_DATA_3, ensure_ascii=False),
@@ -447,7 +447,7 @@ def seed():
             "prescripteur",
             "Mission Locale Lille",
             "n.dupont@ml-lille.fr",
-            "Lucas sort d'un contrat en intérim et souhaite se stabiliser. "
+            "M. Petit sort d'un contrat en intérim et souhaite se stabiliser. "
             "Besoin d'un accompagnement vers un emploi durable.",
             "accompagnement_emploi",
             json.dumps(DIAGNOSTIC_DATA_4, ensure_ascii=False),
@@ -481,7 +481,7 @@ def seed():
             "prescripteur",
             "FT Agence Cahors",
             "jean-marc.lefevre@francetravail.fr",
-            "Fatou est en reconversion professionnelle après un congé parental. "
+            "Mme Ndiaye est en reconversion professionnelle après un congé parental. "
             "Elle cherche un accompagnement dans le secteur de l'aide à la personne.",
             "accompagnement_emploi",
             json.dumps(DIAGNOSTIC_DATA_5, ensure_ascii=False),
