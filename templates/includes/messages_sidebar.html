@@ -1,1 +1,52 @@
-<div class="c-box mb-3 mb-md-4"><h3>Messages</h3><p>TODO</p></div>
+{# Quick message form #}
+<div class="c-box c-box--note mb-3 mb-md-4">
+    <form method="post" action="/orientation/{{ o.id }}/message">
+        <input type="hidden" name="author_name" value="{{ service_name }}">
+        <input type="hidden" name="redirect_to" value="/orientation/{{ o.id }}">
+        <h3>Envoyer un message</h3>
+        <div class="form-group">
+            <label class="visually-hidden" for="sidebar-message">Message</label>
+            <textarea name="content" id="sidebar-message" rows="4"
+                      class="form-control" required
+                      placeholder="Votre message..."></textarea>
+        </div>
+        <div class="form-group mt-2">
+            <div class="form-row">
+                <button class="btn btn-outline-primary btn-sm btn-ico-only bg-white" type="reset">
+                    <span class="visually-hidden">Annuler</span>
+                    <i class="ri-close-line" aria-hidden="true"></i>
+                </button>
+                <button class="btn btn-outline-primary btn-sm btn-ico-only bg-white" type="submit">
+                    <span class="visually-hidden">Envoyer</span>
+                    <i class="ri-check-line" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{# Recent messages #}
+{% if messages %}
+<div class="c-box mb-3 mb-md-4">
+    <h3>Derniers messages</h3>
+    <ul class="list-note">
+        {% for msg in messages[:3] %}
+        <li>
+            <div>
+                <time class="fs-xs text-muted">{{ msg.created_at[:16]|replace("T", " à ") }}</time>
+                <strong class="d-block">{{ msg.author_name }}</strong>
+                <blockquote class="blockquote mt-1 mb-0">
+                    <p>{{ msg.content }}</p>
+                </blockquote>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if messages|length > 3 %}
+    <button class="btn btn-outline-primary btn-block bg-white mt-3"
+            onclick="document.querySelector('#messages-tab').click()">
+        Voir tous les messages
+    </button>
+    {% endif %}
+</div>
+{% endif %}
