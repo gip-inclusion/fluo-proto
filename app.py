@@ -1,9 +1,9 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from db import add_message, get_history, get_messages, get_orientation, init_db, update_orientation_status
+from db import add_message, get_all_orientations, get_history, get_messages, get_orientation, init_db, update_orientation_status
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -28,6 +28,27 @@ MODALITE_LABELS = {
 }
 
 SERVICE_NAME = "PLIE Lille Avenir"
+
+ALL_STATUSES = ["nouvelle", "acceptee", "refusee"]
+
+
+@app.get("/", response_class=HTMLResponse)
+async def orientation_list(request: Request, status: list[str] = Query(default=["nouvelle"])):
+    if not status:
+        status = ["nouvelle"]
+    orientations = get_all_orientations(status_filter=status)
+    return templates.TemplateResponse(
+        "orientation_list.html",
+        {
+            "request": request,
+            "orientations": orientations,
+            "status_labels": STATUS_LABELS,
+            "modalite_labels": MODALITE_LABELS,
+            "active_filters": status,
+            "all_statuses": ALL_STATUSES,
+            "result_count": len(orientations),
+        },
+    )
 
 
 @app.get("/orientation/{orientation_id}", response_class=HTMLResponse)

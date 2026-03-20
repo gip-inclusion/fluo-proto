@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Demandes d'orientation reçues{% endblock %}
+
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+
+                <div class="c-title">
+                    <div class="c-title__main">
+                        <h1 id="list-orientations-title" class="m-0">Demandes d'orientation reçues</h1>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+
+        {# Filter bar #}
+        <div class="s-section__row row">
+            <div class="col-12">
+                <div class="btn-dropdown-filter-group mb-3 mb-md-4">
+                    <form method="get" action="/" id="filter-form">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-dropdown-filter dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" data-bs-auto-close="outside" aria-expanded="false">
+                                Statut
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% for status_val in all_statuses %}
+                                {% set label, css = status_labels[status_val] %}
+                                <li class="dropdown-item">
+                                    <div class="form-check">
+                                        <input id="filter-{{ status_val }}"
+                                               class="form-check-input"
+                                               name="status"
+                                               type="checkbox"
+                                               value="{{ status_val }}"
+                                               onchange="this.form.submit()"
+                                               {% if status_val in active_filters %}checked{% endif %}>
+                                        <label for="filter-{{ status_val }}" class="form-check-label">
+                                            {{ label }}
+                                        </label>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        {% if active_filters != ["nouvelle"] %}
+                        <a href="/"
+                           class="btn btn-ico btn-dropdown-filter"
+                           aria-label="Réinitialiser le filtre actif">
+                            <i class="ri-eraser-line fw-medium" aria-hidden="true"></i>
+                            <span>Effacer tout</span>
+                        </a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {# Results count #}
+        <div class="s-section__row row">
+            <div class="col-12">
+                <div class="d-flex flex-column flex-md-row align-items-md-center mb-3 mb-md-4">
+                    <div class="flex-md-grow-1">
+                        <p class="mb-0" id="orientation-list-count">
+                            {{ result_count }} résultat{{ "s" if result_count != 1 else "" }}
+                        </p>
+                    </div>
+                </div>
+
+                {# Table #}
+                <section aria-labelledby="orientation-list-count">
+                    {% if orientations %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <caption class="visually-hidden">Liste des demandes d'orientation</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Demande de</th>
+                                    <th scope="col">Reçue le</th>
+                                    <th scope="col">Modalité</th>
+                                    <th scope="col">Émetteur</th>
+                                    <th scope="col" class="text-end w-50px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for o in orientations %}
+                                {% set label, css = status_labels.get(o.status, ("Inconnu", "bg-secondary")) %}
+                                <tr class="align-top">
+                                    <td>
+                                        <a class="btn-link" href="/orientation/{{ o.id }}">
+                                            {{ o.person_last_name }} {{ o.person_first_name }}
+                                        </a>
+                                        {% if o.person_address %}
+                                        <span class="d-block text-muted">{{ o.person_address }}</span>
+                                        {% endif %}
+                                        <span class="badge rounded-pill text-nowrap badge-sm {{ css }}">{{ label }}</span>
+                                    </td>
+                                    <td>{{ o.created_at[:10] }}</td>
+                                    <td>{{ modalite_labels.get(o.modalite, o.modalite) }}</td>
+                                    <td>
+                                        {% if o.sender_type == "prescripteur" %}
+                                            <i class="ri-home-smile-2-line" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="ri-community-line" aria-hidden="true"></i>
+                                        {% endif %}
+                                        {{ o.sender_organization or o.sender_name }}
+                                    </td>
+                                    <td class="text-end w-50px align-middle">
+                                        <a class="btn btn-sm btn-link btn-ico-only"
+                                           href="/orientation/{{ o.id }}"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-title="Voir cette demande">
+                                            <i class="ri-arrow-drop-right-line fs-lg" aria-label="Voir la demande de {{ o.person_last_name }} {{ o.person_first_name }}"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="c-box mb-3 mb-md-4">
+                        <p class="text-muted mb-0">Aucune demande d'orientation ne correspond aux filtres sélectionnés.</p>
+                    </div>
+                    {% endif %}
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
