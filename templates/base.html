@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Fluo{% endblock %} - Fluo Proto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/static/vendor/theme-inclusion/images/favicon.ico" type="image/ico">
+    <link rel="stylesheet" href="/static/vendor/theme-inclusion/stylesheets/app.css">
+    <link rel="stylesheet" href="/static/css/itou.css">
+</head>
+<body class="l-authenticated">
+    <header role="banner" id="header">
+        <section class="s-header-authenticated">
+            <div class="s-header-authenticated__container container">
+                <div class="s-header-authenticated__row row">
+                    <div class="s-header-authenticated__col s-header-authenticated__col--logo-service col-auto d-flex align-items-center pe-0">
+                        <a href="/">
+                            <img src="/static/vendor/theme-inclusion/images/logo-emploi-inclusion.svg"
+                                 alt="Fluo Proto" height="90">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </header>
+
+    <main id="main" role="main" class="s-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/vendor/bootstrap/popper.min.js"></script>
+    <script src="/static/vendor/bootstrap/bootstrap.min.js"></script>
+</body>
+</html>
