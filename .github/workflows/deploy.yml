@@ -17,11 +17,11 @@ jobs:
           curl -fsSL "$SCW_URL" -o /usr/local/bin/scw
           chmod +x /usr/local/bin/scw
 
-      - name: Login to Scaleway registry
+      - name: Configure Scaleway CLI
         env:
           SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
           SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
-        run: scw login --access-key="$SCW_ACCESS_KEY" --secret-key="$SCW_SECRET_KEY" --organization-id=REDACTED_ORG_ID --project-id=REDACTED_PROJECT_ID --send-telemetry=false
+        run: scw init secret-key="$SCW_SECRET_KEY" access-key="$SCW_ACCESS_KEY" organization-id=REDACTED_ORG_ID project-id=REDACTED_PROJECT_ID send-telemetry=false with-ssh-key=false install-autocomplete=false
 
       - name: Build and push Docker image
         env:
