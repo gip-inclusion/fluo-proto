@@ -11,23 +11,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy to server
-        env:
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Install Scaleway CLI
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H 163.172.180.4 >> ~/.ssh/known_hosts
+          curl -fsSL https://github.com/scaleway/scaleway-cli/releases/latest/download/scaleway-cli_linux_amd64 -o /usr/local/bin/scw
+          chmod +x /usr/local/bin/scw
 
-          rsync -avz \
-            --exclude='.venv' \
-            --exclude='__pycache__' \
-            --exclude='.git' \
-            --exclude='data.db' \
-            --exclude='.DS_Store' \
-            --exclude='docs/' \
-            --exclude='.superpowers/' \
-            ./ root@163.172.180.4:/opt/fluo-proto/
+      - name: Login to Scaleway registry
+        env:
+          SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+        run: scw login --access-key="$SCW_ACCESS_KEY" --secret-key="$SCW_SECRET_KEY" --organization-id=REDACTED_ORG_ID --project-id=REDACTED_PROJECT_ID --send-telemetry=false
 
-          ssh root@163.172.180.4 "cd /opt/fluo-proto && /root/.local/bin/uv sync && systemctl restart fluo-proto"
+      - name: Build and push Docker image
+        env:
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+        run: |
+          docker login REDACTED_REGISTRY_BASE -u nologin --password-stdin <<< "$SCW_SECRET_KEY"
+          docker build --platform linux/amd64 -t REDACTED_REGISTRY:latest .
+          docker push REDACTED_REGISTRY:latest
+
+      - name: Deploy container
+        env:
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+        run: scw container container deploy ${{ secrets.SCW_CONTAINER_ID }} region=fr-par
