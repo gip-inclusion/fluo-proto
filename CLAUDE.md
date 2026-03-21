@@ -1,13 +1,13 @@
 # Fluo Proto
 
-FastAPI + Jinja2 + SQLite prototype for orientation requests (demandes d'orientation).
+FastAPI + Jinja2 + PostgreSQL prototype for orientation requests (demandes d'orientation).
 
 ## Architecture
 
 This is a clickable prototype — no auth, no real API, just enough to demonstrate the UX of receiving and processing orientation requests.
 
 - **app.py** — all routes (list, detail, accept/refuse, messages, orienteur reply)
-- **db.py** — SQLite schema + query helpers, file-based `data.db`
+- **db.py** — PostgreSQL queries via psycopg, connects via `DATABASE_URL` env var
 - **seed.py** — 5 mock orientations with diagnostic data, history events, messages
 - **templates/** — Jinja2 templates, `base.html` + page templates + `includes/` partials
 - **static/** — vendored CSS/JS/fonts (not in git, see below)
@@ -53,56 +53,52 @@ cp /path/to/les-emplois/itou/static/css/itou.css static/css/
 ## Dev server
 
 ```bash
-uv run uvicorn app:app --reload --host 0.0.0.0 --port 8002
+DATABASE_URL="postgresql://fluo:Fl4o-pR0t0-2026x@REDACTED_DB_ENDPOINT/fluo" uv run uvicorn app:app --reload --host 0.0.0.0 --port 8002
 ```
 
 ## Seed / reset database
 
 ```bash
-rm -f data.db && uv run python seed.py
+DATABASE_URL="postgresql://fluo:Fl4o-pR0t0-2026x@REDACTED_DB_ENDPOINT/fluo" uv run python seed.py
 ```
+
+To reset, drop and recreate tables manually or drop/recreate the database via `scw rdb`.
 
 ## Deploy
 
 **Push to main → auto-deploys** via GitHub Actions (`.github/workflows/deploy.yml`).
 
-The action rsync's the repo to the server, runs `uv sync`, and restarts the systemd service. Static assets (gitignored) are already on the server and preserved across deploys (no `--delete`).
+The action builds a Docker image (linux/amd64), pushes to the Scaleway container registry, and redeploys the serverless container.
 
-### Server details
+### Infrastructure
 
-- Instance: Scaleway STARDUST1-S (€0.0001/h), `fluo-proto-stardust`
-- IP: `163.172.180.4`
-- URL: http://163.172.180.4:8002/
-- SSH: `ssh root@163.172.180.4`
-- App path: `/opt/fluo-proto`
-- Service: `systemctl {status,restart,stop} fluo-proto`
-- Deploy key: dedicated `fluo-proto-deploy` key registered in Scaleway IAM, private key stored as GitHub secret `SSH_PRIVATE_KEY`
+- **Database**: Scaleway Managed PostgreSQL DB-DEV-S `proto-db` (shared across prototypes)
+  - Instance ID: `REDACTED_DB_INSTANCE_ID`
+  - Endpoint: `REDACTED_DB_ENDPOINT`
+  - Database: `fluo`, user: `fluo` (separate DB per prototype)
+  - Admin creds: `~/.config/scw/proto-db.env`
+- **Container**: Scaleway Serverless Container (140 mVCPU / 256 MB)
+  - Container ID: `REDACTED_CONTAINER_ID`
+  - URL: https://REDACTED_CONTAINER_URL
+  - Namespace: `nova` (`REDACTED_NAMESPACE_ID`)
+- **Registry**: `REDACTED_REGISTRY`
+- **GitHub Secrets**: `SCW_ACCESS_KEY`, `SCW_SECRET_KEY`, `SCW_CONTAINER_ID`, `DATABASE_URL`
 
 ### Manual deploy
 
 ```bash
-rsync -avz --exclude='.venv' --exclude='__pycache__' --exclude='.git' --exclude='data.db' --exclude='.DS_Store' --exclude='docs/' --exclude='.superpowers/' ./ root@163.172.180.4:/opt/fluo-proto/
-ssh root@163.172.180.4 "cd /opt/fluo-proto && /root/.local/bin/uv sync && systemctl restart fluo-proto"
+docker buildx build --platform linux/amd64 -t REDACTED_REGISTRY:latest . --push
+scw container container deploy REDACTED_CONTAINER_ID region=fr-par
 ```
 
-### Re-seed on server
+### Adding a new prototype to the shared DB
 
 ```bash
-ssh root@163.172.180.4 "cd /opt/fluo-proto && rm -f data.db && /root/.local/bin/uv run python seed.py && systemctl restart fluo-proto"
-```
-
-### Fresh instance setup
-
-```bash
-apt-get update -qq && apt-get install -yqq python3 python3-venv curl
-curl -LsSf https://astral.sh/uv/install.sh | sh
-mkdir -p /opt/fluo-proto
-# rsync files (including static/)
-cd /opt/fluo-proto && /root/.local/bin/uv sync && /root/.local/bin/uv run python seed.py
-# create /etc/systemd/system/fluo-proto.service then:
-systemctl daemon-reload && systemctl enable --now fluo-proto
+scw rdb database create instance-id=REDACTED_DB_INSTANCE_ID name=<proto_name>
+scw rdb user create instance-id=REDACTED_DB_INSTANCE_ID name=<proto_name> password=<password>
+scw rdb privilege set instance-id=REDACTED_DB_INSTANCE_ID database-name=<proto_name> user-name=<proto_name> permission=all
 ```
 
 ### Gotcha: static assets not in git
 
-`static/vendor/` and `static/css/itou.css` are gitignored (too large). The deploy action does NOT use `--delete` specifically to preserve these files on the server. If you recreate the instance, you must rsync static assets manually from your local machine or copy from les-emplois (see "Relation to les-emplois" above).
+`static/vendor/` and `static/css/itou.css` are gitignored (too large). They are baked into the Docker image at build time. If they're missing locally, copy from les-emplois (see "Relation to les-emplois" above).
