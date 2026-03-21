@@ -21,15 +21,16 @@ jobs:
         env:
           SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
           SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
-        run: scw init secret-key="$SCW_SECRET_KEY" access-key="$SCW_ACCESS_KEY" organization-id=REDACTED_ORG_ID project-id=REDACTED_PROJECT_ID send-telemetry=false with-ssh-key=false install-autocomplete=false
+        run: scw init secret-key="$SCW_SECRET_KEY" access-key="$SCW_ACCESS_KEY" organization-id="${{ secrets.SCW_ORG_ID }}" project-id="${{ secrets.SCW_PROJECT_ID }}" send-telemetry=false with-ssh-key=false install-autocomplete=false
 
       - name: Build and push Docker image
         env:
           SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+          SCW_REGISTRY: ${{ secrets.SCW_REGISTRY }}
         run: |
-          docker login REDACTED_REGISTRY_BASE -u nologin --password-stdin <<< "$SCW_SECRET_KEY"
-          docker build --platform linux/amd64 -t REDACTED_REGISTRY:latest .
-          docker push REDACTED_REGISTRY:latest
+          docker login "${SCW_REGISTRY%/*}" -u nologin --password-stdin <<< "$SCW_SECRET_KEY"
+          docker build --platform linux/amd64 -t "$SCW_REGISTRY:latest" .
+          docker push "$SCW_REGISTRY:latest"
 
       - name: Deploy container
         env:

@@ -68,30 +68,27 @@ DATABASE_URL=postgresql+psycopg://fluo:fluo@localhost:5432/fluo uv run uvicorn w
 
 ### Infrastructure
 
-- **Database**: Scaleway Managed PostgreSQL DB-DEV-S `proto-db` (shared across prototypes)
-  - Instance ID: `REDACTED_DB_INSTANCE_ID`
-  - Endpoint: `REDACTED_DB_ENDPOINT`
-  - Database: `fluo`, user: `fluo` (separate DB per prototype)
-  - Admin creds: `~/.config/scw/proto-db.env`
+All IDs, endpoints, and credentials are stored locally in `~/.config/scw/proto-db.env` and as GitHub Secrets — never committed to the repo.
+
+- **Database**: Scaleway Managed PostgreSQL DB-DEV-S `proto-db` (shared across prototypes, separate DB per prototype)
 - **Container**: Scaleway Serverless Container (140 mVCPU / 256 MB)
-  - Container ID: `REDACTED_CONTAINER_ID`
-  - URL: https://REDACTED_CONTAINER_URL
-  - Namespace: `nova` (`REDACTED_NAMESPACE_ID`)
-- **Registry**: `REDACTED_REGISTRY`
-- **GitHub Secrets**: `SCW_ACCESS_KEY`, `SCW_SECRET_KEY`, `SCW_CONTAINER_ID`, `DATABASE_URL`
+- **Registry**: Scaleway Container Registry
+- **GitHub Secrets**: `SCW_ACCESS_KEY`, `SCW_SECRET_KEY`, `SCW_CONTAINER_ID`, `SCW_REGISTRY`, `SCW_ORG_ID`, `SCW_PROJECT_ID`, `DATABASE_URL`
 - **DATABASE_URL format**: `postgresql+psycopg://user:pass@host:port/db` (SQLAlchemy dialect)
 
 ### Manual deploy
 
 ```bash
-docker buildx build --platform linux/amd64 -t REDACTED_REGISTRY:latest . --push
-scw container container deploy REDACTED_CONTAINER_ID region=fr-par
+source ~/.config/scw/proto-db.env
+docker buildx build --platform linux/amd64 -t $SCW_REGISTRY:latest . --push
+scw container container deploy $SCW_CONTAINER_ID region=fr-par
 ```
 
 ### Adding a new prototype to the shared DB
 
 ```bash
-scw rdb database create instance-id=REDACTED_DB_INSTANCE_ID name=<proto_name>
-scw rdb user create instance-id=REDACTED_DB_INSTANCE_ID name=<proto_name> password=<password>
-scw rdb privilege set instance-id=REDACTED_DB_INSTANCE_ID database-name=<proto_name> user-name=<proto_name> permission=all
+source ~/.config/scw/proto-db.env
+scw rdb database create instance-id=$PROTO_DB_INSTANCE_ID name=<proto_name>
+scw rdb user create instance-id=$PROTO_DB_INSTANCE_ID name=<proto_name> password=<password>
+scw rdb privilege set instance-id=$PROTO_DB_INSTANCE_ID database-name=<proto_name> user-name=<proto_name> permission=all
 ```
