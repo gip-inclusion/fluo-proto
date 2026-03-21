@@ -64,7 +64,7 @@
                         <li{% if msg.author_name == o.sender_name %} class="is-current-user"{% endif %}>
                             <div>
                                 <time class="fs-xs text-muted">
-                                    {{ msg.created_at[:16]|replace("T", " à ") }}
+                                    {{ msg.created_at|format_datetime }}
                                 </time>
                                 <strong class="d-block">
                                     {{ msg.author_name }}

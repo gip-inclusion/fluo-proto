@@ -33,7 +33,7 @@
         {% for msg in messages[:3] %}
         <li>
             <div>
-                <time class="fs-xs text-muted">{{ msg.created_at[:16]|replace("T", " à ") }}</time>
+                <time class="fs-xs text-muted">{{ msg.created_at|format_datetime }}</time>
                 <strong class="d-block">{{ msg.author_name }}</strong>
                 <blockquote class="blockquote mt-1 mb-0">
                     <p>{{ msg.content }}</p>
