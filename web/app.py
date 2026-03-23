@@ -6,7 +6,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from .config import EVENT_LABELS, MODALITE_LABELS, SCENARIOS, SERVICE_NAME, STATUS_LABELS
+from .config import (
+    EVENT_LABELS,
+    MODALITE_FT_LABELS,
+    MODALITE_LABELS,
+    SCENARIOS,
+    SENT_STATUS_LABELS,
+    SERVICE_NAME,
+    STATUS_LABELS,
+)
 from .database import init_db
 from .routes import orientations_router
 from .routes.prescripteur import router as prescripteur_router
@@ -23,7 +31,9 @@ templates.env.globals.update(
         "status_labels": STATUS_LABELS,
         "event_labels": EVENT_LABELS,
         "modalite_labels": MODALITE_LABELS,
+        "modalite_ft_labels": MODALITE_FT_LABELS,
         "scenarios": SCENARIOS,
+        "sent_status_labels": SENT_STATUS_LABELS,
     }
 )
 templates.env.filters["format_datetime"] = lambda v: v[:16].replace("T", " à ") if v else ""

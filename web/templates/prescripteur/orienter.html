@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Trouver des solutions — {{ o.person_first_name }} {{ o.person_last_name }}{% endblock %}
+
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+
+                {# Back link #}
+                <div class="c-prevstep">
+                    <a href="{{ prefix }}/beneficiaire/{{ o.id }}" class="btn btn-ico btn-link ps-0">
+                        <i class="ri-arrow-drop-left-line ri-xl fw-medium" aria-hidden="true"></i>
+                        <span>Retour au bénéficiaire</span>
+                    </a>
+                </div>
+
+                <div class="c-title">
+                    <div class="c-title__main">
+                        <h1>Trouver des solutions pour {{ o.person_first_name }} {{ o.person_last_name }}</h1>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+
+            {# Left column: profile + diagnostic in one box #}
+            <div class="s-section__col col-12 col-lg-5 col-xxl-4">
+                <div class="c-box c-box--note mb-3 mb-md-4 orienter-profile">
+
+                    {# Profile summary #}
+                    <h3>Résumé du profil</h3>
+                    <ul class="list-unstyled fs-sm mb-2">
+                        {% if age %}
+                        <li><i class="ri-user-line me-1" aria-hidden="true"></i> {{ age }} ans</li>
+                        {% endif %}
+                        {% if projet_pro %}
+                        <li><i class="ri-briefcase-line me-1" aria-hidden="true"></i> Cherche à travailler dans : {{ projet_pro }}</li>
+                        {% else %}
+                        <li><i class="ri-briefcase-line me-1" aria-hidden="true"></i> Projet professionnel à définir</li>
+                        {% endif %}
+                        {% if o.person_address %}
+                        <li><i class="ri-map-pin-line me-1" aria-hidden="true"></i> {{ o.person_address }}</li>
+                        {% endif %}
+                    </ul>
+
+                    {# Référent·e de parcours #}
+                    <h3>Référent·e de parcours</h3>
+                    <div class="fs-sm mb-2">
+                        <i class="ri-user-star-line me-1" aria-hidden="true"></i> {{ o.referent_name }}
+                    </div>
+
+                    {# Diagnostic — include creates its own c-box, neutralized by CSS #}
+                    {% if o_diagnostic_data %}
+                    {% include "includes/diagnostic.html" %}
+                    {% endif %}
+
+                </div>
+            </div>
+
+            {# Right column: solutions #}
+            <div class="s-section__col col-12 col-lg-7 col-xxl-8">
+
+                {# Sticky section nav #}
+                <nav class="orienter-nav" id="orienter-nav">
+                    {% for group in solutions %}
+                    {% set ns = namespace(count=0) %}
+                    {% for s in group.structures %}
+                        {% if s.postes %}{% set ns.count = ns.count + s.postes|length %}{% else %}{% set ns.count = ns.count + 1 %}{% endif %}
+                    {% endfor %}
+                    <a href="#group-{{ group.key }}" class="orienter-nav__item{% if loop.first %} active{% endif %}">{{ group.title }} <span class="orienter-nav__count">{{ ns.count }}</span></a>
+                    {% endfor %}
+                </nav>
+
+                {% for group in solutions %}
+                <div id="group-{{ group.key }}" class="orienter-group">
+
+                    {% for structure in group.structures %}
+                    <div class="c-box mb-3">
+
+                        {# Structure header with inline action for non-job structures #}
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                {% if structure.badge %}
+                                <i class="ri-building-line text-primary" aria-hidden="true"></i>
+                                <strong class="text-primary">{{ structure.badge }} - {{ structure.name }}</strong>
+                                {% else %}
+                                <strong>{{ structure.name }}</strong>
+                                {% endif %}
+                            </div>
+                            {% if not structure.postes %}
+                            {% if group.action == "emplois" %}
+                            <button type="button" class="btn btn-sm btn-secondary btn-ico flex-shrink-0 ms-3"
+                                    data-bs-toggle="modal" data-bs-target="#orientModal"
+                                    onclick="prepareOrientModal({{ structure.name|tojson }}, {{ group.key|tojson }}, {{ group.title|tojson }}, '')">
+                                <img src="/static/vendor/theme-inclusion/images/logo-emploi-inclusion-mono.svg" alt="" height="14">
+                                <span>Candidater</span>
+                            </button>
+                            {% else %}
+                            <button type="button" class="btn btn-sm btn-secondary btn-ico flex-shrink-0 ms-3"
+                                    data-bs-toggle="modal" data-bs-target="#orientModal"
+                                    onclick="prepareOrientModal({{ structure.name|tojson }}, {{ group.key|tojson }}, {{ group.title|tojson }}, '')">
+                                <img src="/static/vendor/theme-inclusion/images/logo-dora-mono.svg" alt="" height="14">
+                                <span>Orienter</span>
+                            </button>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+
+                        {# Contact details #}
+                        {% if structure.address %}
+                        <div class="fs-sm mb-1">
+                            <i class="ri-map-pin-line text-danger me-1" aria-hidden="true"></i> {{ structure.address }}
+                        </div>
+                        {% endif %}
+                        {% if structure.horaires %}
+                        <div class="fs-sm text-muted mb-1">
+                            <i class="ri-time-line me-1" aria-hidden="true"></i> {{ structure.horaires }}
+                        </div>
+                        {% endif %}
+                        {% if structure.phone %}
+                        <div class="fs-sm mb-1">
+                            <i class="ri-phone-line text-primary me-1" aria-hidden="true"></i> {{ structure.phone }}
+                        </div>
+                        {% endif %}
+                        {% if structure.email %}
+                        <div class="fs-sm mb-1">
+                            <i class="ri-mail-line text-primary me-1" aria-hidden="true"></i> {{ structure.email }}
+                        </div>
+                        {% endif %}
+
+                        {# Job listings with inline action button #}
+                        {% if structure.postes %}
+                        {% for poste in structure.postes %}
+                        <div class="border-top pt-3 {% if not loop.first %}mt-3{% endif %}">
+                            <div class="d-flex gap-2 flex-wrap mb-1">
+                                <span class="badge badge-xs rounded-pill bg-info-lighter text-info">{{ poste.contrat }}</span>
+                                <span class="badge badge-xs rounded-pill bg-info-lighter text-info">{{ poste.heures }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong class="d-block">{{ poste.titre }}</strong>
+                                    <div class="fs-xs text-muted mt-1">
+                                        <i class="ri-route-line" aria-hidden="true"></i> à <strong class="text-primary">{{ poste.distance }}</strong> de votre lieu de recherche
+                                    </div>
+                                    <div class="fs-xs text-muted">
+                                        <i class="ri-map-pin-2-line" aria-hidden="true"></i> {{ poste.lieu }}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-secondary btn-ico flex-shrink-0 ms-3"
+                                        data-bs-toggle="modal" data-bs-target="#orientModal"
+                                        onclick="prepareOrientModal({{ structure.name|tojson }}, {{ group.key|tojson }}, {{ group.title|tojson }}, {{ poste.titre|tojson }})">
+                                    <img src="/static/vendor/theme-inclusion/images/logo-emploi-inclusion-mono.svg" alt="" height="14">
+                                    <span>Candidater</span>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{# Orientation modal #}
+<div class="modal fade" id="orientModal" tabindex="-1" aria-labelledby="orientModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{{ prefix }}/beneficiaire/{{ o.id }}/orienter">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orientModalLabel">Confirmer l'orientation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="structure_name" id="modal-structure-name">
+                    <input type="hidden" name="structure_key" id="modal-structure-key">
+                    <input type="hidden" name="solution_title" id="modal-solution-title">
+                    <input type="hidden" name="poste_titre" id="modal-poste-titre">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Structure</label>
+                        <p id="modal-structure-display" class="mb-0"></p>
+                    </div>
+                    <div class="mb-3" id="modal-poste-group" style="display:none;">
+                        <label class="form-label fw-bold">Poste</label>
+                        <p id="modal-poste-display" class="mb-0"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" for="modal-message">Message / recommandation</label>
+                        <textarea name="message" id="modal-message" rows="4"
+                                  class="form-control"
+                                  placeholder="Ajoutez un message pour la structure d'accueil..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Envoyer l'orientation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function prepareOrientModal(structureName, structureKey, solutionTitle, posteTitre) {
+    document.getElementById('modal-structure-name').value = structureName;
+    document.getElementById('modal-structure-key').value = structureKey;
+    document.getElementById('modal-solution-title').value = solutionTitle;
+    document.getElementById('modal-poste-titre').value = posteTitre;
+    document.getElementById('modal-structure-display').textContent = structureName;
+    var posteGroup = document.getElementById('modal-poste-group');
+    var posteDisplay = document.getElementById('modal-poste-display');
+    if (posteTitre) {
+        posteGroup.style.display = '';
+        posteDisplay.textContent = posteTitre;
+    } else {
+        posteGroup.style.display = 'none';
+    }
+    document.getElementById('modal-message').value = '';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var nav = document.getElementById('orienter-nav');
+    if (!nav) return;
+
+    var header = document.querySelector('.s-title-02');
+    var headerH = header ? header.offsetHeight : 0;
+    nav.style.top = headerH + 'px';
+
+    var links = [].slice.call(nav.querySelectorAll('.orienter-nav__item'));
+    var groups = [].slice.call(document.querySelectorAll('.orienter-group'));
+
+    function update() {
+        var barBottom = headerH + nav.offsetHeight + 10;
+        var active = groups[0];
+        for (var i = 0; i < groups.length; i++) {
+            if (groups[i].getBoundingClientRect().top <= barBottom) {
+                active = groups[i];
+            }
+        }
+        for (var j = 0; j < links.length; j++) {
+            links[j].classList.toggle('active', links[j].getAttribute('href') === '#' + active.id);
+        }
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+
+    links.forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            var target = document.querySelector(link.getAttribute('href'));
+            if (target) {
+                var y = target.getBoundingClientRect().top + window.scrollY - headerH - nav.offsetHeight - 8;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

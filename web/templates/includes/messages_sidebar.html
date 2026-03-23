@@ -1,7 +1,8 @@
 {# Quick message form #}
+{% if message_post_url is defined and message_post_url %}
 <div class="c-box c-box--note mb-3 mb-md-4">
-    <form method="post" action="{{ prefix }}/orientation/{{ o.id }}/message">
-        <input type="hidden" name="author_name" value="{{ service_name }}">
+    <form method="post" action="{{ message_post_url }}">
+        <input type="hidden" name="author_name" value="{{ request.state.scenario.label if request.state.scenario else service_name }}">
         <input type="hidden" name="source" value="sidebar">
         <h3>Commentaires partagés</h3>
         <div class="form-group">
@@ -25,6 +26,7 @@
         <p class="form-text mt-2">Ces commentaires sont partagés avec les membres de votre organisation et avec la personne qui a émis la demande d'orientation.</p>
     </form>
 </div>
+{% endif %}
 
 {# Recent messages #}
 {% if messages %}

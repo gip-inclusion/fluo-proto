@@ -37,9 +37,8 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Nom</th>
-                                    <th scope="col">Date d'inscription</th>
-                                    <th scope="col">Modalité</th>
-                                    <th scope="col">Référent</th>
+                                    <th scope="col">Date d'entrée</th>
+                                    <th scope="col">Accompagnateur</th>
                                     <th scope="col" class="text-end w-50px"></th>
                                 </tr>
                             </thead>
@@ -54,17 +53,14 @@
                                         <span class="d-block text-muted">{{ b.person_address }}</span>
                                         {% endif %}
                                     </td>
-                                    <td>{{ b.date_inscription }}</td>
-                                    <td>
-                                        {{ modalite_ft_labels.get(b.modalite_ft, b.modalite_ft) }}
-                                    </td>
-                                    <td>{{ b.referent_name }}</td>
+                                    <td>{{ b.date_entree }}</td>
+                                    <td>{{ b.accompagnateur or "—" }}</td>
                                     <td class="text-end w-50px align-middle">
                                         <a class="btn btn-sm btn-link btn-ico-only"
                                            href="{{ prefix }}/beneficiaire/{{ b.id }}"
                                            data-bs-toggle="tooltip"
                                            data-bs-title="Voir ce bénéficiaire">
-                                            <i class="ri-arrow-drop-right-line fs-lg" aria-label="Voir {{ b.person_last_name }} {{ b.person_first_name }}"></i>
+                                            <i class="ri-arrow-drop-right-line fs-lg" aria-label="Voir"></i>
                                         </a>
                                     </td>
                                 </tr>

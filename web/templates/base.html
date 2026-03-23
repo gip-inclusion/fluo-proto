@@ -12,7 +12,7 @@
 <body class="l-authenticated">
     {% set scenario = request.state.scenario %}
     <header role="banner" id="header">
-        <section class="s-header-authenticated">
+        <section class="s-header-authenticated d-lg-none">
             <div class="s-header-authenticated__container container">
                 <div class="s-header-authenticated__row row">
                     <div class="s-header-authenticated__col s-header-authenticated__col--logo-service col-auto d-flex align-items-center pe-0">
@@ -91,12 +91,12 @@
                 <strong>PROTOTYPE – Données fictives</strong>
             </div>
             <button type="button"
-                    class="btn btn-sm btn-outline-danger"
+                    class="btn btn-sm btn-ico btn-outline-white"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasScenario"
                     aria-controls="offcanvasScenario">
-                <i class="ri-group-line fw-medium" aria-hidden="true"></i>
-                Sélectionner un scénario
+                <i class="ri-user-community-line" aria-hidden="true"></i>
+                <span>Sélectionner un scénario</span>
             </button>
         </div>
     </div>

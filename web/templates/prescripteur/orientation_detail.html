@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Orientation envoyée — {{ o.person_last_name }} {{ o.person_first_name }}{% endblock %}
+
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+
+                {# Back link #}
+                <div class="c-prevstep">
+                    <a href="{{ prefix }}/orientations" class="btn btn-ico btn-link ps-0">
+                        <i class="ri-arrow-drop-left-line ri-xl fw-medium" aria-hidden="true"></i>
+                        <span>Retour à la liste</span>
+                    </a>
+                </div>
+
+                {# Title + badge #}
+                <div class="c-title">
+                    <div class="c-title__main">
+                        <h1>
+                            Orientation envoyée —
+                            {{ o.person_last_name }} {{ o.person_first_name }}
+                            <span class="badge rounded-pill text-nowrap badge-base {{ status_class }}">
+                                {{ status_label }}
+                            </span>
+                        </h1>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+
+            {# Right column: commentaires #}
+            <div class="s-section__col col-12 col-lg-4 col-xxl-3 order-1 order-lg-2">
+                {% include "includes/messages_sidebar.html" %}
+            </div>
+
+            <div class="s-section__col col-12 col-lg-8 col-xxl-9 order-2 order-lg-1">
+
+                {# Demande d'orientation #}
+                <div class="c-box mb-3 mb-md-4">
+                    {% if so.status == "acceptee" and so.recipient_name %}
+                    <h3>Qui accueille cet usager</h3>
+                    {% else %}
+                    <h3>Demande d'orientation</h3>
+                    {% endif %}
+                    <ul class="list-data mb-3">
+                        <li>
+                            <small>Structure</small>
+                            <strong>{{ so.structure_name }}</strong>
+                        </li>
+                        <li>
+                            <small>Solution</small>
+                            <strong>{{ so.solution_title }}</strong>
+                        </li>
+                        {% if so.poste_titre %}
+                        <li>
+                            <small>Poste</small>
+                            <strong>{{ so.poste_titre }}</strong>
+                        </li>
+                        {% endif %}
+                        {% if structure_info %}
+                            {% if structure_info.address %}
+                            <li>
+                                <small>Adresse</small>
+                                <strong>{{ structure_info.address }}</strong>
+                            </li>
+                            {% endif %}
+                            {% if structure_info.phone %}
+                            <li>
+                                <small>Téléphone</small>
+                                <strong>{{ structure_info.phone }}</strong>
+                            </li>
+                            {% endif %}
+                            {% if structure_info.email %}
+                            <li>
+                                <small>E-mail</small>
+                                <strong>{{ structure_info.email }}</strong>
+                            </li>
+                            {% endif %}
+                        {% endif %}
+                        {% if so.status == "acceptee" and so.recipient_name %}
+                        <li>
+                            <small>Accompagnateur</small>
+                            <strong>{{ so.recipient_name }}</strong>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <small>Date d'envoi</small>
+                            <strong>{{ so.created_at|format_datetime }}</strong>
+                        </li>
+                    </ul>
+                    {% if so.message %}
+                    <blockquote class="blockquote mb-0">
+                        <p>{{ so.message }}</p>
+                    </blockquote>
+                    {% endif %}
+                </div>
+
+                {# Response from the structure #}
+                {% if so.response_message %}
+                <div class="c-box c-box--note mb-3 mb-md-4">
+                    <h3>Réponse de la structure</h3>
+                    <blockquote class="blockquote mt-2 mb-0">
+                        <p>{{ so.response_message }}</p>
+                    </blockquote>
+                </div>
+                {% endif %}
+
+                {# Personal info #}
+                {% include "includes/personal_info.html" %}
+
+                {# Diagnostic #}
+                {% if o_diagnostic_data %}
+                {% include "includes/diagnostic.html" %}
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

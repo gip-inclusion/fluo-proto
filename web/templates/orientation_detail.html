@@ -35,22 +35,20 @@
                     {% if o.status == "nouvelle" %}
                     <div class="form-row align-items-center gx-3">
                         <div class="form-group col-12 col-lg-auto">
-                            <form method="post" action="{{ prefix }}/orientation/{{ o.id }}/accept">
-                                <button type="submit"
-                                        class="btn btn-lg btn-link-white btn-block btn-ico justify-content-center">
-                                    <i class="ri-check-line fw-medium" aria-hidden="true"></i>
-                                    <span>Accepter</span>
-                                </button>
-                            </form>
+                            <button type="button"
+                                    class="btn btn-lg btn-link-white btn-block btn-ico justify-content-center"
+                                    data-bs-toggle="modal" data-bs-target="#acceptModal">
+                                <i class="ri-check-line fw-medium" aria-hidden="true"></i>
+                                <span>Accepter</span>
+                            </button>
                         </div>
                         <div class="form-group col-12 col-lg-auto">
-                            <form method="post" action="{{ prefix }}/orientation/{{ o.id }}/refuse">
-                                <button type="submit"
-                                        class="btn btn-lg btn-link-white btn-block btn-ico">
-                                    <i class="ri-close-line fw-medium" aria-hidden="true"></i>
-                                    <span>Refuser</span>
-                                </button>
-                            </form>
+                            <button type="button"
+                                    class="btn btn-lg btn-link-white btn-block btn-ico"
+                                    data-bs-toggle="modal" data-bs-target="#refuseModal">
+                                <i class="ri-close-line fw-medium" aria-hidden="true"></i>
+                                <span>Refuser</span>
+                            </button>
                         </div>
                         <div class="form-group col-12 col-lg d-lg-flex justify-content-lg-end">
                             <div class="dropdown">
@@ -69,6 +67,12 @@
                         <span class="badge rounded-pill {{ status_class }} text-white">
                             {{ status_label }}
                         </span>
+                        {% if plie_beneficiaire_url %}
+                        <a href="{{ plie_beneficiaire_url }}" class="btn btn-sm btn-link-white btn-ico ms-auto">
+                            <i class="ri-user-line fw-medium" aria-hidden="true"></i>
+                            <span>Voir le bénéficiaire</span>
+                        </a>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>
@@ -147,4 +151,75 @@
         </div>
     </div>
 </section>
+
+{# Accept modal #}
+{% if o.status == "nouvelle" %}
+<div class="modal fade" id="acceptModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{{ prefix }}/orientation/{{ o.id }}/accept">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="acceptModalLabel">Accepter l'orientation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">
+                        Vous acceptez l'orientation de
+                        <strong>{{ o.person_last_name }} {{ o.person_first_name }}</strong>.
+                    </p>
+                    <div class="mb-3">
+                        <label for="accept-recipient" class="form-label">Accompagnateur assigné</label>
+                        <input type="text" class="form-control" id="accept-recipient"
+                               name="recipient_name" placeholder="Nom de l'accompagnateur">
+                    </div>
+                    <div class="mb-3">
+                        <label for="accept-message" class="form-label">Message de réponse</label>
+                        <textarea class="form-control" id="accept-message" name="response_message"
+                                  rows="4" placeholder="Informations complémentaires pour le prescripteur..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="ri-check-line fw-medium" aria-hidden="true"></i>
+                        Accepter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{# Refuse modal #}
+<div class="modal fade" id="refuseModal" tabindex="-1" aria-labelledby="refuseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{{ prefix }}/orientation/{{ o.id }}/refuse">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refuseModalLabel">Refuser l'orientation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">
+                        Vous refusez l'orientation de
+                        <strong>{{ o.person_last_name }} {{ o.person_first_name }}</strong>.
+                    </p>
+                    <div class="mb-3">
+                        <label for="refuse-message" class="form-label">Motif du refus</label>
+                        <textarea class="form-control" id="refuse-message" name="response_message"
+                                  rows="4" placeholder="Expliquez la raison du refus..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="ri-close-line fw-medium" aria-hidden="true"></i>
+                        Refuser
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

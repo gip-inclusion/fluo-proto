@@ -4,10 +4,17 @@
             <h3 class="mb-0">Informations personnelles</h3>
         </div>
         <div class="col-12 col-sm-auto mt-2 mt-sm-0 d-flex align-items-center">
+            {% if beneficiaire_url is defined and beneficiaire_url %}
+            <a href="{{ beneficiaire_url }}" class="btn btn-ico btn-outline-primary">
+                <i class="ri-user-line fw-medium" aria-hidden="true"></i>
+                <span>Voir le bénéficiaire</span>
+            </a>
+            {% else %}
             <span class="btn btn-ico btn-outline-primary disabled">
                 <i class="ri-pencil-line fw-medium" aria-hidden="true"></i>
                 <span>Modifier</span>
             </span>
+            {% endif %}
         </div>
     </div>
     <ul class="list-data mb-3">
