@@ -97,16 +97,18 @@
                             </div>
                             {% if not structure.postes %}
                             {% if group.action == "emplois" %}
-                            <button type="button" class="btn btn-sm btn-secondary btn-ico flex-shrink-0 ms-3"
+                            <button type="button" class="btn btn-sm btn-secondary btn-ico flex-shrink-0 ms-3 orient-btn"
                                     data-bs-toggle="modal" data-bs-target="#orientModal"
-                                    onclick="prepareOrientModal({{ structure.name|tojson }}, {{ group.key|tojson }}, {{ group.title|tojson }}, '')">
+                                    data-structure-name="{{ structure.name }}" data-structure-key="{{ group.key }}"
+                                    data-solution-title="{{ group.title }}" data-poste-titre="">
                                 <img src="/static/vendor/theme-inclusion/images/logo-emploi-inclusion-mono.svg" alt="" height="14">
                                 <span>Candidater</span>
                             </button>
                             {% else %}
-                            <button type="button" class="btn btn-sm btn-secondary btn-ico flex-shrink-0 ms-3"
+                            <button type="button" class="btn btn-sm btn-secondary btn-ico flex-shrink-0 ms-3 orient-btn"
                                     data-bs-toggle="modal" data-bs-target="#orientModal"
-                                    onclick="prepareOrientModal({{ structure.name|tojson }}, {{ group.key|tojson }}, {{ group.title|tojson }}, '')">
+                                    data-structure-name="{{ structure.name }}" data-structure-key="{{ group.key }}"
+                                    data-solution-title="{{ group.title }}" data-poste-titre="">
                                 <img src="/static/vendor/theme-inclusion/images/logo-dora-mono.svg" alt="" height="14">
                                 <span>Orienter</span>
                             </button>
@@ -154,9 +156,10 @@
                                         <i class="ri-map-pin-2-line" aria-hidden="true"></i> {{ poste.lieu }}
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-sm btn-secondary btn-ico flex-shrink-0 ms-3"
+                                <button type="button" class="btn btn-sm btn-secondary btn-ico flex-shrink-0 ms-3 orient-btn"
                                         data-bs-toggle="modal" data-bs-target="#orientModal"
-                                        onclick="prepareOrientModal({{ structure.name|tojson }}, {{ group.key|tojson }}, {{ group.title|tojson }}, {{ poste.titre|tojson }})">
+                                        data-structure-name="{{ structure.name }}" data-structure-key="{{ group.key }}"
+                                        data-solution-title="{{ group.title }}" data-poste-titre="{{ poste.titre }}">
                                     <img src="/static/vendor/theme-inclusion/images/logo-emploi-inclusion-mono.svg" alt="" height="14">
                                     <span>Candidater</span>
                                 </button>
@@ -217,22 +220,25 @@
 </div>
 
 <script>
-function prepareOrientModal(structureName, structureKey, solutionTitle, posteTitre) {
-    document.getElementById('modal-structure-name').value = structureName;
-    document.getElementById('modal-structure-key').value = structureKey;
-    document.getElementById('modal-solution-title').value = solutionTitle;
-    document.getElementById('modal-poste-titre').value = posteTitre;
-    document.getElementById('modal-structure-display').textContent = structureName;
-    var posteGroup = document.getElementById('modal-poste-group');
-    var posteDisplay = document.getElementById('modal-poste-display');
-    if (posteTitre) {
-        posteGroup.style.display = '';
-        posteDisplay.textContent = posteTitre;
-    } else {
-        posteGroup.style.display = 'none';
-    }
-    document.getElementById('modal-message').value = '';
-}
+document.querySelectorAll('.orient-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var d = this.dataset;
+        document.getElementById('modal-structure-name').value = d.structureName;
+        document.getElementById('modal-structure-key').value = d.structureKey;
+        document.getElementById('modal-solution-title').value = d.solutionTitle;
+        document.getElementById('modal-poste-titre').value = d.posteTitre || '';
+        document.getElementById('modal-structure-display').textContent = d.structureName;
+        var posteGroup = document.getElementById('modal-poste-group');
+        var posteDisplay = document.getElementById('modal-poste-display');
+        if (d.posteTitre) {
+            posteGroup.style.display = '';
+            posteDisplay.textContent = d.posteTitre;
+        } else {
+            posteGroup.style.display = 'none';
+        }
+        document.getElementById('modal-message').value = '';
+    });
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     var nav = document.getElementById('orienter-nav');
