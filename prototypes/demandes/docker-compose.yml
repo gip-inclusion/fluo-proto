@@ -2,9 +2,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: fluo
-      POSTGRES_USER: fluo
-      POSTGRES_PASSWORD: fluo
+      POSTGRES_DB: demandes
+      POSTGRES_USER: demandes
+      POSTGRES_PASSWORD: demandes
     ports:
       - "5432:5432"
     volumes:
