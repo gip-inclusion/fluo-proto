@@ -1,41 +1,69 @@
-# Fluo Proto
+# Fluo Proto Factory
 
-FastAPI + Jinja2 + PostgreSQL prototype for orientation requests (demandes d'orientation).
+Monorepo that produces throwaway prototypes for product design, user testing, and fast iteration. Each prototype lives under `prototypes/<name>/` as a self-contained FastAPI + Jinja2 + PostgreSQL app visually identical to [les-emplois](https://github.com/gip-inclusion/les-emplois).
 
-## Architecture
+"Fluo" is the overall endeavour. Individual protos are named after what they explore (e.g., `demandes` for orientation requests, `recs` for recommendations).
 
-Clickable prototype — no auth, no real API, just enough to demonstrate the UX.
+## Layout
 
 ```
-web/                — Python package (all application code)
-  app.py            — FastAPI setup, template globals, mount routers
-  config.py         — settings, constants, labels
-  database.py       — SQLAlchemy engine, session, init_db
-  models.py         — SQLModel models (Orientation, Message, HistoryEvent)
-  seed.py           — 5 mock orientations with diagnostic data
-  routes/
-    orientations.py — all orientation routes (list, detail, accept, refuse, message, orienteur)
-  templates/        — Jinja2: base.html + pages + includes/
-  static/           — vendored CSS/JS/fonts from les-emplois (committed to git, ~4MB)
+fluo-proto-factory/
+├── _template/            — the scaffold (copied into each new proto by copier)
+├── prototypes/           — one subdirectory per proto, fully self-contained
+│   └── demandes/         — orientation requests for PLIE Lille Avenir
+├── Makefile              — operator commands (make help lists them)
+├── copier.yml            — copier config for `make new`
+├── ruff.toml             — shared lint config
+├── scripts/              — provision.sh, fetch-assets.sh
+├── .githooks/pre-commit  — lint + URL guard
+├── PROTOTYPE.md          — the guide for building a new proto (read this)
+└── .github/workflows/    — CI (lint) and deploy (per-proto)
 ```
 
-Two user views without auth:
-- `/` and `/orientation/{id}` — the receiving service (PLIE Lille Avenir) processes incoming orientations
-- `/orientation/{id}/orienteur` — the sender can view status and exchange messages
+## Isolation
 
-Status flow: `nouvelle` → `acceptee` / `refusee`
+- Each proto has its own `Dockerfile`, `pyproject.toml`, `uv.lock`, `docker-compose.yml`, and PostgreSQL database. Nothing shared at runtime.
+- Static assets (~4 MB) are duplicated per proto — frozen at creation time.
+- Editing `_template/` has zero effect on existing protos. No propagation.
+- Each proto has its own database on the shared Scaleway RDB instance.
 
-Adding a new feature: create `web/routes/feature.py` with an `APIRouter`, include it in `web/app.py`.
+## Creating a new proto
 
-## Relation to les-emplois
-
-Reproduces the look of [les-emplois](https://github.com/gip-inclusion/les-emplois) via `theme-inclusion`. Static assets are committed to git (trimmed from 16MB to ~4MB). To refresh from les-emplois:
+See `PROTOTYPE.md`. TL;DR:
 
 ```bash
-./scripts/fetch-assets.sh /path/to/les-emplois
+make new recs              # scaffold from _template/
+make provision recs        # create Scaleway container + DB
+make dev recs              # run locally with hot reload
 ```
 
-## Design system gotchas
+## Local dev
+
+```bash
+make dev <proto>           # hot reload on localhost:8002
+make reseed <proto>        # drop + re-seed local DB
+make lint                  # ruff check
+make fmt                   # ruff format
+```
+
+## Deploy
+
+Push to `main` → GitHub Actions detects which protos changed and runs `make deploy <proto>` for each. Manual: `make deploy <proto>` from a laptop (requires `scw` CLI, docker login, `SCW_REGISTRY` from `~/.config/scw/proto-db.env`).
+
+## Infrastructure
+
+- **Database**: Scaleway Managed PostgreSQL `proto-db` (shared instance, one database per proto).
+- **Containers**: Scaleway Serverless Containers (one per proto, 256 MB / 140 mVCPU / min-scale=1 / privacy=public).
+- **Registry**: Scaleway Container Registry (one image per proto, tagged by proto name). `SCW_REGISTRY` is the namespace path only (e.g. `rg.fr-par.scw.cloud/nova-container-registry`); per-proto images live at `$SCW_REGISTRY/<proto>:latest`.
+- **Secrets**: factory-level GitHub secrets cover all protos (`SCW_ACCESS_KEY`, `SCW_SECRET_KEY`, `SCW_REGISTRY`, `SCW_PROJECT_ID`, `SCW_ORG_ID`). Operator credentials live in `~/.config/scw/proto-db.env` (never in the repo).
+- **DATABASE_URL** is set on each Scaleway container at provision time, never in the repo.
+- **Container lookup**: `make deploy` finds containers by name (`scw container container list name=<proto>`), no IDs stored in the repo.
+
+## URL privacy
+
+Public proto URLs are **not** stored in the repo. The pre-commit hook blocks any attempt to commit a `*.functions.fnc.fr-par.scw.cloud` URL. Use `make urls` to list all current URLs locally.
+
+## Design system (applies to every proto)
 
 - **CSS class prefixes**: `s-` sections, `c-` components. Always use `__container` / `__row` / `__col` BEM nesting.
 - **c-box variants**: `c-box--action` (dark), `c-box--note` (light). Plain `c-box` = white card.
@@ -44,51 +72,9 @@ Reproduces the look of [les-emplois](https://github.com/gip-inclusion/les-emploi
 - **Badges**: `badge-sm` (tables), `badge-base` (titles). Both need `rounded-pill text-nowrap`.
 - **Body class**: `l-authenticated` triggers permanent sidebar on xl+ screens.
 
-## Template globals
+See `PROTOTYPE.md` for the full design-system reference, template patterns, and common pitfalls.
 
-Available in all templates without passing per-route:
-- `service_name` — "PLIE Lille Avenir"
-- `status_labels` — dict mapping status → (label, css_class)
-- `event_labels` — dict mapping event_type → label
-- `modalite_labels` — dict mapping modalite → label
+## Commit rules
 
-Custom filter: `{{ value|format_datetime }}` — formats ISO datetime to "YYYY-MM-DD à HH:MM"
-
-## Local dev
-
-```bash
-docker compose up -d
-DATABASE_URL=postgresql+psycopg://fluo:fluo@localhost:5432/fluo uv run python -m web.seed
-DATABASE_URL=postgresql+psycopg://fluo:fluo@localhost:5432/fluo uv run uvicorn web.app:app --reload --host 0.0.0.0 --port 8002
-```
-
-## Deploy
-
-**Push to main → auto-deploys** via GitHub Actions. Builds Docker image → pushes to registry → redeploys container.
-
-### Infrastructure
-
-All IDs, endpoints, and credentials are stored locally in `~/.config/scw/proto-db.env` and as GitHub Secrets — never committed to the repo.
-
-- **Database**: Scaleway Managed PostgreSQL DB-DEV-S `proto-db` (shared across prototypes, separate DB per prototype)
-- **Container**: Scaleway Serverless Container (140 mVCPU / 256 MB)
-- **Registry**: Scaleway Container Registry
-- **GitHub Secrets**: `SCW_ACCESS_KEY`, `SCW_SECRET_KEY`, `SCW_CONTAINER_ID`, `SCW_REGISTRY`, `SCW_ORG_ID`, `SCW_PROJECT_ID`, `DATABASE_URL`
-- **DATABASE_URL format**: `postgresql+psycopg://user:pass@host:port/db` (SQLAlchemy dialect)
-
-### Manual deploy
-
-```bash
-source ~/.config/scw/proto-db.env
-docker buildx build --platform linux/amd64 -t $SCW_REGISTRY:latest . --push
-scw container container deploy $SCW_CONTAINER_ID region=fr-par
-```
-
-### Adding a new prototype to the shared DB
-
-```bash
-source ~/.config/scw/proto-db.env
-scw rdb database create instance-id=$PROTO_DB_INSTANCE_ID name=<proto_name>
-scw rdb user create instance-id=$PROTO_DB_INSTANCE_ID name=<proto_name> password=<password>
-scw rdb privilege set instance-id=$PROTO_DB_INSTANCE_ID database-name=<proto_name> user-name=<proto_name> permission=all
-```
+- Atomic, one-line commits.
+- No "co-authored by Claude" trailers.
