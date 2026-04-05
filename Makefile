@@ -65,12 +65,12 @@ reseed: ## Drop + reseed a proto's local DB — usage: make reseed <name>
 urls: ## Print all proto names and their Scaleway URLs
 	@scw container container list -o json | jq -r '.[] | "\(.name)\t\(.domain_name)"'
 
-lint: ## Run ruff lint + format check on all protos
-	@uvx ruff check prototypes/
-	@uvx ruff format --check prototypes/
+lint: ## Run ruff lint + format check on all protos and the template
+	@uvx ruff check prototypes/ _template/
+	@uvx ruff format --check prototypes/ _template/
 
-fmt: ## Run ruff format on all protos
-	@uvx ruff format prototypes/
+fmt: ## Run ruff format on all protos and the template
+	@uvx ruff format prototypes/ _template/
 
 update-assets: ## Refresh _template/web/static from a les-emplois clone — usage: make update-assets <path>
 	@path=$(firstword $(ARGS)); \

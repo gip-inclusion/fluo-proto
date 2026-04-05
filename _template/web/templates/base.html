@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Fluo{% endblock %} - Fluo Proto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/static/vendor/theme-inclusion/images/favicon.ico" type="image/ico">
+    <link rel="stylesheet" href="/static/vendor/theme-inclusion/stylesheets/app.css">
+    <link rel="stylesheet" href="/static/css/itou.css">
+    <link rel="stylesheet" href="/static/css/overrides.css">
+</head>
+<body class="l-authenticated">
+    {% set scenario = request.state.scenario %}
+    <header role="banner" id="header">
+        <section class="s-header-authenticated d-lg-none">
+            <div class="s-header-authenticated__container container">
+                <div class="s-header-authenticated__row row">
+                    <div class="s-header-authenticated__col s-header-authenticated__col--logo-service col-auto d-flex align-items-center pe-0">
+                        <a href="{{ scenario.nav[0].href if scenario else '/' }}">
+                            <img src="/static/vendor/theme-inclusion/images/logo-plateforme-inclusion.svg"
+                                 alt="Fluo Proto" height="90">
+                        </a>
+                    </div>
+                    <div class="s-header-authenticated__col s-header-authenticated__col--nav col d-flex align-items-center justify-content-end pe-0">
+                        <nav role="navigation" id="nav-primary" aria-label="Navigation principale">
+                            <ul>
+                                <li class="dropdown d-none d-sm-inline-block">
+                                    <button type="button" class="btn btn-outline-primary btn-ico bg-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-account-circle-line" aria-hidden="true"></i>
+                                        <span class="ms-2">Mon espace</span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <span class="dropdown-item text-muted">{{ scenario.label if scenario else "Fluo Proto" }}</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="s-header-authenticated__col s-header-authenticated__col--burger col-auto d-flex align-items-center ps-0">
+                        <button type="button" class="btn btn-link btn-ico pe-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav" aria-controls="offcanvasNav" aria-label="Ouvrir le menu">
+                            <i class="ri-menu-line" aria-hidden="true"></i>
+                            <span>Menu</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="offcanvas" id="offcanvasNav" aria-label="Barre de navigation principale">
+            <div class="offcanvas-header offcanvas-header--organization">
+                <div class="dropdown dropdown-organization flex-grow-1 py-4">
+                    <span class="btn btn-outline-primary btn-ico btn-block bg-white">
+                        <i class="ri-building-line fw-medium" aria-hidden="true"></i>
+                        <span>{{ scenario.label if scenario else "Fluo Proto" }}</span>
+                    </span>
+                </div>
+                <div class="border-start border-nuance-08 d-lg-none">
+                    <button type="button" class="btn-link ps-4 pt-5 pe-2 me-n2" data-bs-dismiss="offcanvas" aria-label="Fermer">
+                        <i class="ri-close-line" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="offcanvas-body d-flex flex-column">
+                <nav class="flex-grow-1" role="navigation" aria-label="Navigation principale">
+                    {% if scenario %}
+                    <ul class="nav nav-tabs flex-column mb-3">
+                        {% for item in scenario.nav %}
+                        <li class="nav-item">
+                            <a href="{{ item.href }}" class="nav-link{% if request.url.path == item.href or request.url.path.startswith(item.get('active_prefix', item.href + '/')) %} active{% endif %}">
+                                <i class="{{ item.icon }} fw-medium" aria-hidden="true"></i>
+                                <span>{{ item.label }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </nav>
+                <div class="d-none d-lg-block mt-auto p-3 text-center">
+                    <a href="{{ scenario.nav[0].href if scenario else '/' }}">
+                        <img src="/static/vendor/theme-inclusion/images/logo-plateforme-inclusion.svg"
+                             alt="Fluo Proto" height="60">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="global-messages-container">
+        <div class="alert alert-danger fade show d-flex align-items-center justify-content-between" role="status">
+            <div>
+                <strong>PROTOTYPE – Données fictives</strong>
+            </div>
+            <button type="button"
+                    class="btn btn-sm btn-ico btn-outline-white"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasScenario"
+                    aria-controls="offcanvasScenario">
+                <i class="ri-user-community-line" aria-hidden="true"></i>
+                <span>Sélectionner un scénario</span>
+            </button>
+        </div>
+    </div>
+
+    {# Scenario selector offcanvas #}
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasScenario" aria-labelledby="offcanvasScenarioLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasScenarioLabel">Sélectionner un scénario</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+        </div>
+        <div class="offcanvas-body">
+            <p class="text-muted mb-3">Chaque scénario simule un type d'utilisateur différent.</p>
+            {% for slug, sc in scenarios.items() %}
+            <a href="/{{ slug }}/"
+               class="c-box d-block mb-3 text-decoration-none{% if scenario and scenario.slug == slug %} border-primary{% endif %}">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="flex-shrink-0">
+                        <i class="ri-account-circle-line ri-xl text-primary" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        <strong class="d-block">{{ sc.label }}</strong>
+                        <span class="text-muted">{{ sc.description }}</span>
+                    </div>
+                    {% if scenario and scenario.slug == slug %}
+                    <div class="ms-auto">
+                        <span class="badge rounded-pill bg-primary">Actif</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <main id="main" role="main" class="s-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/vendor/bootstrap/popper.min.js"></script>
+    <script src="/static/vendor/bootstrap/bootstrap.min.js"></script>
+</body>
+</html>

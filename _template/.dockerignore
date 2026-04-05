@@ -1,0 +1,9 @@
+.venv
+__pycache__
+.git
+.github
+.DS_Store
+.superpowers
+docs
+data.db
+*.md
