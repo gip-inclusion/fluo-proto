@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Install Scaleway CLI
         run: |
@@ -47,15 +47,25 @@ jobs:
       - name: Deploy changed protos
         env:
           SCW_REGISTRY: ${{ secrets.SCW_REGISTRY }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          GITHUB_SHA: ${{ github.sha }}
+          INPUT_PROTO: ${{ github.event.inputs.proto }}
         run: |
           set -euo pipefail
-          if [ -n "${{ github.event.inputs.proto }}" ]; then
-            protos="${{ github.event.inputs.proto }}"
+          if [ -n "$INPUT_PROTO" ]; then
+            protos="$INPUT_PROTO"
           else
-            protos=$(git diff --name-only HEAD^ HEAD \
+            # Diff across the full push range. If before-sha is all zeros (first
+            # push to a branch), fall back to comparing against the default branch.
+            if [ "$GITHUB_EVENT_BEFORE" = "0000000000000000000000000000000000000000" ] || [ -z "$GITHUB_EVENT_BEFORE" ]; then
+              base="origin/main~1"
+            else
+              base="$GITHUB_EVENT_BEFORE"
+            fi
+            protos=$(git diff --name-only "$base" "$GITHUB_SHA" 2>/dev/null \
               | grep -oE '^prototypes/[^/]+' \
               | sed 's|^prototypes/||' \
-              | sort -u)
+              | sort -u || true)
           fi
           if [ -z "$protos" ]; then
             echo "No protos changed, nothing to deploy."
