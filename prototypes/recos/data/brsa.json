@@ -1,0 +1,367 @@
+{
+  "besoinsParDiagnostic": [
+    {
+      "diagnostic": {
+        "idDiagnostic": null,
+        "idMetierChiffre": null,
+        "nomMetier": "Exploitant / Exploitante agricole",
+        "typologie": "métier recherché",
+        "codeTypologie": "MR",
+        "codeSousTypologie": "ORE",
+        "codeRome": null,
+        "codeAppellation": null,
+        "statut": "EN_COURS",
+        "estPrioritaire": false,
+        "estCreationPartenaire": false,
+        "agent": {
+          "nom": "VIDAL",
+          "prenom": "Nathalie",
+          "structure": "MONTAUBAN NORD"
+        },
+        "dateMiseAJour": "2026-03-31T00:00:00.000+02:00",
+        "dateMiseAJourProjet": null
+      },
+      "dateDerniereExplorationBesoin": "2026-03-31T00:00:00.000+02:00",
+      "agentDerniereExplorationBesoin": {
+        "nom": "VIDAL",
+        "prenom": "Nathalie",
+        "structure": "MONTAUBAN NORD"
+      },
+      "thematiquesBesoins": [
+        {
+          "code": "1",
+          "libelle": "Choisir un métier",
+          "besoins": [
+            {
+              "code": "1",
+              "libelle": "Identifier ses points forts et ses compétences",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2025-10-13T00:00:00.000+02:00"
+            },
+            {
+              "code": "2",
+              "libelle": "Connaître les opportunités d'emploi",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2025-10-13T00:00:00.000+02:00"
+            },
+            {
+              "code": "3",
+              "libelle": "Découvrir un métier ou un secteur d'activité",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2025-10-13T00:00:00.000+02:00"
+            },
+            {
+              "code": "4",
+              "libelle": "Confirmer son choix de métier",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2025-10-13T00:00:00.000+02:00"
+            }
+          ]
+        },
+        {
+          "code": "2",
+          "libelle": "Se former",
+          "besoins": [
+            {
+              "code": "7",
+              "libelle": "Utiliser le numérique",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2025-10-13T00:00:00.000+02:00"
+            },
+            {
+              "code": "5",
+              "libelle": "Trouver sa formation",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2025-10-13T00:00:00.000+02:00"
+            },
+            {
+              "code": "6",
+              "libelle": "Monter son dossier de formation",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2025-10-13T00:00:00.000+02:00"
+            }
+          ]
+        },
+        {
+          "code": "3",
+          "libelle": "Préparer sa candidature",
+          "besoins": [
+            {
+              "code": "8",
+              "libelle": "Valoriser ses compétences",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "9",
+              "libelle": "Réaliser un CV et/ou une lettre de motivation",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "10",
+              "libelle": "Développer son réseau",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "11",
+              "libelle": "Organiser ses démarches de recherche d'emploi",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            }
+          ]
+        },
+        {
+          "code": "4",
+          "libelle": "Trouver un emploi",
+          "besoins": []
+        },
+        {
+          "code": "5",
+          "libelle": "Créer une entreprise",
+          "besoins": [
+            {
+              "code": "15",
+              "libelle": "Définir son projet de création d'entreprise",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2026-03-31T00:00:00.000+02:00"
+            },
+            {
+              "code": "16",
+              "libelle": "Structurer son projet de création d'entreprise",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2026-03-31T00:00:00.000+02:00"
+            },
+            {
+              "code": "17",
+              "libelle": "Développer son entreprise",
+              "valeur": "BESOIN",
+              "agent": {
+                "nom": "VIDAL",
+                "prenom": "Nathalie",
+                "structure": "MONTAUBAN NORD"
+              },
+              "dateExploration": "2026-03-31T00:00:00.000+02:00"
+            }
+          ]
+        },
+        {
+          "code": "6",
+          "libelle": "S'ouvrir à l'international",
+          "besoins": []
+        }
+      ]
+    }
+  ],
+  "thematiqueContrainte": {
+    "code": "7",
+    "libelle": "Résoudre ses contraintes personnelles",
+    "declareSansContrainte": {
+      "flag": true,
+      "date": "2015-09-25T00:00:00.000+02:00"
+    },
+    "agent": null,
+    "dateExploration": null,
+    "contraintes": [
+      {
+        "code": "23",
+        "libelle": "Développer sa mobilité",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "24",
+        "libelle": "Surmonter ses contraintes familiales",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "25",
+        "libelle": "Prendre en compte son état de santé",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "26",
+        "libelle": "Maîtriser la lecture, l'écriture, le calcul",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "27",
+        "libelle": "Faire face à des difficultés financières",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "28",
+        "libelle": "Faire face à des difficultés de logement",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      }
+    ]
+  },
+  "pouvoirAgir": {
+    "confiance": "OUI",
+    "accompagnement": "NON",
+    "resultatAnalyse": "En capacité de mener ses démarches",
+    "agent": {
+      "nom": "VIDAL",
+      "prenom": "Nathalie",
+      "structure": "MONTAUBAN NORD"
+    },
+    "dateExploration": "2025-05-01T00:00:00.000+02:00"
+  },
+  "autonomieNumerique": {
+    "agent": null,
+    "dateExploration": "2024-06-06T00:00:00.000+02:00",
+    "contrainte": {
+      "code": "22",
+      "libelle": "Accéder au numérique et en maîtriser les fondamentaux",
+      "valeur": "NON_ABORDEE",
+      "estPrioritaire": false,
+      "impact": "NON_RENSEIGNE",
+      "dateExploration": null,
+      "situations": [],
+      "objectifs": []
+    },
+    "besoin": {
+      "code": "7",
+      "libelle": "Connaître et utiliser les services numériques",
+      "valeur": "POINT_FORT",
+      "agent": null,
+      "dateExploration": "2025-10-13T00:00:00.000+02:00"
+    }
+  },
+  "extra": {
+    "identite": {
+      "nom": "LARRIEU",
+      "prenom": "Kévin"
+    },
+    "offreRaisonnableEmploi": {
+      "nomMetier": "Exploitant / Exploitante agricole",
+      "typologie": "MÉTIER ESTEVEERCHÉ",
+      "experience": "2 An(s)",
+      "typeContratSouhaite": "Saisonnier",
+      "salaireMinimumAccepte": "1823.03€ / Mensuel",
+      "tempsTravailSouhaite": "temps plein",
+      "trajetAllerAccepte": "82170 GRISOLLES + 20 KM"
+    },
+    "modaliteSuivi": {
+      "modaliteEnCours": "Guidé",
+      "dateEnregistrement": "2025-05-01T00:00:00.000+02:00",
+      "agent": null,
+      "accompagnementDematerialise": false
+    },
+    "insertionActiviteEconomique": {
+      "dispositifIAE": true,
+      "dateEnregistrement": "2018-05-04T00:00:00.000+02:00",
+      "statut": "Non positionné IAE"
+    },
+    "declarationsOrientation": {
+      "date": "2025-03-04T00:00:00.000+01:00",
+      "elements": [
+        "Se sent en capacité d'effectuer seul ses démarches professionnelles",
+        "A commencé les démarches"
+      ]
+    },
+    "usagesNumerique": {
+      "email": "kevin.larrieu@gmail.com",
+      "accepteNotificationsCourriel": null,
+      "pixEmploi": "Aucun test PIX emploi démarré",
+      "visioconference": {
+        "retenuCommePreference": null,
+        "capaciteEvaluee": false
+      },
+      "profilVisibleRecruteurs": false,
+      "abonnementOffresEmploi": false,
+      "priseRendezVousEnLigne": false,
+      "autoInscriptionServices": false
+    },
+    "informationsDeclarees": [
+      {
+        "date": "2024-06-06T00:00:00.000+02:00",
+        "contenu": "Ne pas avoir besoin d'aide pour accéder au numérique"
+      },
+      {
+        "date": "2021-07-13T00:00:00.000+02:00",
+        "source": "bilan en ligne",
+        "contenu": null
+      }
+    ]
+  }
+}

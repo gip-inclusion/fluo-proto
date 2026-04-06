@@ -1,0 +1,246 @@
+{
+  "besoinsParDiagnostic": [
+    {
+      "diagnostic": {
+        "idDiagnostic": null,
+        "idMetierChiffre": null,
+        "nomMetier": null,
+        "typologie": "Projet à définir",
+        "codeTypologie": "PM",
+        "codeSousTypologie": null,
+        "codeRome": null,
+        "codeAppellation": null,
+        "statut": "EN_COURS",
+        "estPrioritaire": false,
+        "estCreationPartenaire": false,
+        "agent": null,
+        "dateMiseAJour": "2025-07-16T00:00:00.000+02:00",
+        "dateMiseAJourProjet": null
+      },
+      "dateDerniereExplorationBesoin": null,
+      "agentDerniereExplorationBesoin": null,
+      "thematiquesBesoins": [
+        {
+          "code": "1",
+          "libelle": "Choisir un métier",
+          "besoins": [
+            {
+              "code": "1",
+              "libelle": "Identifier ses points forts et ses compétences",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "2",
+              "libelle": "Connaître les opportunités d'emploi",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "3",
+              "libelle": "Découvrir un métier ou un secteur d'activité",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "4",
+              "libelle": "Confirmer son choix de métier",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            }
+          ]
+        },
+        {
+          "code": "2",
+          "libelle": "Se former",
+          "besoins": [
+            {
+              "code": "5",
+              "libelle": "Trouver sa formation",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "6",
+              "libelle": "Monter son dossier de formation",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            }
+          ]
+        },
+        {
+          "code": "3",
+          "libelle": "Préparer sa candidature",
+          "besoins": []
+        },
+        {
+          "code": "4",
+          "libelle": "Trouver un emploi",
+          "besoins": []
+        },
+        {
+          "code": "5",
+          "libelle": "Créer une entreprise",
+          "besoins": []
+        },
+        {
+          "code": "6",
+          "libelle": "S'ouvrir à l'international",
+          "besoins": []
+        }
+      ]
+    }
+  ],
+  "thematiqueContrainte": {
+    "code": "7",
+    "libelle": "Résoudre ses contraintes personnelles",
+    "declareSansContrainte": {
+      "flag": false,
+      "date": null
+    },
+    "agent": null,
+    "dateExploration": null,
+    "contraintes": [
+      {
+        "code": "23",
+        "libelle": "Développer sa mobilité",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "24",
+        "libelle": "Surmonter ses contraintes familiales",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "25",
+        "libelle": "Prendre en compte son état de santé",
+        "valeur": "OUI",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "anciennete": "Identifiée depuis plus de 6 mois",
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "26",
+        "libelle": "Maîtriser la lecture, l'écriture, le calcul",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "27",
+        "libelle": "Faire face à des difficultés financières",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "28",
+        "libelle": "Faire face à des difficultés de logement",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      }
+    ]
+  },
+  "pouvoirAgir": {
+    "confiance": null,
+    "accompagnement": null,
+    "resultatAnalyse": null,
+    "agent": null,
+    "dateExploration": null,
+    "elementsDeclaresQuestionnaire": {
+      "date": "2025-07-16T00:00:00.000+02:00",
+      "source": "questionnaire d'orientation"
+    }
+  },
+  "autonomieNumerique": {
+    "agent": null,
+    "dateExploration": null,
+    "contrainte": {
+      "code": "22",
+      "libelle": "Accéder au numérique et en maîtriser les fondamentaux",
+      "valeur": "NON_ABORDEE",
+      "estPrioritaire": false,
+      "impact": "NON_RENSEIGNE",
+      "dateExploration": null,
+      "situations": [],
+      "objectifs": []
+    },
+    "besoin": {
+      "code": "7",
+      "libelle": "Connaître et utiliser les services numériques",
+      "valeur": "NON_EXPLORE",
+      "agent": null,
+      "dateExploration": null
+    }
+  },
+  "extra": {
+    "identite": {
+      "nom": "CAUSSADE",
+      "prenom": "Dylan"
+    },
+    "modaliteSuivi": {
+      "modaliteEnCours": "Guidé",
+      "dateEnregistrement": "2025-05-05T00:00:00.000+02:00",
+      "agent": {
+        "nom": "ESTEVE",
+        "prenom": "Valérie"
+      },
+      "accompagnementDematerialise": false
+    },
+    "insertionActiviteEconomique": {
+      "dispositifIAE": true,
+      "dateEnregistrement": "2018-01-04T00:00:00.000+01:00",
+      "statut": "Non positionné IAE"
+    },
+    "declarationsOrientation": {
+      "date": "2025-07-16T00:00:00.000+02:00",
+      "santeDeclare": "La personne a déclaré avoir une autre difficulté de santé pour laquelle elle souhaite être accompagnée."
+    },
+    "informationsDeclarees": {
+      "date": "2025-04-30T00:00:00.000+02:00",
+      "contenu": "Ne pas avoir besoin d'aide pour accéder au numérique"
+    },
+    "usagesNumerique": {
+      "email": "caussade.d@laposte.net",
+      "accepteNotificationsCourriel": true,
+      "pixEmploi": "Aucun test PIX emploi démarré",
+      "visioconference": {
+        "retenuCommePreference": false,
+        "capaciteEvaluee": false
+      },
+      "profilVisibleRecruteurs": false,
+      "abonnementOffresEmploi": false,
+      "priseRendezVousEnLigne": false,
+      "autoInscriptionServices": false
+    }
+  }
+}

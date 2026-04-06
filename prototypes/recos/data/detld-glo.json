@@ -1,0 +1,296 @@
+{
+  "besoinsParDiagnostic": [
+    {
+      "diagnostic": {
+        "idDiagnostic": null,
+        "idMetierChiffre": null,
+        "nomMetier": "Développeur / Développeuse web",
+        "typologie": "métier recherché",
+        "codeTypologie": "MR",
+        "codeSousTypologie": "ORE",
+        "codeRome": null,
+        "codeAppellation": null,
+        "statut": "EN_COURS",
+        "estPrioritaire": false,
+        "estCreationPartenaire": false,
+        "agent": {
+          "nom": "PEYROT",
+          "prenom": "Sandrine",
+          "structure": "APE MONTAUBAN NORD"
+        },
+        "dateMiseAJour": "2025-04-08T00:00:00.000+02:00",
+        "dateMiseAJourProjet": null
+      },
+      "dateDerniereExplorationBesoin": "2025-04-08T00:00:00.000+02:00",
+      "agentDerniereExplorationBesoin": {
+        "nom": "PEYROT",
+        "prenom": "Sandrine",
+        "structure": "APE MONTAUBAN NORD"
+      },
+      "thematiquesBesoins": [
+        {
+          "code": "1",
+          "libelle": "Choisir un métier",
+          "besoins": [
+            {
+              "code": "1",
+              "libelle": "Identifier ses points forts et ses compétences",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "2",
+              "libelle": "Connaître les opportunités d'emploi",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "3",
+              "libelle": "Découvrir un métier ou un secteur d'activité",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "4",
+              "libelle": "Confirmer son choix de métier",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            }
+          ]
+        },
+        {
+          "code": "2",
+          "libelle": "Se former",
+          "besoins": [
+            {
+              "code": "5",
+              "libelle": "Trouver sa formation",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "6",
+              "libelle": "Monter son dossier de formation",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            }
+          ]
+        },
+        {
+          "code": "3",
+          "libelle": "Préparer sa candidature",
+          "besoins": []
+        },
+        {
+          "code": "4",
+          "libelle": "Trouver un emploi",
+          "besoins": []
+        },
+        {
+          "code": "5",
+          "libelle": "Créer une entreprise",
+          "besoins": [
+            {
+              "code": "15",
+              "libelle": "Définir son projet de création d'entreprise",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "PEYROT",
+                "prenom": "Sandrine",
+                "structure": "APE MONTAUBAN NORD"
+              },
+              "dateExploration": "2025-04-08T00:00:00.000+02:00"
+            },
+            {
+              "code": "16",
+              "libelle": "Structurer son projet de création d'entreprise",
+              "valeur": "POINT_FORT",
+              "agent": {
+                "nom": "PEYROT",
+                "prenom": "Sandrine",
+                "structure": "APE MONTAUBAN NORD"
+              },
+              "dateExploration": "2025-04-08T00:00:00.000+02:00"
+            },
+            {
+              "code": "17",
+              "libelle": "Développer son entreprise",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            }
+          ]
+        },
+        {
+          "code": "6",
+          "libelle": "S'ouvrir à l'international",
+          "besoins": []
+        }
+      ]
+    }
+  ],
+  "thematiqueContrainte": {
+    "code": "7",
+    "libelle": "Résoudre ses contraintes personnelles",
+    "declareSansContrainte": {
+      "flag": false,
+      "date": null
+    },
+    "agent": null,
+    "dateExploration": null,
+    "contraintes": [
+      {
+        "code": "23",
+        "libelle": "Développer sa mobilité",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "24",
+        "libelle": "Surmonter ses contraintes familiales",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "25",
+        "libelle": "Prendre en compte son état de santé",
+        "valeur": "OUI",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "anciennete": "Identifiée depuis plus d'un an",
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "26",
+        "libelle": "Maîtriser la lecture, l'écriture, le calcul",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "27",
+        "libelle": "Faire face à des difficultés financières",
+        "valeur": "OUI",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "anciennete": "Identifiée depuis plus d'un an",
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "28",
+        "libelle": "Faire face à des difficultés de logement",
+        "valeur": "OUI",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "anciennete": "Identifiée depuis plus de 6 mois",
+        "situations": [
+          {
+            "code": "1",
+            "libelle": "Hébergé chez un tiers",
+            "valeur": "OUI",
+            "agent": null,
+            "dateExploration": null
+          }
+        ],
+        "objectifs": [
+          {
+            "code": "42",
+            "libelle": "Accéder à un logement",
+            "valeur": "EN_COURS",
+            "agent": null,
+            "dateExploration": null
+          }
+        ]
+      }
+    ]
+  },
+  "pouvoirAgir": null,
+  "autonomieNumerique": {
+    "agent": null,
+    "dateExploration": null,
+    "contrainte": {
+      "code": "22",
+      "libelle": "Accéder au numérique et en maîtriser les fondamentaux",
+      "valeur": "NON_ABORDEE",
+      "estPrioritaire": false,
+      "impact": "NON_RENSEIGNE",
+      "dateExploration": null,
+      "situations": [],
+      "objectifs": []
+    },
+    "besoin": {
+      "code": "7",
+      "libelle": "Connaître et utiliser les services numériques",
+      "valeur": "NON_EXPLORE",
+      "agent": null,
+      "dateExploration": null
+    }
+  },
+  "extra": {
+    "identite": {
+      "nom": "DELMAS",
+      "prenom": "Stéphane"
+    },
+    "offreRaisonnableEmploi": {
+      "nomMetier": "Développeur / Développeuse web",
+      "typologie": "MÉTIER ESTEVEERCHÉ",
+      "experience": "1 An(s)",
+      "typeContratSouhaite": "CDI",
+      "mobileEtranger": false,
+      "salaireMinimumAccepte": "15€ / Horaire",
+      "tempsTravailSouhaite": "temps plein",
+      "lieuxDeTravail": "Non renseigné",
+      "trajetAllerAccepte": "82150 PIQUECOS + 5 KM"
+    },
+    "modaliteSuivi": {
+      "modaliteEnCours": "Global",
+      "dateEnregistrement": "2025-05-16T00:00:00.000+02:00",
+      "dateDemarrage": "2025-05-16T00:00:00.000+02:00",
+      "agent": {
+        "nom": "PEYROT",
+        "prenom": "Sandrine",
+        "structure": "APE MONTAUBAN NORD"
+      }
+    },
+    "insertionActiviteEconomique": {
+      "dispositifIAE": true,
+      "dateEnregistrement": "2018-01-31T00:00:00.000+01:00",
+      "statut": "Non positionné IAE"
+    },
+    "usagesNumerique": {
+      "email": "sdelmas82@wanadoo.fr",
+      "accepteNotificationsCourriel": true,
+      "pixEmploi": "Aucun test PIX emploi démarré",
+      "visioconference": {
+        "retenuCommePreference": false,
+        "capaciteEvaluee": false
+      },
+      "profilVisibleRecruteurs": false,
+      "abonnementOffresEmploi": false,
+      "priseRendezVousEnLigne": false,
+      "autoInscriptionServices": false
+    }
+  }
+}

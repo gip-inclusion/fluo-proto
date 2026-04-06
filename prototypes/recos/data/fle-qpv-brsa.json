@@ -1,0 +1,303 @@
+{
+  "besoinsParDiagnostic": [
+    {
+      "diagnostic": {
+        "idDiagnostic": null,
+        "idMetierChiffre": null,
+        "nomMetier": null,
+        "typologie": null,
+        "codeTypologie": null,
+        "codeSousTypologie": null,
+        "codeRome": null,
+        "codeAppellation": null,
+        "statut": "EN_COURS",
+        "estPrioritaire": false,
+        "estCreationPartenaire": false,
+        "agent": {
+          "nom": "PRADEL",
+          "prenom": "Céline",
+          "structure": "APE MONTAUBAN ALBASUD"
+        },
+        "dateMiseAJour": "2025-04-18T00:00:00.000+02:00",
+        "dateMiseAJourProjet": null
+      },
+      "dateDerniereExplorationBesoin": null,
+      "agentDerniereExplorationBesoin": null,
+      "thematiquesBesoins": [
+        {
+          "code": "1",
+          "libelle": "Choisir un métier",
+          "besoins": [
+            {
+              "code": "1",
+              "libelle": "Identifier ses points forts et ses compétences",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "2",
+              "libelle": "Connaître les opportunités d'emploi",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "3",
+              "libelle": "Découvrir un métier ou un secteur d'activité",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "4",
+              "libelle": "Confirmer son choix de métier",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            }
+          ]
+        },
+        {
+          "code": "2",
+          "libelle": "Se former",
+          "besoins": [
+            {
+              "code": "5",
+              "libelle": "Trouver sa formation",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            },
+            {
+              "code": "6",
+              "libelle": "Monter son dossier de formation",
+              "valeur": "NON_EXPLORE",
+              "agent": null,
+              "dateExploration": null
+            }
+          ]
+        },
+        {
+          "code": "3",
+          "libelle": "Préparer sa candidature",
+          "besoins": []
+        },
+        {
+          "code": "4",
+          "libelle": "Trouver un emploi",
+          "besoins": []
+        },
+        {
+          "code": "5",
+          "libelle": "Créer une entreprise",
+          "besoins": []
+        },
+        {
+          "code": "6",
+          "libelle": "S'ouvrir à l'international",
+          "besoins": []
+        }
+      ]
+    }
+  ],
+  "thematiqueContrainte": {
+    "code": "7",
+    "libelle": "Résoudre ses contraintes personnelles",
+    "declareSansContrainte": {
+      "flag": false,
+      "date": null
+    },
+    "agent": null,
+    "dateExploration": null,
+    "contraintes": [
+      {
+        "code": "23",
+        "libelle": "Développer sa mobilité",
+        "valeur": "OUI",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "anciennete": "Identifiée depuis plus de 6 mois",
+        "situations": [
+          {
+            "code": null,
+            "libelle": "Vélo ou trottinette électrique",
+            "valeur": "OUI",
+            "agent": null,
+            "dateExploration": null
+          }
+        ],
+        "objectifs": [
+          {
+            "code": "4",
+            "libelle": "Faire un point complet sur sa mobilité",
+            "valeur": "EN_COURS",
+            "agent": null,
+            "dateExploration": null
+          }
+        ]
+      },
+      {
+        "code": "24",
+        "libelle": "Surmonter ses contraintes familiales",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "25",
+        "libelle": "Prendre en compte son état de santé",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "26",
+        "libelle": "Maîtriser la lecture, l'écriture, le calcul",
+        "valeur": "NON_ABORDEE",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "situations": [],
+        "objectifs": []
+      },
+      {
+        "code": "27",
+        "libelle": "Faire face à des difficultés financières",
+        "valeur": "OUI",
+        "estPrioritaire": false,
+        "impact": "NON_RENSEIGNE",
+        "dateExploration": null,
+        "anciennete": "Identifiée depuis plus de 6 mois",
+        "situations": [
+          {
+            "code": null,
+            "libelle": "Sans aucune ressource",
+            "valeur": "OUI",
+            "agent": null,
+            "dateExploration": null
+          }
+        ],
+        "objectifs": [
+          {
+            "code": null,
+            "libelle": "Mobiliser un dispositif d'aide alimentaire",
+            "valeur": "EN_COURS",
+            "agent": null,
+            "dateExploration": null
+          }
+        ]
+      },
+      {
+        "code": "28",
+        "libelle": "Faire face à des difficultés de logement",
+        "valeur": "OUI",
+        "estPrioritaire": true,
+        "impact": "FORT",
+        "dateExploration": null,
+        "anciennete": "Identifiée depuis plus de 6 mois",
+        "situations": [
+          {
+            "code": null,
+            "libelle": "Personne en habitat non conventionnel (squat, bidonville, yourte...)",
+            "valeur": "OUI",
+            "agent": null,
+            "dateExploration": null
+          }
+        ],
+        "objectifs": []
+      }
+    ]
+  },
+  "pouvoirAgir": {
+    "confiance": null,
+    "accompagnement": null,
+    "resultatAnalyse": null,
+    "agent": null,
+    "dateExploration": null,
+    "elementsDeclaresQuestionnaire": {
+      "date": "2026-01-22T00:00:00.000+01:00",
+      "source": "questionnaire d'orientation",
+      "elements": [
+        "Ne se sent pas vraiment en capacité d'effectuer seul ses démarches professionnelles.",
+        "N'a pas commencé les démarches."
+      ]
+    }
+  },
+  "autonomieNumerique": {
+    "agent": null,
+    "dateExploration": null,
+    "contrainte": {
+      "code": "22",
+      "libelle": "Accéder au numérique et en maîtriser les fondamentaux",
+      "valeur": "NON_ABORDEE",
+      "estPrioritaire": false,
+      "impact": "NON_RENSEIGNE",
+      "dateExploration": null,
+      "situations": [],
+      "objectifs": []
+    },
+    "besoin": {
+      "code": "7",
+      "libelle": "Connaître et utiliser les services numériques",
+      "valeur": "NON_EXPLORE",
+      "agent": null,
+      "dateExploration": null
+    }
+  },
+  "extra": {
+    "identite": {
+      "nom": "BENZIANE",
+      "prenom": "Mourad"
+    },
+    "ofii": {
+      "beneficiaireCIR": true,
+      "beneficiaireProtectionInternationale": true,
+      "niveauFLE": "A.1 non acquis"
+    },
+    "modaliteSuivi": {
+      "modaliteEnCours": "Renforcé",
+      "dateEnregistrement": "2025-09-30T00:00:00.000+02:00",
+      "agent": {
+        "nom": "HAMIDI",
+        "prenom": "Yassine"
+      }
+    },
+    "insertionActiviteEconomique": {
+      "statut": "Non positionné IAE"
+    },
+    "declarationsOrientation": {
+      "date": "2026-01-22T00:00:00.000+01:00",
+      "elements": [
+        "Ne se sent pas vraiment en capacité d'effectuer seul ses démarches professionnelles.",
+        "N'a pas commencé les démarches."
+      ]
+    },
+    "propositionsServices": [
+      {
+        "titre": "Bilan acco mobilité",
+        "description": "Accompagnement mobilité - Avoir un objectif : faire de la mobilité un tremplin pour l'emploi."
+      }
+    ],
+    "usagesNumerique": {
+      "email": "mouradbenz@gmail.com",
+      "accepteNotificationsCourriel": true,
+      "pixEmploi": "Aucun test PIX emploi démarré",
+      "visioconference": {
+        "retenuCommePreference": false,
+        "capaciteEvaluee": false
+      },
+      "profilVisibleRecruteurs": false,
+      "abonnementOffresEmploi": false,
+      "priseRendezVousEnLigne": false,
+      "autoInscriptionServices": false
+    }
+  }
+}
