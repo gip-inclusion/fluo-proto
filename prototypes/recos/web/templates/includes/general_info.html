@@ -1,0 +1,33 @@
+<div class="s-section__row row">
+    <div class="s-section__col col-12 col-xxl-8">
+        <div class="c-box mb-3 mb-md-4">
+            <h3>Informations générales</h3>
+            <ul class="list-data mb-3">
+                <li>
+                    <small>Nom</small>
+                    <strong>{{ b.person_last_name }}</strong>
+                </li>
+                <li>
+                    <small>Prénom</small>
+                    <strong>{{ b.person_first_name }}</strong>
+                </li>
+                <li>
+                    <small>Email</small>
+                    <strong>{{ b.person_email or "" }}</strong>
+                </li>
+                <li>
+                    <small>Téléphone</small>
+                    <strong>{{ b.person_phone or "" }}</strong>
+                </li>
+                <li>
+                    <small>Date de naissance</small>
+                    <strong>{{ b.person_birthdate or "" }}</strong>
+                </li>
+                <li>
+                    <small>Adresse</small>
+                    <strong>{{ b.person_address or "" }}</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

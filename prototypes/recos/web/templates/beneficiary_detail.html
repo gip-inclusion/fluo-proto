@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}{{ b.person_last_name }} {{ b.person_first_name }}{% endblock %}
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+                <div class="c-prevstep">
+                    <a href="/beneficiaries" class="btn btn-ico btn-link ps-0">
+                        <i class="ri-arrow-drop-left-line ri-xl fw-medium" aria-hidden="true"></i>
+                        <span>Retour à la liste</span>
+                    </a>
+                </div>
+                <div class="c-title">
+                    <div class="c-title__main">
+                        <h1>
+                            {{ b.person_last_name }} {{ b.person_first_name }}
+                            {% if b.modalite %}
+                            <span class="badge rounded-pill text-nowrap badge-base bg-info">{{ b.modalite }}</span>
+                            {% elif structure %}
+                            <span class="badge rounded-pill text-nowrap badge-base bg-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
+                            {% endif %}
+                        </h1>
+                    </div>
+                    <div class="c-title__actions d-flex gap-2">
+                        <a href="/beneficiary/{{ b.id }}/recommendations" class="btn btn-primary btn-ico">
+                            <i class="ri-compass-line fw-medium" aria-hidden="true"></i>
+                            <span>Prescrire une solution</span>
+                        </a>
+                    </div>
+                </div>
+
+                {# Modalité / structure bar #}
+                <div class="c-box mb-3">
+                    <div class="row">
+                        <div class="col-12 col-sm">
+                            <h3 class="mb-0">
+                                {% if b.modalite %}
+                                Modalité d'accompagnement : {{ b.modalite }}
+                                {% elif structure %}
+                                Structure référente : {{ structure.name }} ({{ structure.type_acronym }})
+                                {% else %}
+                                Modalité / structure référente : <span class="text-muted">Inconnue</span>
+                                {% endif %}
+                            </h3>
+                        </div>
+                        <div class="col-12 col-sm-auto mt-2 mt-sm-0 d-flex align-items-center">
+                            <a href="/beneficiary/{{ b.id }}/recommendations" class="btn btn-ico btn-outline-primary">
+                                <i class="ri-pencil-line fw-medium" aria-hidden="true"></i>
+                                <span>Modifier</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {# Tabs #}
+                <ul class="s-tabs-01__nav nav nav-tabs mb-0" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info"
+                           role="tab" aria-controls="info" aria-selected="true">
+                            Informations générales
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="diagnostic-tab" data-bs-toggle="tab" href="#diagnostic"
+                           role="tab" aria-controls="diagnostic" aria-selected="false">
+                            Diagnostic
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="prescriptions-tab" data-bs-toggle="tab" href="#prescriptions"
+                           role="tab" aria-controls="prescriptions" aria-selected="false">
+                            Prescriptions
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                {% include "includes/general_info.html" %}
+            </div>
+            <div class="tab-pane fade" id="diagnostic" role="tabpanel" aria-labelledby="diagnostic-tab">
+                {% include "includes/diagnostic.html" %}
+            </div>
+            <div class="tab-pane fade" id="prescriptions" role="tabpanel" aria-labelledby="prescriptions-tab">
+                {% include "includes/prescriptions.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -44,3 +44,24 @@ async def list_beneficiaries(request: Request):
             "result_count": len(beneficiaries),
         },
     )
+
+
+@router.get("/beneficiary/{id}", response_class=HTMLResponse)
+async def detail_beneficiary(request: Request, id: int):
+    with Session(engine) as session:
+        b = session.get(Beneficiary, id)
+        if not b:
+            return HTMLResponse("Not found", status_code=404)
+        structure = None
+        if b.structure_referente_id:
+            structure = session.get(Structure, b.structure_referente_id)
+        diagnostic = json.loads(b.diagnostic_data) if b.diagnostic_data else None
+    return _templates(request).TemplateResponse(
+        "beneficiary_detail.html",
+        {
+            "request": request,
+            "b": b,
+            "structure": structure,
+            "diagnostic": diagnostic,
+        },
+    )
