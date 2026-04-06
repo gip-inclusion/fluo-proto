@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+                <div class="c-title mb-3">
+                    <div class="c-title__main">
+                        <h1>Tableau de bord</h1>
+                    </div>
+                </div>
+                <div class="mb-3 mb-md-4">
+                    <input type="text" class="form-control form-control-lg" disabled
+                           placeholder="Rechercher une personne, une structure, un emploi...">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+            <div class="col-12 col-md-6 col-xl-4 mb-3 mb-md-4">
+                <div class="c-box h-100">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <h3 class="mb-0">Personnes accompagnées</h3>
+                        <span class="badge rounded-pill text-nowrap badge-base bg-info">70 dossiers</span>
+                    </div>
+                    <ul class="list-unstyled mb-3">
+                        <li class="d-flex align-items-start gap-2 mb-2">
+                            <i class="ri-alert-line text-danger fw-medium mt-1" aria-hidden="true"></i>
+                            <span><strong>1</strong> dossier sans solution</span>
+                        </li>
+                        <li class="d-flex align-items-start gap-2 mb-2">
+                            <i class="ri-mail-line text-primary fw-medium mt-1" aria-hidden="true"></i>
+                            <span><strong>5</strong> réponses à des demandes d'orientation</span>
+                        </li>
+                        <li class="d-flex align-items-start gap-2 mb-2">
+                            <i class="ri-time-line text-warning fw-medium mt-1" aria-hidden="true"></i>
+                            <div>
+                                <strong>1</strong> personne en fin de parcours
+                                <span class="d-block text-muted fs-sm">Anticiper la sortie de cette personne</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <a href="/beneficiaries" class="btn btn-link ps-0">Voir tous les dossiers</a>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-4 mb-3 mb-md-4">
+                <div class="c-box h-100">
+                    <h3 class="mb-3">En ce moment sur mon territoire</h3>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <strong>Prochain comité local</strong>
+                            <span class="d-block text-muted fs-sm">Personnes isolées et santé mentale — 15 avril, Maison de quartier Fives</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>Nouveaux services référencés</strong>
+                            <span class="d-block text-muted fs-sm">Mobilité (3), Hébergement (1)</span>
+                        </li>
+                        <li class="mb-0">
+                            <strong>3 nouvelles fiches de poste en SIAE</strong>
+                            <span class="d-block text-muted fs-sm">Jardins de Cocagne, Envie Nord, La Fabrique</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-4 mb-3 mb-md-4">
+                <div class="c-box h-100">
+                    <h3 class="mb-3">Organisation</h3>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <strong>Mon agence</strong>
+                            <span class="d-block text-muted fs-sm">France Travail Lille Centre</span>
+                        </li>
+                        <li class="mb-2">
+                            <strong>Référent de territoire</strong>
+                            <span class="d-block text-muted fs-sm">Marie Lefebvre</span>
+                        </li>
+                        <li class="mb-0">
+                            <strong>Prochaine réunion d'équipe</strong>
+                            <span class="d-block text-muted fs-sm">Mardi 22 avril, 10h00</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
