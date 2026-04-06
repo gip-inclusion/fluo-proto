@@ -26,13 +26,15 @@
                     <i class="text-disabled">Inconnue</i>
                     {% endif %}
                 </li>
+                {% if structure %}
                 <li>
-                    <small>Référent</small>
-                    <strong>Marie Lefebvre</strong>
+                    <small>Accompagnateur·rice</small>
+                    <strong>{{ structure.name }}</strong>
                 </li>
+                {% endif %}
                 <li>
-                    <small>Organisation</small>
-                    <strong>France Travail Lille Centre</strong>
+                    <small>Référent·e France Travail</small>
+                    <strong>Marie Lefebvre</strong>
                 </li>
             </ul>
         </div>
