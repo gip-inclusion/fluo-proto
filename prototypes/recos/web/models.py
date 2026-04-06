@@ -1,6 +1,26 @@
 from sqlmodel import Field, SQLModel
 
 
+class Solution(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str
+    solution_type: str
+    type_label: str
+    structure_name: str | None = None
+    commune: str | None = None
+    code_postal: str | None = None
+    description: str | None = None
+    conditions_admission: str | None = None
+    places_disponibles: int = 0
+    age_min: int | None = None
+    age_max: int | None = None
+    requires_brsa: bool = False
+    requires_detld: bool = False
+    requires_qpv: bool = False
+    requires_rqth: bool = False
+    max_diploma_level: int | None = None
+
+
 class Structure(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str

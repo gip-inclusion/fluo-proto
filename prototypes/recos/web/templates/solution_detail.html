@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}{{ solution.name }}{% endblock %}
+{% block global_banner %}
+{% if b %}
+        <div class="alert alert-primary fade show" role="status">
+            <div class="d-flex flex-row justify-content-between align-items-center">
+                <p class="mb-0 text-start">
+                    <i class="ri-arrow-right-line fw-medium pe-2" aria-hidden="true"></i>
+                    <strong>Vous recherchez actuellement pour {{ b.person_last_name }} {{ b.person_first_name }}</strong>
+                </p>
+                <a href="/beneficiary/{{ b.id }}" class="btn-link-white btn-ico align-items-center" aria-label="Quitter la recherche">
+                    <i class="ri-close-line ri-xl fw-medium me-1" aria-hidden="true"></i>
+                    <span class="fs-sm fw-medium">Quitter</span>
+                </a>
+            </div>
+        </div>
+{% endif %}
+{% endblock %}
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+                <div class="c-prevstep">
+                    {% if b %}
+                    <a href="/beneficiary/{{ b.id }}/recommendations" class="btn btn-ico btn-link ps-0">
+                        <i class="ri-arrow-drop-left-line ri-xl fw-medium" aria-hidden="true"></i>
+                        <span>Retour aux recommandations</span>
+                    </a>
+                    {% else %}
+                    <a href="/beneficiaries" class="btn btn-ico btn-link ps-0">
+                        <i class="ri-arrow-drop-left-line ri-xl fw-medium" aria-hidden="true"></i>
+                        <span>Retour</span>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="c-title">
+                    <div class="c-title__main">
+                        <h1>
+                            {{ solution.name }}
+                            <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ solution.type_label }}</span>
+                        </h1>
+                    </div>
+                    <div class="c-title__actions d-flex gap-2">
+                        <button class="btn btn-primary btn-ico" disabled>
+                            <i class="ri-compass-line fw-medium" aria-hidden="true"></i>
+                            <span>Prescrire cette solution</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+            <div class="s-section__col col-12 col-lg-8">
+
+                {# Informations #}
+                <div class="c-box mb-3 mb-md-4">
+                    <h2 class="h5 mb-3">Informations</h2>
+                    <dl class="list-data mb-0">
+                        <div class="list-data__item">
+                            <dt class="list-data__label">Type</dt>
+                            <dd class="list-data__value">
+                                <span class="badge rounded-pill badge-sm bg-info">{{ solution.type_label }}</span>
+                            </dd>
+                        </div>
+                        {% if solution.structure_name %}
+                        <div class="list-data__item">
+                            <dt class="list-data__label">Structure</dt>
+                            <dd class="list-data__value">{{ solution.structure_name }}</dd>
+                        </div>
+                        {% endif %}
+                        {% if solution.commune %}
+                        <div class="list-data__item">
+                            <dt class="list-data__label">Commune</dt>
+                            <dd class="list-data__value">
+                                {{ solution.commune }}{% if solution.code_postal %} ({{ solution.code_postal }}){% endif %}
+                            </dd>
+                        </div>
+                        {% endif %}
+                        {% if solution.description %}
+                        <div class="list-data__item">
+                            <dt class="list-data__label">Description</dt>
+                            <dd class="list-data__value">{{ solution.description }}</dd>
+                        </div>
+                        {% endif %}
+                    </dl>
+                </div>
+
+                {# Conditions d'admission #}
+                <div class="c-box mb-3 mb-md-4">
+                    <h2 class="h5 mb-3">Conditions d'admission</h2>
+                    {% if solution.conditions_admission %}
+                    <p class="mb-3">{{ solution.conditions_admission }}</p>
+                    {% endif %}
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if solution.requires_brsa %}
+                        <span class="badge rounded-pill badge-sm bg-warning">BRSA</span>
+                        {% endif %}
+                        {% if solution.requires_detld %}
+                        <span class="badge rounded-pill badge-sm bg-warning">DETLD</span>
+                        {% endif %}
+                        {% if solution.requires_qpv %}
+                        <span class="badge rounded-pill badge-sm bg-warning">QPV</span>
+                        {% endif %}
+                        {% if solution.requires_rqth %}
+                        <span class="badge rounded-pill badge-sm bg-warning">RQTH</span>
+                        {% endif %}
+                        {% if solution.age_max %}
+                        <span class="badge rounded-pill badge-sm bg-info">{{ solution.age_min or 16 }}-{{ solution.age_max }} ans</span>
+                        {% endif %}
+                        {% if solution.max_diploma_level %}
+                        <span class="badge rounded-pill badge-sm bg-info">Niveau diplôme max : {{ solution.max_diploma_level }}</span>
+                        {% endif %}
+                        {% if not solution.requires_brsa and not solution.requires_detld and not solution.requires_qpv and not solution.requires_rqth and not solution.age_max and not solution.max_diploma_level %}
+                        <span class="text-muted fs-sm">Aucune condition spécifique</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# Disponibilité #}
+                <div class="c-box mb-3 mb-md-4">
+                    <h2 class="h5 mb-3">Disponibilité</h2>
+                    {% if solution.places_disponibles > 0 %}
+                    <p class="mb-0">
+                        <span class="badge rounded-pill badge-base bg-success">{{ solution.places_disponibles }} places disponibles</span>
+                    </p>
+                    {% else %}
+                    <p class="mb-0">
+                        <span class="badge rounded-pill badge-base bg-danger">Saturé — aucune place disponible</span>
+                    </p>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

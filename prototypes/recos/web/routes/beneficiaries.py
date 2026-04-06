@@ -5,7 +5,8 @@ from fastapi.responses import HTMLResponse
 from sqlmodel import Session, select
 
 from ..database import engine
-from ..models import Beneficiary, Professional, Structure
+from ..matching import compute_recommendations
+from ..models import Beneficiary, Professional, Solution, Structure
 
 router = APIRouter()
 
@@ -81,7 +82,37 @@ async def recommendations(request: Request, id: int):
         b = session.get(Beneficiary, id)
         if not b:
             return HTMLResponse("Not found", status_code=404)
+        structure = None
+        if b.structure_referente_id:
+            structure = session.get(Structure, b.structure_referente_id)
+        solutions = session.exec(select(Solution)).all()
+        results = compute_recommendations(b, solutions)
     return _templates(request).TemplateResponse(
         "recommendations.html",
-        {"request": request, "b": b},
+        {
+            "request": request,
+            "b": b,
+            "structure": structure,
+            "results": results,
+        },
+    )
+
+
+@router.get("/solution/{id}", response_class=HTMLResponse)
+async def solution_detail(request: Request, id: int):
+    from_id = request.query_params.get("from")
+    with Session(engine) as session:
+        solution = session.get(Solution, id)
+        if not solution:
+            return HTMLResponse("Not found", status_code=404)
+        beneficiary = None
+        if from_id:
+            beneficiary = session.get(Beneficiary, int(from_id))
+    return _templates(request).TemplateResponse(
+        "solution_detail.html",
+        {
+            "request": request,
+            "solution": solution,
+            "b": beneficiary,
+        },
     )

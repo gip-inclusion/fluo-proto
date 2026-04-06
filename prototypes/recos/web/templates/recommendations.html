@@ -30,12 +30,7 @@
                         <a class="nav-link" id="employers-tab" data-bs-toggle="tab" href="#employers"
                            role="tab" aria-controls="employers" aria-selected="false">
                             Employeurs (SIAE et GEIQ)
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="positions-tab" data-bs-toggle="tab" href="#positions"
-                           role="tab" aria-controls="positions" aria-selected="false">
-                            Postes ouverts
+                            <span class="badge rounded-pill bg-info ms-1">{{ results.employeurs|length }}</span>
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -59,39 +54,202 @@
 <section class="s-section">
     <div class="s-section__container container">
         <div class="tab-content">
+            {# ── Employeurs tab ── #}
             <div class="tab-pane fade" id="employers" role="tabpanel" aria-labelledby="employers-tab">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12">
+                        {% if results.employeurs %}
                         <div class="c-box mb-3 mb-md-4">
-                            <p class="text-muted mb-0">Aucun résultat disponible pour le moment.</p>
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Structure</th>
+                                            <th>Type</th>
+                                            <th>Commune</th>
+                                            <th>Places</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for s in results.employeurs %}
+                                        <tr>
+                                            <td class="fw-medium">{{ s.name }}</td>
+                                            <td><span class="badge rounded-pill badge-sm bg-info">{{ s.type_label }}</span></td>
+                                            <td>{{ s.commune or "—" }}</td>
+                                            <td>
+                                                {% if s.places_disponibles > 0 %}
+                                                <span class="badge rounded-pill badge-sm bg-success">{{ s.places_disponibles }} places</span>
+                                                {% else %}
+                                                <span class="badge rounded-pill badge-sm bg-danger">Saturé</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end">
+                                                <a href="/solution/{{ s.id }}?from={{ b.id }}" class="btn btn-link btn-ico btn-sm">
+                                                    <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+                        {% else %}
+                        <div class="c-box mb-3 mb-md-4">
+                            <p class="text-muted mb-0">Aucun employeur inclusif trouvé à proximité.</p>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="positions" role="tabpanel" aria-labelledby="positions-tab">
-                <div class="s-section__row row">
-                    <div class="s-section__col col-12">
-                        <div class="c-box mb-3 mb-md-4">
-                            <p class="text-muted mb-0">Aucun résultat disponible pour le moment.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            {# ── Services d'insertion tab ── #}
             <div class="tab-pane fade" id="services" role="tabpanel" aria-labelledby="services-tab">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12">
                         <div class="c-box mb-3 mb-md-4">
-                            <p class="text-muted mb-0">Aucun résultat disponible pour le moment.</p>
+                            <div class="d-flex gap-2 align-items-center mb-3">
+                                <input type="text" class="form-control" placeholder="Rechercher un service, une structure..." disabled>
+                                <button class="btn btn-outline-primary btn-ico" disabled>
+                                    <i class="ri-filter-3-line fw-medium" aria-hidden="true"></i>
+                                    <span>Filtres</span>
+                                </button>
+                            </div>
+                            <p class="text-muted fs-sm mb-3">
+                                <i class="ri-information-line fw-medium" aria-hidden="true"></i>
+                                Moteur de recherche — fonctionnalité à venir.
+                            </p>
                         </div>
+
+                        {% if results.services %}
+                        {% for s in results.services %}
+                        <div class="c-box mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h3 class="h6 mb-1">
+                                        {{ s.name }}
+                                        <span class="badge rounded-pill badge-sm bg-info ms-1">{{ s.type_label }}</span>
+                                    </h3>
+                                    {% if s.commune %}
+                                    <p class="text-muted fs-sm mb-1">
+                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
+                                        {{ s.commune }}{% if s.code_postal %} ({{ s.code_postal }}){% endif %}
+                                    </p>
+                                    {% endif %}
+                                    {% if s.description %}
+                                    <p class="fs-sm mb-0">{{ s.description[:120] }}{% if s.description|length > 120 %}...{% endif %}</p>
+                                    {% endif %}
+                                </div>
+                                <a href="/solution/{{ s.id }}?from={{ b.id }}" class="btn btn-outline-primary btn-sm btn-ico ms-3 flex-shrink-0">
+                                    <span>Voir</span>
+                                    <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="c-box mb-3 mb-md-4">
+                            <p class="text-muted mb-0">Aucun résultat disponible.</p>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
+
+            {# ── Solutions de parcours tab (default) ── #}
             <div class="tab-pane fade show active" id="solutions" role="tabpanel" aria-labelledby="solutions-tab">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12">
-                        <div class="c-box mb-3 mb-md-4">
-                            <p class="text-muted mb-0">Aucune recommandation disponible pour le moment.</p>
+
+                        {# D'où on part #}
+                        <div class="alert alert-info mb-3 mb-md-4">
+                            <i class="ri-information-line fw-medium" aria-hidden="true"></i>
+                            {% if b.modalite %}
+                            Modalité actuelle : <strong>{{ b.modalite }}</strong>
+                            {% elif structure %}
+                            Structure référente : <strong>{{ structure.name }} ({{ structure.type_acronym }})</strong>
+                            {% else %}
+                            Aucune modalité ou structure référente
+                            {% endif %}
                         </div>
+
+                        {# Recommendations #}
+                        {% if results.recommended %}
+                        <h2 class="h5 mb-3">
+                            <i class="ri-star-line fw-medium text-warning" aria-hidden="true"></i>
+                            Recommandations
+                        </h2>
+                        <div class="row">
+                            {% for s in results.recommended %}
+                            <div class="col-12 col-md-6 mb-3">
+                                <div class="c-box h-100">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h3 class="h6 mb-0">
+                                            {{ s.structure_name or s.name }}
+                                            <span class="badge rounded-pill badge-sm bg-info ms-1">{{ s.type_label }}</span>
+                                        </h3>
+                                        {% if s.places_disponibles > 0 %}
+                                        <span class="badge rounded-pill badge-sm bg-success flex-shrink-0">{{ s.places_disponibles }} places</span>
+                                        {% else %}
+                                        <span class="badge rounded-pill badge-sm bg-danger flex-shrink-0">Saturé</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if s.commune %}
+                                    <p class="text-muted fs-sm mb-1">
+                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
+                                        {{ s.commune }}
+                                    </p>
+                                    {% endif %}
+                                    {% if s.conditions_admission %}
+                                    <p class="fs-sm mb-1">
+                                        <i class="ri-checkbox-circle-line fw-medium text-success" aria-hidden="true"></i>
+                                        {{ s.conditions_admission }}
+                                    </p>
+                                    {% endif %}
+                                    {% if s.description %}
+                                    <p class="fs-sm text-muted mb-2">{{ s.description[:100] }}{% if s.description|length > 100 %}...{% endif %}</p>
+                                    {% endif %}
+                                    <a href="/solution/{{ s.id }}?from={{ b.id }}" class="btn btn-outline-primary btn-sm btn-ico">
+                                        <span>Voir le détail</span>
+                                        <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="c-box mb-3 mb-md-4">
+                            <p class="text-muted mb-0">Aucune recommandation disponible pour ce profil.</p>
+                        </div>
+                        {% endif %}
+
+                        {# Voir plus links #}
+                        <div class="d-flex flex-wrap gap-2 mb-3 mb-md-4 mt-2">
+                            {% if results.employeurs %}
+                            <a href="#employers" class="btn btn-link btn-sm" data-bs-toggle="tab"
+                               role="tab" aria-controls="employers">
+                                <i class="ri-building-line fw-medium" aria-hidden="true"></i>
+                                SIAE à proximité ({{ results.employeurs|length }})
+                            </a>
+                            {% endif %}
+                            {% if results.parcours|length > results.recommended|length %}
+                            <a href="#" class="btn btn-link btn-sm">
+                                <i class="ri-compass-line fw-medium" aria-hidden="true"></i>
+                                Autres solutions de parcours ({{ results.parcours|length }})
+                            </a>
+                            {% endif %}
+                        </div>
+
+                        {# Recherche manuelle #}
+                        <div class="mt-3">
+                            <a href="#services" class="btn btn-outline-primary btn-ico" data-bs-toggle="tab"
+                               role="tab" aria-controls="services">
+                                <i class="ri-search-line fw-medium" aria-hidden="true"></i>
+                                <span>Recherche manuelle</span>
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </div>
