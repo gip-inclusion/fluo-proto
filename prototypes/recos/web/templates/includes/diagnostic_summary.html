@@ -2,7 +2,7 @@
    🟢 = strength / no issue    🟡 = identified issue    🔴 = priority #}
 
 {% if diagnostic %}
-<div class="c-box mb-3 mb-md-4">
+<div class="c-box mb-3 mb-md-4 bg-success-lightest border-success">
     <h3>Synthèse diagnostic</h3>
 
     {# ── Projet pro ── #}
@@ -33,7 +33,7 @@
     <ul class="list-unstyled mb-0">
         {% for besoin in ns_besoins.items %}
         <li class="d-flex align-items-center gap-2 mb-1">
-            <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <i class="ri-circle-fill text-warning" style="font-size: 0.6rem;" aria-hidden="true"></i>
             <span class="fs-sm">{{ besoin }}</span>
         </li>
         {% endfor %}
@@ -56,9 +56,9 @@
             {% for libelle, est_prio in ns_contraintes.items %}
             <li class="d-flex align-items-center gap-2 mb-1">
                 {% if est_prio %}
-                <i class="ri-circle-fill text-danger" style="font-size: 0.5rem;" aria-hidden="true"></i>
+                <i class="ri-circle-fill text-danger" style="font-size: 0.6rem;" aria-hidden="true"></i>
                 {% else %}
-                <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+                <i class="ri-circle-fill text-warning" style="font-size: 0.6rem;" aria-hidden="true"></i>
                 {% endif %}
                 <span class="fs-sm">{{ libelle }}</span>
             </li>
@@ -69,7 +69,7 @@
         <h4>Contraintes</h4>
         <ul class="list-unstyled mb-0">
             <li class="d-flex align-items-center gap-2 mb-1">
-                <i class="ri-circle-fill text-success" style="font-size: 0.5rem;" aria-hidden="true"></i>
+                <i class="ri-circle-fill text-success" style="font-size: 0.6rem;" aria-hidden="true"></i>
                 <span class="fs-sm">Aucune contrainte déclarée</span>
             </li>
         </ul>
@@ -84,13 +84,13 @@
     <ul class="list-unstyled mb-0">
         <li class="d-flex align-items-center gap-2 mb-1">
             {% if pa.confiance == "OUI" and pa.accompagnement != "OUI" %}
-            <i class="ri-circle-fill text-success" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <i class="ri-circle-fill text-success" style="font-size: 0.6rem;" aria-hidden="true"></i>
             <span class="fs-sm">Autonome dans ses démarches</span>
             {% elif pa.confiance == "OUI" and pa.accompagnement == "OUI" %}
-            <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <i class="ri-circle-fill text-warning" style="font-size: 0.6rem;" aria-hidden="true"></i>
             <span class="fs-sm">Confiant·e, mais demande un accompagnement</span>
             {% else %}
-            <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <i class="ri-circle-fill text-warning" style="font-size: 0.6rem;" aria-hidden="true"></i>
             <span class="fs-sm">Besoin d'accompagnement dans ses démarches</span>
             {% endif %}
         </li>
@@ -108,10 +108,10 @@
     <ul class="list-unstyled mb-0">
         <li class="d-flex align-items-center gap-2 mb-1">
             {% if num_ok %}
-            <i class="ri-circle-fill text-success" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <i class="ri-circle-fill text-success" style="font-size: 0.6rem;" aria-hidden="true"></i>
             <span class="fs-sm">À l'aise avec le numérique</span>
             {% else %}
-            <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <i class="ri-circle-fill text-warning" style="font-size: 0.6rem;" aria-hidden="true"></i>
             <span class="fs-sm">Difficultés numériques identifiées</span>
             {% endif %}
         </li>
