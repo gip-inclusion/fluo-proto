@@ -119,6 +119,13 @@ def _matches(beneficiary: Beneficiary, solution: Solution, profile: dict) -> boo
     """Check if a person is eligible for a solution."""
     age = profile["age"]
 
+    # Territory-bound solutions (PLIE): person must be in the same commune
+    territory_bound_types = {"plie"}
+    if solution.solution_type in territory_bound_types and solution.commune:
+        person_city = _person_city(beneficiary)
+        if person_city and person_city.lower() != solution.commune.lower():
+            return False
+
     # Age constraints
     if solution.age_min and age and age < solution.age_min:
         return False
