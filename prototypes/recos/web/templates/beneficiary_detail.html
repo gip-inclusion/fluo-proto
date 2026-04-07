@@ -128,16 +128,18 @@
                         {% set best = solutions_list[0] %}
                         {% set others_count = solutions_list|length - 1 %}
                         <div class="c-box p-0 mb-3 mb-md-4">
-                            <div class="p-3 p-lg-4 d-flex justify-content-between align-items-center border-bottom">
+                            <div class="p-3 p-lg-4 border-bottom">
                                 <span class="h4 mb-0">{{ type_label }}</span>
-                                {% if best.places_disponibles > 0 %}
-                                <span class="badge rounded-pill badge-sm bg-success-lighter text-success">{{ best.places_disponibles }} places</span>
-                                {% else %}
-                                <span class="badge rounded-pill badge-sm bg-danger-lighter text-danger">Saturé</span>
-                                {% endif %}
                             </div>
                             <div class="p-3 p-lg-4">
-                                <h3 class="h6 mb-2">{{ best.structure_name or best.name }}</h3>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h3 class="h6 mb-0">{{ best.structure_name or best.name }}</h3>
+                                    {% if best.places_disponibles > 0 %}
+                                    <span class="badge rounded-pill badge-sm bg-success-lighter text-success flex-shrink-0">{{ best.places_disponibles }} places</span>
+                                    {% else %}
+                                    <span class="badge rounded-pill badge-sm bg-danger-lighter text-danger flex-shrink-0">Saturé</span>
+                                    {% endif %}
+                                </div>
 
                                 {% if best.commune %}
                                 <p class="text-muted fs-sm mb-2">
