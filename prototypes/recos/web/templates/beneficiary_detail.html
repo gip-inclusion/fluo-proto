@@ -99,61 +99,99 @@
                             {% endif %}
                         </div>
 
-                        {# Recommendations #}
-                        {% if results.recommended %}
-                        <h2 class="h5 mb-3">
-                            <i class="ri-star-line fw-medium text-warning" aria-hidden="true"></i>
-                            Recommandations
-                        </h2>
-                        <div class="row">
-                            {% for s in results.recommended %}
-                            <div class="col-12 col-md-6 mb-3">
-                                <div class="c-box h-100">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h3 class="h6 mb-0">
-                                            {{ s.structure_name or s.name }}
-                                            <span class="badge rounded-pill badge-sm bg-info ms-1">{{ s.type_label }}</span>
-                                        </h3>
-                                        {% if s.places_disponibles > 0 %}
-                                        <span class="badge rounded-pill badge-sm bg-success flex-shrink-0">{{ s.places_disponibles }} places</span>
-                                        {% else %}
-                                        <span class="badge rounded-pill badge-sm bg-danger flex-shrink-0">Saturé</span>
+                        {# Collect diagnostic signals for "why" display #}
+                        {% set ns_diag_besoins = namespace(items=[]) %}
+                        {% set ns_diag_contraintes = namespace(items=[]) %}
+                        {% if diagnostic %}
+                            {% for bp in diagnostic.besoinsParDiagnostic or [] %}
+                                {% for th in bp.thematiquesBesoins or [] %}
+                                    {% for b_item in th.besoins or [] %}
+                                        {% if b_item.valeur == "BESOIN" %}
+                                            {% set ns_diag_besoins.items = ns_diag_besoins.items + [b_item.libelle] %}
                                         {% endif %}
-                                    </div>
-                                    {% if s.commune %}
-                                    <p class="text-muted fs-sm mb-1">
-                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
-                                        {{ s.commune }}
-                                    </p>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                            {% set tc = diagnostic.thematiqueContrainte %}
+                            {% if tc %}
+                                {% for c in tc.contraintes or [] %}
+                                    {% if c.valeur and c.valeur != "NON_ABORDEE" and c.valeur != "NON_ABORDE" %}
+                                        {% set ns_diag_contraintes.items = ns_diag_contraintes.items + [(c.libelle, c.estPrioritaire)] %}
                                     {% endif %}
-                                    {% if s.conditions_admission %}
-                                    <p class="fs-sm mb-1">
-                                        <i class="ri-checkbox-circle-line fw-medium text-success" aria-hidden="true"></i>
-                                        {{ s.conditions_admission }}
-                                    </p>
-                                    {% endif %}
-                                    {% if s.description %}
-                                    <p class="fs-sm text-muted mb-2">{{ s.description[:100] }}{% if s.description|length > 100 %}...{% endif %}</p>
-                                    {% endif %}
-                                    <div class="d-flex gap-2">
-                                        <a href="/solution/{{ s.id }}?from={{ b.id }}" class="btn btn-outline-primary btn-sm btn-ico">
-                                            <span>Voir le détail</span>
-                                            <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-primary btn-sm btn-ico prescribe-btn"
-                                                data-bs-toggle="modal" data-bs-target="#prescribeModal"
-                                                data-beneficiary-id="{{ b.id }}"
-                                                data-solution-id="{{ s.id }}"
-                                                data-solution-name="{{ s.name }}"
-                                                data-solution-type="{{ s.type_label }}">
-                                            <i class="ri-send-plane-line fw-medium" aria-hidden="true"></i>
-                                            <span>Prescrire</span>
-                                        </button>
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+
+                        {# Recommendations — one card per solution type #}
+                        {% if results.by_type %}
+                        {% for type_label, solutions_list in results.by_type.items() %}
+                        {% set best = solutions_list[0] %}
+                        {% set others_count = solutions_list|length - 1 %}
+                        <div class="c-box p-0 mb-3 mb-md-4">
+                            <div class="p-3 p-lg-4 d-flex justify-content-between align-items-center">
+                                <span class="h4 mb-0">{{ type_label }}</span>
+                                {% if best.places_disponibles > 0 %}
+                                <span class="badge rounded-pill badge-sm bg-success-lighter text-success">{{ best.places_disponibles }} places</span>
+                                {% else %}
+                                <span class="badge rounded-pill badge-sm bg-danger-lighter text-danger">Saturé</span>
+                                {% endif %}
+                            </div>
+                            <div class="px-3 px-lg-4">
+                                <h3 class="h6 mb-2">{{ best.structure_name or best.name }}</h3>
+
+                                {% if best.commune %}
+                                <p class="text-muted fs-sm mb-2">
+                                    <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
+                                    {{ best.commune }}{% if best.code_postal %} ({{ best.code_postal }}){% endif %}
+                                </p>
+                                {% endif %}
+
+                                {% if best.description %}
+                                <p class="fs-sm mb-2">{{ best.description[:150] }}{% if best.description|length > 150 %}...{% endif %}</p>
+                                {% endif %}
+
+                                {# Why this is recommended — links to diagnostic signals #}
+                                {% if ns_diag_besoins.items or ns_diag_contraintes.items %}
+                                <div class="mb-3">
+                                    <p class="fs-sm fw-bold mb-1">Pourquoi cette recommandation</p>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        {% for besoin in ns_diag_besoins.items[:3] %}
+                                        <span class="badge rounded-pill badge-xs bg-success-lighter text-success">{{ besoin }}</span>
+                                        {% endfor %}
+                                        {% for libelle, est_prio in ns_diag_contraintes.items[:2] %}
+                                        <span class="badge rounded-pill badge-xs {% if est_prio %}bg-danger-lighter text-danger{% else %}bg-warning-lighter text-warning{% endif %}">{{ libelle }}</span>
+                                        {% endfor %}
                                     </div>
                                 </div>
+                                {% endif %}
+
+                                <div class="d-flex gap-2 mb-3">
+                                    <a href="/solution/{{ best.id }}?from={{ b.id }}" class="btn btn-outline-primary btn-sm btn-ico">
+                                        <i class="ri-eye-line fw-medium" aria-hidden="true"></i>
+                                        <span>Voir le détail</span>
+                                    </a>
+                                    <button type="button" class="btn btn-primary btn-sm btn-ico prescribe-btn"
+                                            data-bs-toggle="modal" data-bs-target="#prescribeModal"
+                                            data-beneficiary-id="{{ b.id }}"
+                                            data-solution-id="{{ best.id }}"
+                                            data-solution-name="{{ best.name }}"
+                                            data-solution-type="{{ best.type_label }}">
+                                        <i class="ri-send-plane-line fw-medium" aria-hidden="true"></i>
+                                        <span>Prescrire</span>
+                                    </button>
+                                </div>
                             </div>
-                            {% endfor %}
+
+                            {% if others_count > 0 %}
+                            <div class="border-top px-3 px-lg-4 py-3">
+                                <a href="#search" class="btn-link btn-ico fs-sm" data-bs-toggle="tab" role="tab">
+                                    <span>Consulter {{ others_count }} autre{{ "s" if others_count > 1 }} solution{{ "s" if others_count > 1 }} de ce type</span>
+                                    <i class="ri-arrow-right-s-line fw-medium" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                            {% endif %}
                         </div>
+                        {% endfor %}
                         {% else %}
                         <div class="c-box mb-3 mb-md-4">
                             <p class="text-muted mb-0">Aucune recommandation disponible pour ce profil.</p>

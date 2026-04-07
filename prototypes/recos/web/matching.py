@@ -237,8 +237,22 @@ def compute_recommendations(beneficiary: Beneficiary, solutions: list[Solution])
             counts["geiq"] += 1
         recommended.append(s)
 
+    # Group by solution type_label: best (most places) first per type, exclude modalités FT
+    by_type = {}
+    for s in matched:
+        if s.solution_type == "modalite_ft":
+            continue
+        label = s.type_label
+        if label not in by_type:
+            by_type[label] = []
+        by_type[label].append(s)
+    # Sort each group: available spots desc, then by name
+    for label in by_type:
+        by_type[label].sort(key=lambda s: (-s.places_disponibles, s.name))
+
     return {
         "recommended": recommended,
+        "by_type": by_type,
         "employeurs": employeurs,
         "services": matched,
         "parcours": parcours,
