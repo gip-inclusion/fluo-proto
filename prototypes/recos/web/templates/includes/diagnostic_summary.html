@@ -1,5 +1,5 @@
-{# Condensed diagnostic sidebar — glanceable recap for the solutions tab.
-   Shows only: projet pro, besoins (not forces), constraints, autonomie, numérique. #}
+{# Condensed diagnostic sidebar — glanceable, color-coded.
+   🟢 = strength / no issue    🟡 = identified issue    🔴 = priority #}
 
 {% if diagnostic %}
 <div class="c-box mb-3 mb-md-4">
@@ -13,34 +13,28 @@
             <small>Projet professionnel</small>
             <strong>{{ diag.nomMetier }}</strong>
         </li>
-        {% if diag.typologie %}
-        <li>
-            <small>Typologie</small>
-            <strong>{{ diag.typologie }}</strong>
-        </li>
-        {% endif %}
     </ul>
     {% endif %}
 
-    {# ── Besoins identifiés (pas les points forts) ── #}
+    {# ── Besoins identifiés (BESOIN only, not POINT_FORT) ── #}
     {% set ns_besoins = namespace(items=[]) %}
     {% for bp in diagnostic.besoinsParDiagnostic or [] %}
         {% for th in bp.thematiquesBesoins or [] %}
             {% for b_item in th.besoins or [] %}
                 {% if b_item.valeur == "BESOIN" %}
-                    {% set ns_besoins.items = ns_besoins.items + [(th.libelle, b_item.libelle)] %}
+                    {% set ns_besoins.items = ns_besoins.items + [b_item.libelle] %}
                 {% endif %}
             {% endfor %}
         {% endfor %}
     {% endfor %}
     {% if ns_besoins.items %}
     <hr class="my-3">
-    <h4>Besoins identifiés</h4>
-    <ul class="list-data mb-0">
-        {% for theme, besoin in ns_besoins.items %}
-        <li>
-            <small>{{ theme }}</small>
-            <strong>{{ besoin }}</strong>
+    <h4>Besoins</h4>
+    <ul class="list-unstyled mb-0">
+        {% for besoin in ns_besoins.items %}
+        <li class="d-flex align-items-center gap-2 mb-1">
+            <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <span class="fs-sm">{{ besoin }}</span>
         </li>
         {% endfor %}
     </ul>
@@ -58,72 +52,76 @@
         {% if ns_contraintes.items %}
         <hr class="my-3">
         <h4>Contraintes</h4>
-        <ul class="list-data mb-0">
+        <ul class="list-unstyled mb-0">
             {% for libelle, est_prio in ns_contraintes.items %}
-            <li>
-                <small>{{ libelle }}</small>
-                <strong>{% if est_prio %}Prioritaire{% else %}Identifiée{% endif %}</strong>
+            <li class="d-flex align-items-center gap-2 mb-1">
+                {% if est_prio %}
+                <i class="ri-circle-fill text-danger" style="font-size: 0.5rem;" aria-hidden="true"></i>
+                {% else %}
+                <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+                {% endif %}
+                <span class="fs-sm">{{ libelle }}</span>
             </li>
             {% endfor %}
         </ul>
         {% elif tc.declareSansContrainte and tc.declareSansContrainte.flag %}
         <hr class="my-3">
         <h4>Contraintes</h4>
-        <ul class="list-data mb-0">
-            <li>
-                <small>Contraintes personnelles</small>
-                <strong class="text-success">Aucune déclarée</strong>
+        <ul class="list-unstyled mb-0">
+            <li class="d-flex align-items-center gap-2 mb-1">
+                <i class="ri-circle-fill text-success" style="font-size: 0.5rem;" aria-hidden="true"></i>
+                <span class="fs-sm">Aucune contrainte déclarée</span>
             </li>
         </ul>
         {% endif %}
     {% endif %}
 
-    {# ── Autonomie ── #}
-    {% set pa = diagnostic.pouvoirAgir %}
+    {# ── Autonomie (condensed into one line) ── #}
+    {% set pa = diagnostic.pouvoirAgir if diagnostic.pouvoirAgir else none %}
     {% if pa and (pa.confiance or pa.accompagnement) %}
     <hr class="my-3">
     <h4>Autonomie</h4>
-    <ul class="list-data mb-0">
-        {% if pa.confiance %}
-        <li>
-            <small>Confiance dans ses démarches</small>
-            <strong>{{ "Oui" if pa.confiance == "OUI" else "Non" }}</strong>
+    <ul class="list-unstyled mb-0">
+        <li class="d-flex align-items-center gap-2 mb-1">
+            {% if pa.confiance == "OUI" and pa.accompagnement != "OUI" %}
+            <i class="ri-circle-fill text-success" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <span class="fs-sm">Autonome dans ses démarches</span>
+            {% elif pa.confiance == "OUI" and pa.accompagnement == "OUI" %}
+            <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <span class="fs-sm">Confiant·e, mais demande un accompagnement</span>
+            {% else %}
+            <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <span class="fs-sm">Besoin d'accompagnement dans ses démarches</span>
+            {% endif %}
         </li>
-        {% endif %}
-        {% if pa.accompagnement %}
-        <li>
-            <small>Besoin d'accompagnement</small>
-            <strong>{{ "Oui" if pa.accompagnement == "OUI" else "Non" }}</strong>
-        </li>
-        {% endif %}
     </ul>
     {% endif %}
 
-    {# ── Numérique ── #}
-    {% set an = diagnostic.autonomieNumerique %}
-    {% if an and (an.contrainte or an.besoin) %}
+    {# ── Numérique (condensed into one line) ── #}
+    {% set an = diagnostic.autonomieNumerique if diagnostic.autonomieNumerique else none %}
+    {% if an %}
+        {% set num_ok = true %}
+        {% if an.contrainte and an.contrainte.valeur == "OUI" %}{% set num_ok = false %}{% endif %}
+        {% if an.besoin and an.besoin.valeur == "BESOIN" %}{% set num_ok = false %}{% endif %}
     <hr class="my-3">
     <h4>Numérique</h4>
-    <ul class="list-data mb-0">
-        {% if an.contrainte and an.contrainte.valeur and an.contrainte.valeur != "NON_ABORDEE" %}
-        <li>
-            <small>{{ an.contrainte.libelle }}</small>
-            <strong>{{ "Oui" if an.contrainte.valeur == "OUI" else "Non" }}</strong>
+    <ul class="list-unstyled mb-0">
+        <li class="d-flex align-items-center gap-2 mb-1">
+            {% if num_ok %}
+            <i class="ri-circle-fill text-success" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <span class="fs-sm">À l'aise avec le numérique</span>
+            {% else %}
+            <i class="ri-circle-fill text-warning" style="font-size: 0.5rem;" aria-hidden="true"></i>
+            <span class="fs-sm">Difficultés numériques identifiées</span>
+            {% endif %}
         </li>
-        {% endif %}
-        {% if an.besoin %}
-        <li>
-            <small>{{ an.besoin.libelle }}</small>
-            <strong>{{ "Oui" if an.besoin.valeur == "BESOIN" else "Non" }}</strong>
-        </li>
-        {% endif %}
     </ul>
     {% endif %}
 
     <hr class="my-3">
     <a href="#diagnostic" class="btn-link btn-ico fs-sm" data-bs-toggle="tab" role="tab">
         <i class="ri-eye-line fw-medium" aria-hidden="true"></i>
-        <span>Voir le diagnostic complet</span>
+        <span>Diagnostic complet</span>
     </a>
 </div>
 {% endif %}
