@@ -164,40 +164,55 @@
                                     <p class="fs-sm fw-bold mb-1">Compatibilité avec le diagnostic</p>
                                     <div class="d-flex flex-wrap gap-1" style="margin-left: -3px;">
                                         {% for besoin in ns_diag_besoins.items[:3] %}
-                                        <span class="badge rounded-pill badge-xs bg-success-lighter text-success">{{ besoin }}</span>
+                                        <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
+                                            <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
+                                            {{ besoin }}
+                                        </span>
                                         {% endfor %}
                                         {% for libelle, est_prio in ns_diag_contraintes.items[:2] %}
-                                        <span class="badge rounded-pill badge-xs {% if est_prio %}bg-danger-lighter text-danger{% else %}bg-info-lighter text-info{% endif %}">{{ libelle }}</span>
+                                        <span class="badge badge-sm rounded-pill {% if est_prio %}bg-danger-lighter text-danger{% else %}bg-info-lighter text-info{% endif %}">
+                                            <i class="ri-{% if est_prio %}alert-line{% else %}information-line{% endif %}" aria-hidden="true"></i>
+                                            {{ libelle }}
+                                        </span>
                                         {% endfor %}
                                     </div>
                                 </div>
                                 {% endif %}
 
                                 {# Éligibilité #}
-                                <div class="mb-0">
+                                <div class="mb-0 mt-2">
                                     <p class="fs-sm fw-bold mb-1">Éligibilité à la solution</p>
                                     {% set iae_types = ["aci", "ei", "etti", "ai"] %}
                                     <div class="d-flex flex-wrap gap-1" style="margin-left: -3px;">
                                         {% if best.solution_type in iae_types %}
                                             {% set has_pass = "PASS IAE valide" in (b.eligibilites or "") %}
                                             {% if has_pass %}
-                                            <span class="badge rounded-pill badge-xs bg-success-lighter text-success">PASS IAE valide</span>
+                                            <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
+                                                <i class="ri-pass-valid-line" aria-hidden="true"></i>
+                                                PASS&nbsp;IAE valide
+                                            </span>
                                             {% else %}
-                                            <span class="badge rounded-pill badge-xs bg-info-lighter text-info">Éligibilité IAE à valider</span>
+                                            <span class="badge badge-sm rounded-pill bg-warning-lighter text-warning">
+                                                <i class="ri-error-warning-line" aria-hidden="true"></i>
+                                                Éligibilité IAE à valider
+                                            </span>
                                             {% endif %}
                                         {% else %}
-                                            {% set elig_badges = [] %}
+                                            {% set ns_elig = namespace(found=false) %}
                                             {% for e in (b._eligibility_list if b._eligibility_list is defined else []) %}
                                                 {% if best.type_label in e %}
-                                                    {% set _ = elig_badges.append(e) %}
+                                                    {% set ns_elig.found = true %}
+                                                    <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
+                                                        <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
+                                                        Éligible au dispositif
+                                                    </span>
                                                 {% endif %}
                                             {% endfor %}
-                                            {% if elig_badges %}
-                                                {% for e in elig_badges %}
-                                                <span class="badge rounded-pill badge-xs bg-success-lighter text-success">{{ e }}</span>
-                                                {% endfor %}
-                                            {% else %}
-                                            <span class="badge rounded-pill badge-xs bg-info-lighter text-info">Éligibilité à valider</span>
+                                            {% if not ns_elig.found %}
+                                            <span class="badge badge-sm rounded-pill bg-warning-lighter text-warning">
+                                                <i class="ri-error-warning-line" aria-hidden="true"></i>
+                                                Éligibilité à valider
+                                            </span>
                                             {% endif %}
                                         {% endif %}
                                     </div>
