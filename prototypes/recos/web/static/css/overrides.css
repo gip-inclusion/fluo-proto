@@ -127,7 +127,7 @@
     }
 }
 
-/* Override the theme's 320px/380px values at larger breakpoints. */
+/* Override the theme's 320px/380px sidebar widths (theme uses !important on .offcanvas). */
 @media (min-width: 1280px) {
     .l-authenticated #offcanvasNav {
         width: 240px !important;
