@@ -321,14 +321,21 @@ def compute_recommendations(
     for label in by_type:
         by_type[label].sort(key=_relevance)
 
-    # Cap to 3 most relevant types (prioritize types with keyword matches)
+    # Rank types: direct-action solutions before preparatory ones for autonomous people
+    preparatory_types = {"prepa_competences"}
+
     def _type_relevance(label: str) -> tuple:
         best = by_type[label][0]
-        return _relevance(best)
+        # Autonomous person with a project → penalize preparatory solutions
+        is_prep = (
+            1
+            if (profile.get("is_autonomous") and profile.get("has_project") and best.solution_type in preparatory_types)
+            else 0
+        )
+        return (is_prep,) + _relevance(best)
 
-    if len(by_type) > 3:
-        sorted_types = sorted(by_type.keys(), key=_type_relevance)
-        by_type = {k: by_type[k] for k in sorted_types[:3]}
+    sorted_types = sorted(by_type.keys(), key=_type_relevance)
+    by_type = {k: by_type[k] for k in sorted_types[:3]}
 
     return {
         "recommended": recommended,

@@ -173,7 +173,7 @@ SOLUTIONS = [
         "structure_name": "GEIQ Métiers Verts",
         "commune": "Lille",
         "code_postal": "59000",
-        "description": "Alternance dans l'entretien des espaces verts, l'horticulture et le paysagisme. En lien avec les collectivités locales.",
+        "description": "Alternance dans les métiers agricoles, espaces verts, horticulture et paysagisme. En lien avec les exploitations et collectivités locales.",
         "conditions_admission": "Intérêt pour le travail en extérieur, pas de diplôme requis",
         "places_disponibles": 5,
         "requires_physical": True,
