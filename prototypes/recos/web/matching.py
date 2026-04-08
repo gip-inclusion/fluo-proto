@@ -69,6 +69,31 @@ def _parse_eligibilities(beneficiary: Beneficiary) -> dict:
     if situation.get("inscritPoleEmploiDepuis") and "DETLD" in str(situation.get("inscritPoleEmploiDepuis", "")):
         is_detld = True
 
+    # Extract diagnostic signals for fit matching
+    has_health_constraint = False
+    has_mobility_constraint = False
+    is_autonomous = False
+    has_project = False
+
+    tc = diagnostic.get("thematiqueContrainte", {})
+    for c in tc.get("contraintes", []):
+        if c.get("valeur") in ("NON_ABORDEE", "NON_ABORDE", None):
+            continue
+        libelle = (c.get("libelle") or "").lower()
+        if "santé" in libelle:
+            has_health_constraint = True
+        if "mobilité" in libelle:
+            has_mobility_constraint = True
+
+    pa = diagnostic.get("pouvoirAgir") or {}
+    if pa.get("confiance") == "OUI" and pa.get("accompagnement") != "OUI":
+        is_autonomous = True
+
+    if diagnostic.get("besoinsParDiagnostic"):
+        diag_entry = diagnostic["besoinsParDiagnostic"][0].get("diagnostic", {})
+        if diag_entry.get("nomMetier"):
+            has_project = True
+
     return {
         "is_brsa": is_brsa,
         "is_detld": is_detld,
@@ -76,6 +101,10 @@ def _parse_eligibilities(beneficiary: Beneficiary) -> dict:
         "is_rqth": is_rqth,
         "age": _compute_age(beneficiary.person_birthdate),
         "diploma_level": identite.get("niveauDiplome"),
+        "has_health_constraint": has_health_constraint,
+        "has_mobility_constraint": has_mobility_constraint,
+        "is_autonomous": is_autonomous,
+        "has_project": has_project,
     }
 
 
@@ -129,6 +158,14 @@ def _matches(beneficiary: Beneficiary, solution: Solution, profile: dict) -> boo
         if person_city and person_city.lower() != solution.commune.lower():
             return False
 
+    # Health constraint → skip physical solutions
+    if solution.requires_physical and profile.get("has_health_constraint"):
+        return False
+
+    # Autonomy-gated solutions (GEIQ, Prépa qualification) → only for people with a project
+    if solution.requires_autonomy and not profile.get("has_project"):
+        return False
+
     # Age constraints
     if solution.age_min and age and age < solution.age_min:
         return False
@@ -160,7 +197,9 @@ def _matches(beneficiary: Beneficiary, solution: Solution, profile: dict) -> boo
     return True
 
 
-def compute_recommendations(beneficiary: Beneficiary, solutions: list[Solution]) -> dict:
+def compute_recommendations(
+    beneficiary: Beneficiary, solutions: list[Solution], current_structure_type: str | None = None
+) -> dict:
     """Return matched solutions grouped by category.
 
     Returns:
@@ -240,16 +279,28 @@ def compute_recommendations(beneficiary: Beneficiary, solutions: list[Solution])
             counts["geiq"] += 1
         recommended.append(s)
 
-    # Group by solution type_label: best (most places) first per type, exclude modalités FT
-    by_type = {}
+    # Group by solution type_label: best first per type, exclude modalités FT
+    # Also skip the type the person is currently in (e.g., already at an ACI → no more ACI)
+    acronym_to_solution_type = {"aci": "aci", "ei": "ei", "plie": "plie", "e2c": "e2c", "geiq": "geiq"}
+    skip_solution_type = acronym_to_solution_type.get((current_structure_type or "").lower())
+
+    # Sheltered paths (ACI, CUI-CAE) are less relevant for autonomous people with a project
+    stabilization_types = {"aci", "cui_cae"}
+
+    by_type: dict[str, list] = {}
     for s in matched:
         if s.solution_type == "modalite_ft":
+            continue
+        if skip_solution_type and s.solution_type == skip_solution_type:
+            continue
+        if profile.get("is_autonomous") and profile.get("has_project") and s.solution_type in stabilization_types:
             continue
         label = s.type_label
         if label not in by_type:
             by_type[label] = []
         by_type[label].append(s)
-    # Sort each group: relevance to person's project first, then available spots
+
+    # Sort each group by relevance
     diagnostic = json.loads(beneficiary.diagnostic_data) if beneficiary.diagnostic_data else {}
     projet_metier = ""
     if diagnostic.get("besoinsParDiagnostic"):
@@ -260,7 +311,6 @@ def compute_recommendations(beneficiary: Beneficiary, solutions: list[Solution])
         desc = ((s.description or "") + " " + (s.name or "")).lower()
         projet_words = [w for w in projet_metier.split() if len(w) > 3]
         keyword_match = sum(1 for w in projet_words if w in desc)
-        # If no project defined, boost "remobilisation" / "projet professionnel" solutions
         if not projet_metier and ("remobilisation" in desc or "projet professionnel" in desc):
             keyword_match = 1
         person_city = _person_city(beneficiary)
@@ -270,6 +320,15 @@ def compute_recommendations(beneficiary: Beneficiary, solutions: list[Solution])
 
     for label in by_type:
         by_type[label].sort(key=_relevance)
+
+    # Cap to 3 most relevant types (prioritize types with keyword matches)
+    def _type_relevance(label: str) -> tuple:
+        best = by_type[label][0]
+        return _relevance(best)
+
+    if len(by_type) > 3:
+        sorted_types = sorted(by_type.keys(), key=_type_relevance)
+        by_type = {k: by_type[k] for k in sorted_types[:3]}
 
     return {
         "recommended": recommended,

@@ -96,6 +96,7 @@ SOLUTIONS = [
         "requires_brsa": True,
         "requires_detld": True,
         "requires_qpv": True,
+        "requires_physical": True,
     },
     {
         "name": "Tissons la Solidarité",
@@ -124,6 +125,7 @@ SOLUTIONS = [
         "requires_brsa": True,
         "requires_detld": True,
         "requires_qpv": True,
+        "requires_physical": True,
     },
     # ── EI ──
     {
@@ -151,6 +153,7 @@ SOLUTIONS = [
         "description": "Contrat pro en alternance dans le BTP : maçonnerie, peinture, électricité. Qualification diplômante en 12 mois.",
         "conditions_admission": "Motivation pour le BTP, aptitude physique, mobilité",
         "places_disponibles": 8,
+        "requires_physical": True,
     },
     {
         "name": "GEIQ Propreté Hauts-de-France",
@@ -173,6 +176,7 @@ SOLUTIONS = [
         "description": "Alternance dans l'entretien des espaces verts, l'horticulture et le paysagisme. En lien avec les collectivités locales.",
         "conditions_admission": "Intérêt pour le travail en extérieur, pas de diplôme requis",
         "places_disponibles": 5,
+        "requires_physical": True,
     },
     # ── PLIE ──
     {

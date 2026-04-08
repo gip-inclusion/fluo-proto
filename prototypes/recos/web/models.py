@@ -40,6 +40,8 @@ class Solution(SQLModel, table=True):
     requires_qpv: bool = False
     requires_rqth: bool = False
     max_diploma_level: int | None = None
+    requires_physical: bool = False  # skip if person has health constraint
+    requires_autonomy: bool = False  # only for people who are autonomous with a project
 
 
 class Structure(SQLModel, table=True):

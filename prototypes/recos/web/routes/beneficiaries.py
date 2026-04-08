@@ -78,7 +78,8 @@ async def detail_beneficiary(request: Request, id: int):
             p._solution = prescription_solutions_map.get(p.solution_id)
         # Solutions recommendations
         all_solutions = session.exec(select(Solution)).all()
-        results = compute_recommendations(b, all_solutions)
+        current_struct_type = structure.type_acronym if structure else None
+        results = compute_recommendations(b, all_solutions, current_structure_type=current_struct_type)
         # Services grouped by category
         all_services = session.exec(select(Service)).all()
         services_grouped = get_services_for_beneficiary(b, all_services)
