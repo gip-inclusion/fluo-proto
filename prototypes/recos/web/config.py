@@ -22,6 +22,18 @@ ELIGIBILITY_COLORS = {
     "Éligible E2C": "bg-info",
 }
 
+BENEFICIARY_TYPES = ["QPV", "RSA", "AAH", "DELD", "DETLD", "Jeune", "Senior"]
+
+BENEFICIARY_TYPE_COLORS = {
+    "QPV": "bg-info",
+    "RSA": "bg-warning",
+    "AAH": "bg-important",
+    "DELD": "bg-pilotage",
+    "DETLD": "bg-danger",
+    "Jeune": "bg-success",
+    "Senior": "bg-marche",
+}
+
 NAV_ITEMS = [
     {"href": "/dashboard", "icon": "ri-home-line", "label": "Accueil", "active_prefix": "/dashboard"},
     {

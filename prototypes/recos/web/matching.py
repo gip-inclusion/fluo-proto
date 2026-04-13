@@ -31,6 +31,10 @@ LILLE_METRO = {
 LILLE_REACHABLE = LILLE_METRO | {"cambrai", "douai", "lens", "arras"}
 
 
+def compute_age(birthdate_str: str | None) -> int | None:
+    return _compute_age(birthdate_str)
+
+
 def _compute_age(birthdate_str: str | None) -> int | None:
     if not birthdate_str:
         return None
@@ -106,6 +110,53 @@ def _parse_eligibilities(beneficiary: Beneficiary) -> dict:
         "is_autonomous": is_autonomous,
         "has_project": has_project,
     }
+
+
+def compute_beneficiary_types(beneficiary: Beneficiary) -> list[str]:
+    """Return the subset of {QPV, RSA, AAH, DELD, DETLD, Jeune, Senior} that applies."""
+    profile = _parse_eligibilities(beneficiary)
+    types: list[str] = []
+    if profile["is_qpv"]:
+        types.append("QPV")
+    if profile["is_brsa"]:
+        types.append("RSA")
+
+    eligibilities = json.loads(beneficiary.eligibilites) if beneficiary.eligibilites else []
+    diagnostic = json.loads(beneficiary.diagnostic_data) if beneficiary.diagnostic_data else {}
+    extra = diagnostic.get("extra", {})
+    situation = extra.get("situationAdministrative", {})
+    has_aah = any("AAH" in e.upper() for e in eligibilities) or bool(situation.get("beneficiaireAAH"))
+    if has_aah:
+        types.append("AAH")
+
+    inscription_date_str = (extra.get("insertionActiviteEconomique") or {}).get("dateEnregistrement") or (
+        extra.get("modaliteSuivi") or {}
+    ).get("dateEnregistrement")
+    months = _months_since(inscription_date_str)
+    if months is not None:
+        if months > 24:
+            types.append("DETLD")
+        elif months > 12:
+            types.append("DELD")
+
+    age = profile["age"]
+    if age is not None:
+        if age < 26:
+            types.append("Jeune")
+        elif age >= 50:
+            types.append("Senior")
+    return types
+
+
+def _months_since(iso_date_str: str | None) -> int | None:
+    if not iso_date_str:
+        return None
+    try:
+        bd = date.fromisoformat(iso_date_str[:10])
+    except ValueError:
+        return None
+    today = date.today()
+    return (today.year - bd.year) * 12 + (today.month - bd.month) - (1 if today.day < bd.day else 0)
 
 
 def _person_city(beneficiary: Beneficiary) -> str | None:

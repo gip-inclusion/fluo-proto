@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from .config import (
+    BENEFICIARY_TYPE_COLORS,
     ELIGIBILITY_COLORS,
     MODALITE_LABELS,
     NAV_ITEMS,
@@ -27,6 +28,7 @@ templates.env.globals.update(
         "service_name": SERVICE_NAME,
         "modalite_labels": MODALITE_LABELS,
         "eligibility_colors": ELIGIBILITY_COLORS,
+        "beneficiary_type_colors": BENEFICIARY_TYPE_COLORS,
         "nav_items": NAV_ITEMS,
         "tag_colors": TAG_COLORS,
         "prescription_status_labels": PRESCRIPTION_STATUS_LABELS,

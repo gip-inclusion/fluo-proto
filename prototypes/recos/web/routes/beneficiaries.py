@@ -5,8 +5,9 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlmodel import Session, select
 
+from ..config import BENEFICIARY_TYPES
 from ..database import engine
-from ..matching import compute_recommendations, get_services_for_beneficiary
+from ..matching import compute_age, compute_beneficiary_types, compute_recommendations, get_services_for_beneficiary
 from ..models import Beneficiary, Prescription, Professional, Service, Solution, Structure
 
 router = APIRouter()
@@ -26,24 +27,40 @@ async def dashboard(request: Request):
 
 @router.get("/beneficiaries", response_class=HTMLResponse)
 async def list_beneficiaries(request: Request):
+    selected_types = [t for t in request.query_params.getlist("type") if t in BENEFICIARY_TYPES]
+    ft_only = request.query_params.get("ft") == "1"
+    ft_modalites = ["Renforcé", "Guidé"]
+    selected_modalite = request.query_params.get("modalite") or ""
+    if selected_modalite not in ft_modalites:
+        selected_modalite = ""
     with Session(engine) as session:
         beneficiaries = session.exec(select(Beneficiary).order_by(Beneficiary.person_last_name)).all()
-        # Eagerly load structure names for display
         structure_ids = [b.structure_referente_id for b in beneficiaries if b.structure_referente_id]
         structures = {}
         if structure_ids:
             for s in session.exec(select(Structure).where(Structure.id.in_(structure_ids))).all():
                 structures[s.id] = s
-        # Parse eligibilites JSON for each beneficiary
         for b in beneficiaries:
-            b._eligibility_list = json.loads(b.eligibilites) if b.eligibilites else []
+            b._types = compute_beneficiary_types(b)
             b._structure = structures.get(b.structure_referente_id)
+            b._age = compute_age(b.person_birthdate)
+        if selected_types:
+            beneficiaries = [b for b in beneficiaries if any(t in b._types for t in selected_types)]
+        if ft_only:
+            beneficiaries = [b for b in beneficiaries if b.modalite]
+            if selected_modalite:
+                beneficiaries = [b for b in beneficiaries if b.modalite == selected_modalite]
     return _templates(request).TemplateResponse(
         "beneficiary_list.html",
         {
             "request": request,
             "beneficiaries": beneficiaries,
             "result_count": len(beneficiaries),
+            "beneficiary_types": BENEFICIARY_TYPES,
+            "selected_types": selected_types,
+            "ft_only": ft_only,
+            "ft_modalites": ft_modalites,
+            "selected_modalite": selected_modalite if ft_only else "",
         },
     )
 
@@ -55,6 +72,7 @@ async def detail_beneficiary(request: Request, id: int):
         if not b:
             return HTMLResponse("Not found", status_code=404)
         b._eligibility_list = json.loads(b.eligibilites) if b.eligibilites else []
+        b._age = compute_age(b.person_birthdate)
         structure = None
         if b.structure_referente_id:
             structure = session.get(Structure, b.structure_referente_id)

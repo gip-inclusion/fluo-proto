@@ -21,13 +21,11 @@
                             <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
                             {% endif %}
                         </h1>
-                    </div>
-                    <div class="c-title__actions d-flex gap-2">
-                        <a href="#search" class="btn btn-primary btn-ico"
-                           data-bs-toggle="tab" role="tab" aria-controls="search">
-                            <i class="ri-send-plane-line fw-medium" aria-hidden="true"></i>
-                            <span>Postuler</span>
-                        </a>
+                        <p class="text-muted mb-0">
+                            {% if b._age is not none %}{{ b._age }} ans{% endif %}
+                            {% if b._age is not none and b.person_address %} · {% endif %}
+                            {% if b.person_address %}{{ b.person_address }}{% endif %}
+                        </p>
                     </div>
                 </div>
 
@@ -86,18 +84,6 @@
                         {% include "includes/diagnostic_summary.html" %}
                     </div>
                     <div class="s-section__col col-12 col-lg-8 col-xxxl-9 order-2 order-lg-1">
-
-                        {# D'où on part #}
-                        <div class="alert alert-info mb-3 mb-md-4">
-                            <i class="ri-information-line fw-medium" aria-hidden="true"></i>
-                            {% if b.modalite %}
-                            Modalité actuelle : <strong>{{ b.modalite }}</strong>
-                            {% elif structure %}
-                            Structure référente : <strong>{{ structure.name }} ({{ structure.type_acronym }})</strong>
-                            {% else %}
-                            Aucune modalité ou structure référente
-                            {% endif %}
-                        </div>
 
                         {# Collect diagnostic signals for "why" display #}
                         {% set ns_diag_besoins = namespace(items=[]) %}
