@@ -149,7 +149,7 @@
         {% if tc %}
             {% for c in tc.contraintes or [] %}
                 {% if c.valeur and c.valeur != "NON_ABORDEE" and c.valeur != "NON_ABORDE" %}
-                    {% set ns_contraintes.items = ns_contraintes.items + [(c.libelle, c.estPrioritaire)] %}
+                    {% set ns_contraintes.items = ns_contraintes.items + [c] %}
                 {% endif %}
             {% endfor %}
         {% endif %}
@@ -161,12 +161,36 @@
                 Contraintes et besoins
             </h3>
 
-            {% for libelle, est_prio in ns_contraintes.items %}
-            {% if est_prio %}
-            {{ dot("danger", libelle + " (prioritaire)") }}
-            {% else %}
-            {{ dot("warning", libelle) }}
-            {% endif %}
+            {% for c in ns_contraintes.items %}
+            <div class="mb-2">
+                <div class="d-flex align-items-center gap-2">
+                    {% if c.estPrioritaire %}
+                    <i class="ri-circle-fill text-danger flex-shrink-0" style="font-size: 0.6rem;" aria-hidden="true"></i>
+                    <span class="fs-sm">{{ c.libelle }} (prioritaire)</span>
+                    {% else %}
+                    <i class="ri-circle-fill text-warning flex-shrink-0" style="font-size: 0.6rem;" aria-hidden="true"></i>
+                    <span class="fs-sm">{{ c.libelle }}</span>
+                    {% endif %}
+                    {% if c.impact and c.impact not in ("NON_RENSEIGNE", "NON_ABORDEE", "NON_ABORDE") %}
+                    {% set impact_class = {"FORT": "bg-danger-lighter text-danger", "MOYEN": "bg-warning-lighter text-warning", "FAIBLE": "bg-info-lighter text-info"}.get(c.impact, "bg-secondary-lighter text-secondary") %}
+                    <span class="badge rounded-pill text-nowrap badge-sm {{ impact_class }}">Impact {{ c.impact|lower }}</span>
+                    {% endif %}
+                </div>
+                {% if c.situations or c.objectifs %}
+                <ul class="list-unstyled mb-0 ms-4 mt-1">
+                    {% for s in c.situations or [] %}
+                    {% if s.libelle %}
+                    <li class="text-muted fs-xs">· {{ s.libelle }}</li>
+                    {% endif %}
+                    {% endfor %}
+                    {% for o in c.objectifs or [] %}
+                    {% if o.libelle %}
+                    <li class="text-muted fs-xs">→ {{ o.libelle }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
             {% endfor %}
 
             {% if ns_contraintes.items and ns_besoins.items %}
