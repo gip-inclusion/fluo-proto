@@ -324,7 +324,7 @@ THEMATIQUE_TO_CATEGORY = {
     "lecture-ecriture-calcul": ("Français et compétences de base", "francais"),
 }
 
-DATA_INCLUSION_DB = "/Users/louije/Development/gip/data-inclusion.db"
+DATA_INCLUSION_DB = str(Path(__file__).resolve().parents[3] / "data-inclusion.db")
 
 
 def _seed_services(session: Session) -> None:
