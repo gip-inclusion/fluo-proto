@@ -20,6 +20,12 @@ class Service(SQLModel, table=True):
     category: str  # "mobilite", "numerique", "formation", etc.
     category_label: str  # "Mobilité", "Numérique", "Formation", etc.
     thematiques: str | None = None  # original thematiques JSON for reference
+    latitude: float | None = None
+    longitude: float | None = None
+    telephone: str | None = None
+    courriel: str | None = None
+    contact_nom_prenom: str | None = None
+    site_web: str | None = None
 
 
 class Solution(SQLModel, table=True):
@@ -42,6 +48,11 @@ class Solution(SQLModel, table=True):
     max_diploma_level: int | None = None
     requires_physical: bool = False  # skip if person has health constraint
     requires_autonomy: bool = False  # only for people who are autonomous with a project
+    telephone: str | None = None
+    courriel: str | None = None
+    contact_nom_prenom: str | None = None
+    site_web: str | None = None
+    rome_code: str | None = None  # main ROME for GEIQ / role matching
 
 
 class Structure(SQLModel, table=True):

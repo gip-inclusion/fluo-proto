@@ -154,6 +154,10 @@ SOLUTIONS = [
         "conditions_admission": "Motivation pour le BTP, aptitude physique, mobilité",
         "places_disponibles": 8,
         "requires_physical": True,
+        "rome_code": "F1601",
+        "telephone": "03 20 55 14 00",
+        "courriel": "contact@geiqbtpnord.fr",
+        "site_web": "https://www.geiqbtpnord.fr",
     },
     {
         "name": "GEIQ Propreté Hauts-de-France",
@@ -165,6 +169,10 @@ SOLUTIONS = [
         "description": "Alternance dans les métiers de la propreté : agent de service, laveur de vitres, machiniste. Aucun diplôme requis.",
         "conditions_admission": "Aucun diplôme requis, motivation",
         "places_disponibles": 4,
+        "rome_code": "K2204",
+        "telephone": "03 20 45 78 90",
+        "courriel": "contact@geiq-proprete-hdf.fr",
+        "site_web": "https://geiq-proprete-hdf.fr",
     },
     {
         "name": "GEIQ Métiers Verts",
@@ -177,6 +185,10 @@ SOLUTIONS = [
         "conditions_admission": "Intérêt pour le travail en extérieur, pas de diplôme requis",
         "places_disponibles": 5,
         "requires_physical": True,
+        "rome_code": "A1101",
+        "telephone": "03 20 12 34 56",
+        "courriel": "contact@geiq-metiers-verts.fr",
+        "site_web": "https://geiq-metiers-verts.fr",
     },
     # ── PLIE ──
     {
@@ -190,6 +202,10 @@ SOLUTIONS = [
         "conditions_admission": "DELD, résidant sur le territoire lillois, niveau V et infra",
         "places_disponibles": 10,
         "max_diploma_level": 5,
+        "telephone": "03 20 95 57 67",
+        "courriel": "contact@plielilleavenir.fr",
+        "contact_nom_prenom": "Nathalie DUCROCQ",
+        "site_web": "https://www.plielilleavenir.fr",
     },
     # ── E2C ──
     {
@@ -202,7 +218,12 @@ SOLUTIONS = [
         "description": "Parcours individualisé : remise à niveau, stages en entreprise, accompagnement social. Entrées permanentes, 4 à 18 mois.",
         "conditions_admission": "16-25 ans, sans diplôme ni qualification, sorti du système scolaire",
         "places_disponibles": 5,
+        "age_min": 16,
         "age_max": 25,
+        "telephone": "03 28 38 05 50",
+        "courriel": "contact@e2c-grandlille.fr",
+        "contact_nom_prenom": "Karim BENALI",
+        "site_web": "https://e2c-grandlille.fr",
     },
     # ── EPIDE ──
     {
@@ -213,10 +234,15 @@ SOLUTIONS = [
         "commune": "Cambrai",
         "code_postal": "59400",
         "description": "Internat de 8 à 24 mois : formation professionnelle, sport, vie collective, accompagnement santé. Centre le plus proche de la métropole lilloise.",
-        "conditions_admission": "18-25 ans, niveau infra-bac, volontaire, hébergé sur place",
+        "conditions_admission": "17-25 ans, niveau infra-bac, volontaire, hébergé sur place",
         "places_disponibles": 2,
+        "age_min": 17,
         "age_max": 25,
         "max_diploma_level": 3,
+        "telephone": "03 27 73 01 50",
+        "courriel": "epide-cambrai@epide.fr",
+        "contact_nom_prenom": "Julien LEFEBVRE",
+        "site_web": "https://www.epide.fr/centre/cambrai",
     },
     # ── CUI-CAE ──
     {
@@ -336,6 +362,11 @@ def _seed_services(session: Session) -> None:
 
     cur.execute("""
         SELECT s.nom, s.thematiques, s.commune, s.code_postal, s.description,
+               s.latitude, s.longitude,
+               COALESCE(s.telephone, st.telephone) as telephone,
+               COALESCE(s.courriel, st.courriel) as courriel,
+               s.contact_nom_prenom,
+               st.site_web,
                st.nom as structure_name
         FROM services s
         LEFT JOIN structures st ON s.structure_id = st.id
@@ -409,11 +440,71 @@ def _seed_services(session: Session) -> None:
             category=category_key,
             category_label=category_label,
             thematiques=thematiques_raw,
+            latitude=row["latitude"],
+            longitude=row["longitude"],
+            telephone=row["telephone"],
+            courriel=row["courriel"],
+            contact_nom_prenom=row["contact_nom_prenom"],
+            site_web=row["site_web"],
         )
         session.add(svc)
         seen_names.add(name)
         category_counts[category_key] = category_counts.get(category_key, 0) + 1
         services_added += 1
+
+    # ── Supplementary: Apprentis d'Auteuil services across Hauts-de-France ──
+    cur.execute("""
+        SELECT s.nom, s.thematiques, s.commune, s.code_postal, s.description,
+               s.latitude, s.longitude,
+               COALESCE(s.telephone, st.telephone) as telephone,
+               COALESCE(s.courriel, st.courriel) as courriel,
+               s.contact_nom_prenom,
+               st.site_web,
+               st.nom as structure_name
+        FROM services s
+        JOIN structures st ON s.structure_id = st.id
+        WHERE LOWER(st.nom) LIKE '%auteuil%'
+          AND s.source = 'dora'
+          AND s.thematiques IS NOT NULL
+          AND s.thematiques NOT IN ('[]', '')
+          AND (s.code_postal LIKE '59%' OR s.code_postal LIKE '62%' OR s.code_postal LIKE '80%')
+    """)
+    for row in cur.fetchall():
+        name = row["nom"]
+        if not name or name in seen_names:
+            continue
+        try:
+            thematiques = json.loads(row["thematiques"])
+        except (json.JSONDecodeError, TypeError):
+            continue
+        category_key = None
+        category_label = None
+        for thematique in thematiques:
+            prefix = thematique.split("--")[0] if "--" in thematique else thematique
+            if prefix in THEMATIQUE_TO_CATEGORY:
+                category_label, category_key = THEMATIQUE_TO_CATEGORY[prefix]
+                break
+        if not category_key:
+            continue
+        description = (row["description"] or "")[:297]
+        svc = Service(
+            name=name,
+            structure_name=row["structure_name"] or "",
+            commune=row["commune"],
+            code_postal=row["code_postal"],
+            description=description,
+            category=category_key,
+            category_label=category_label,
+            thematiques=row["thematiques"],
+            latitude=row["latitude"],
+            longitude=row["longitude"],
+            telephone=row["telephone"],
+            courriel=row["courriel"],
+            contact_nom_prenom=row["contact_nom_prenom"],
+            site_web=row["site_web"],
+        )
+        session.add(svc)
+        seen_names.add(name)
 
     conn.close()
 
@@ -443,6 +534,11 @@ def seed() -> None:
                 requires_qpv=sol_data.get("requires_qpv", False),
                 requires_rqth=sol_data.get("requires_rqth", False),
                 max_diploma_level=sol_data.get("max_diploma_level"),
+                telephone=sol_data.get("telephone"),
+                courriel=sol_data.get("courriel"),
+                contact_nom_prenom=sol_data.get("contact_nom_prenom"),
+                site_web=sol_data.get("site_web"),
+                rome_code=sol_data.get("rome_code"),
             )
             session.add(sol)
 

@@ -28,7 +28,34 @@ LILLE_METRO = {
 }
 
 # Solutions that require travel but are still reachable from Lille metro
-LILLE_REACHABLE = LILLE_METRO | {"cambrai", "douai", "lens", "arras"}
+LILLE_REACHABLE = LILLE_METRO | {"cambrai", "douai", "lens", "arras", "liévin", "lievin"}
+
+
+COMMUNE_COORDS = {
+    "lille": (50.633, 3.058),
+    "hellemmes": (50.625, 3.107),
+    "lomme": (50.640, 3.010),
+    "roubaix": (50.692, 3.173),
+    "tourcoing": (50.723, 3.160),
+    "villeneuve-d'ascq": (50.618, 3.143),
+    "villeneuve d'ascq": (50.618, 3.143),
+    "marcq-en-baroeul": (50.668, 3.090),
+    "lambersart": (50.653, 3.027),
+    "wasquehal": (50.671, 3.132),
+    "croix": (50.679, 3.150),
+    "mons-en-baroeul": (50.635, 3.115),
+    "faches-thumesnil": (50.591, 3.070),
+    "wattrelos": (50.700, 3.213),
+    "hem": (50.659, 3.182),
+    "loos": (50.613, 3.000),
+    "wambrechies": (50.688, 3.043),
+    "cambrai": (50.176, 3.235),
+    "lens": (50.432, 2.830),
+    "liévin": (50.422, 2.778),
+    "lievin": (50.422, 2.778),
+    "douai": (50.369, 3.079),
+    "arras": (50.291, 2.777),
+}
 
 
 def compute_age(birthdate_str: str | None) -> int | None:
@@ -110,6 +137,182 @@ def _parse_eligibilities(beneficiary: Beneficiary) -> dict:
         "is_autonomous": is_autonomous,
         "has_project": has_project,
     }
+
+
+METIER_TO_ROME = {
+    "Exploitant / Exploitante agricole": ("A1101", "Conduite d'engins agricoles et forestiers"),
+    "Développeur / Développeuse web": ("M1805", "Études et développement informatique"),
+}
+
+PROJET_PRO_MOCK = {
+    "A1101": {
+        "insights": {
+            "tension": "Forte",
+            "salaire_median": "1 900 € brut/mois",
+            "demandeurs_emploi_region": "1 250",
+            "offres_actives_region": "430",
+            "competences_cles": ["Permis tracteur", "Conduite d'engins", "Mécanique de base", "Travail en extérieur"],
+        },
+        "offres": [
+            {
+                "titre": "Ouvrier·ère agricole polyvalent·e",
+                "structure": "GAEC Les Jardins du Nord",
+                "contrat": "CDD 6 mois",
+                "lieu": "Lille (59000)",
+                "salaire": "1 801 € brut/mois",
+                "description": "Culture maraîchère bio, récolte et conditionnement. Travail en équipe.",
+            },
+            {
+                "titre": "Conducteur·rice de tracteur agricole",
+                "structure": "Ferme des Weppes",
+                "contrat": "CDI",
+                "lieu": "Wavrin (59136)",
+                "salaire": "2 000 € brut/mois",
+                "description": "Préparation des sols, semis, traitements. Permis B requis.",
+            },
+            {
+                "titre": "Ouvrier·ère viticole",
+                "structure": "Domaine Terres d'Opale",
+                "contrat": "Saisonnier 4 mois",
+                "lieu": "Arras (62000)",
+                "salaire": "SMIC horaire",
+                "description": "Taille, entretien de la vigne et vendanges.",
+            },
+        ],
+        "formations": [
+            {
+                "titre": "CAPA Productions horticoles",
+                "structure": "CFPPA Lille-Lomme",
+                "duree": "12 mois · 1 400 h",
+                "lieu": "Lomme (59160)",
+                "rentree": "Septembre 2026",
+            },
+            {
+                "titre": "BPREA — Brevet professionnel responsable d'entreprise agricole",
+                "structure": "CFPPA Douai-Wagnonville",
+                "duree": "10 mois · 1 200 h",
+                "lieu": "Douai (59500)",
+                "rentree": "Novembre 2026",
+            },
+        ],
+        "immersions": [
+            {
+                "titre": "Immersion aux Jardins de Cocagne",
+                "structure": "Jardins de Cocagne Lille",
+                "duree": "2 semaines",
+                "lieu": "Lille (59000)",
+                "dispositif": "PMSMP via France Travail",
+            },
+            {
+                "titre": "Découverte métier — Ferme du Nord",
+                "structure": "Ferme pédagogique du Nord",
+                "duree": "5 jours",
+                "lieu": "Villeneuve-d'Ascq (59650)",
+                "dispositif": "PMSMP",
+            },
+        ],
+    },
+    "M1805": {
+        "insights": {
+            "tension": "Forte",
+            "salaire_median": "3 200 € brut/mois",
+            "demandeurs_emploi_region": "2 800",
+            "offres_actives_region": "1 850",
+            "competences_cles": ["JavaScript", "Python", "Git", "Méthodes agiles"],
+        },
+        "offres": [
+            {
+                "titre": "Développeur·se web junior",
+                "structure": "OVHcloud",
+                "contrat": "CDI",
+                "lieu": "Roubaix (59100)",
+                "salaire": "32 k€ brut/an",
+                "description": "PHP, JavaScript, Symfony. Équipe produit, méthodes agiles.",
+            },
+            {
+                "titre": "Intégrateur·rice HTML/CSS",
+                "structure": "Decathlon Digital",
+                "contrat": "CDD 12 mois",
+                "lieu": "Villeneuve-d'Ascq (59650)",
+                "salaire": "28 k€ brut/an",
+                "description": "Intégration responsive, accessibilité, Figma-to-code.",
+            },
+            {
+                "titre": "Développeur·se fullstack",
+                "structure": "Adeo Services",
+                "contrat": "CDI",
+                "lieu": "Templemars (59175)",
+                "salaire": "38 k€ brut/an",
+                "description": "React, Node.js, TypeScript. Équipe e-commerce.",
+            },
+        ],
+        "formations": [
+            {
+                "titre": "Titre pro Développeur·se web et web mobile",
+                "structure": "AFPA Roubaix",
+                "duree": "9 mois · 1 200 h",
+                "lieu": "Roubaix (59100)",
+                "rentree": "Octobre 2026",
+            },
+            {
+                "titre": "Bootcamp Fullstack JavaScript",
+                "structure": "Le Wagon Lille",
+                "duree": "9 semaines intensives",
+                "lieu": "Lille (59000)",
+                "rentree": "Juin 2026",
+            },
+        ],
+        "immersions": [
+            {
+                "titre": "Immersion équipe produit",
+                "structure": "Blablacar Tech Hub",
+                "duree": "2 semaines",
+                "lieu": "Lille (59000)",
+                "dispositif": "PMSMP via France Travail",
+            },
+        ],
+    },
+}
+
+
+def get_projet_pro(beneficiary: Beneficiary) -> dict | None:
+    """Return ROME-based mock job offers / formations / immersions for the beneficiary's métier."""
+    if not beneficiary.diagnostic_data:
+        return None
+    try:
+        diagnostic = json.loads(beneficiary.diagnostic_data)
+    except json.JSONDecodeError:
+        return None
+    diag = ((diagnostic.get("besoinsParDiagnostic") or [{}])[0]).get("diagnostic") or {}
+    nom_metier = diag.get("nomMetier")
+    if not nom_metier:
+        return None
+    rome = METIER_TO_ROME.get(nom_metier)
+    if not rome:
+        return {"nom_metier": nom_metier, "rome_code": None, "rome_libelle": None, "offres": [], "formations": [], "immersions": []}
+    rome_code, rome_libelle = rome
+    mock = PROJET_PRO_MOCK.get(rome_code, {"offres": [], "formations": [], "immersions": []})
+    return {
+        "nom_metier": nom_metier,
+        "rome_code": rome_code,
+        "rome_libelle": rome_libelle,
+        "insights": mock.get("insights"),
+        "offres": mock.get("offres", []),
+        "formations": mock.get("formations", []),
+        "immersions": mock.get("immersions", []),
+    }
+
+
+def compute_modalite_months(beneficiary: Beneficiary) -> int | None:
+    """Return the number of months since the beneficiary entered their current modalité."""
+    if not beneficiary.diagnostic_data:
+        return None
+    try:
+        diagnostic = json.loads(beneficiary.diagnostic_data)
+    except json.JSONDecodeError:
+        return None
+    ms = (diagnostic.get("extra") or {}).get("modaliteSuivi") or {}
+    return _months_since(ms.get("dateEnregistrement"))
 
 
 def compute_beneficiary_types(beneficiary: Beneficiary) -> list[str]:
@@ -462,6 +665,85 @@ def get_contrainte_services(beneficiary: Beneficiary, services: list[Service]) -
 
     result.sort(key=lambda r: (not r["est_prioritaire"], -impact_weight.get(r["impact"], 0)))
     return result
+
+
+def get_auteuil_services(
+    beneficiary: Beneficiary,
+    services: list[Service],
+    age: int | None,
+    has_projet_pro: bool,
+) -> list[Service]:
+    """Return Apprentis d'Auteuil services matching the beneficiary's profile.
+
+    Criteria:
+    - Service structure name contains "Auteuil"
+    - Beneficiary age ≤ 29 (Apprentis d'Auteuil targets 16-29)
+    - Reachable (Lille metro + extended reachable zone)
+    - AND profile fit: contrainte category match OR has a projet pro
+    """
+    if age is None or age > 29:
+        return []
+    diagnostic = json.loads(beneficiary.diagnostic_data) if beneficiary.diagnostic_data else {}
+    tc = diagnostic.get("thematiqueContrainte") or {}
+    contrainte_categories: set[str] = set()
+    for c in tc.get("contraintes") or []:
+        if c.get("valeur") and c["valeur"] not in ("NON_ABORDEE", "NON_ABORDE"):
+            cat = _category_for_contrainte(c.get("libelle") or "")
+            if cat:
+                contrainte_categories.add(cat)
+    is_young = age is not None and 16 <= age <= 29
+
+    result: list[Service] = []
+    for svc in services:
+        if not svc.structure_name or "auteuil" not in svc.structure_name.lower():
+            continue
+        # Reachable — same logic as _is_nearby but looser for this national partner: accept Hauts-de-France
+        person_city = (_person_city(beneficiary) or "").lower()
+        svc_city = (svc.commune or "").lower()
+        reachable = (
+            not svc_city
+            or svc_city == person_city
+            or (person_city in LILLE_METRO and svc_city in LILLE_REACHABLE)
+        )
+        if not reachable:
+            continue
+        # Profile fit
+        fits = (
+            svc.category in contrainte_categories
+            or is_young
+            or (has_projet_pro and svc.category == "emploi")
+        )
+        if fits:
+            result.append(svc)
+    return result
+
+
+def get_iae_geiq_solutions(
+    beneficiary: Beneficiary,
+    solutions: list[Solution],
+    beneficiary_types: list[str],
+    rome_code: str | None,
+) -> tuple[list[Solution], list[Solution]]:
+    """Return (iae_solutions, geiq_solutions) if the beneficiary is RSA/QPV/DETLD and followed by FT.
+
+    - IAE matches on proximity only.
+    - GEIQ matches on proximity AND ROME code.
+    """
+    is_ft = bool(beneficiary.modalite and not beneficiary.structure_referente_id)
+    eligible = {"RSA", "QPV", "DETLD"} & set(beneficiary_types)
+    if not (is_ft and eligible):
+        return [], []
+
+    iae_types = {"aci", "ei", "etti", "ai"}
+    iae = [s for s in solutions if s.solution_type in iae_types and _is_nearby(beneficiary, s)]
+    geiq: list[Solution] = []
+    if rome_code:
+        geiq = [
+            s
+            for s in solutions
+            if s.solution_type == "geiq" and _is_nearby(beneficiary, s) and s.rome_code == rome_code
+        ]
+    return iae, geiq
 
 
 def get_services_for_beneficiary(beneficiary: Beneficiary, services: list[Service]) -> dict[str, list[Service]]:

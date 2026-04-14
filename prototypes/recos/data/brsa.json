@@ -16,7 +16,7 @@
         "agent": {
           "nom": "VIDAL",
           "prenom": "Nathalie",
-          "structure": "MONTAUBAN NORD"
+          "structure": "LILLE VAUCANSON"
         },
         "dateMiseAJour": "2026-03-31T00:00:00.000+02:00",
         "dateMiseAJourProjet": null
@@ -25,7 +25,7 @@
       "agentDerniereExplorationBesoin": {
         "nom": "VIDAL",
         "prenom": "Nathalie",
-        "structure": "MONTAUBAN NORD"
+        "structure": "LILLE VAUCANSON"
       },
       "thematiquesBesoins": [
         {
@@ -39,7 +39,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2025-10-13T00:00:00.000+02:00"
             },
@@ -50,7 +50,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2025-10-13T00:00:00.000+02:00"
             },
@@ -61,7 +61,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2025-10-13T00:00:00.000+02:00"
             },
@@ -72,7 +72,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2025-10-13T00:00:00.000+02:00"
             }
@@ -89,7 +89,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2025-10-13T00:00:00.000+02:00"
             },
@@ -100,7 +100,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2025-10-13T00:00:00.000+02:00"
             },
@@ -111,7 +111,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2025-10-13T00:00:00.000+02:00"
             }
@@ -167,7 +167,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2026-03-31T00:00:00.000+02:00"
             },
@@ -178,7 +178,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2026-03-31T00:00:00.000+02:00"
             },
@@ -189,7 +189,7 @@
               "agent": {
                 "nom": "VIDAL",
                 "prenom": "Nathalie",
-                "structure": "MONTAUBAN NORD"
+                "structure": "LILLE VAUCANSON"
               },
               "dateExploration": "2026-03-31T00:00:00.000+02:00"
             }
@@ -282,7 +282,7 @@
     "agent": {
       "nom": "VIDAL",
       "prenom": "Nathalie",
-      "structure": "MONTAUBAN NORD"
+      "structure": "LILLE VAUCANSON"
     },
     "dateExploration": "2025-05-01T00:00:00.000+02:00"
   },
