@@ -179,11 +179,11 @@
 
 {# ── Orienter vers modal ── #}
 {% set ft_counselors = [
-    ("Yassine HAMIDI", "Renforcé"),
-    ("Valérie ESTEVE", "Guidé"),
-    ("Sandrine PEYROT", "Global"),
-    ("Marc DUPONT", "Essentiel"),
-    ("Sophie MARTIN", "Intensif"),
+    ("Yassine HAMIDI", "Renforcé", 45),
+    ("Valérie ESTEVE", "Guidé", 648),
+    ("Sandrine PEYROT", "Global", 52),
+    ("Marc DUPONT", "Essentiel", 812),
+    ("Sophie MARTIN", "Intensif", 38),
 ] %}
 {% set partners = ["PLIE de Lille", "Conseil Départemental du Nord", "Mission Locale de Lille"] %}
 {% set modalite_accompagnements = ["Renforcé", "Guidé", "Essentiel", "Intensif", "Global"] %}
@@ -199,12 +199,13 @@
 
                 <h4 class="mt-2">France Travail</h4>
                 <div class="list-group mb-4">
-                    {% for name, modalite in ft_counselors %}
+                    {% for name, modalite, portfolio in ft_counselors %}
                     {% set dest_id = 'dest-ft-' ~ loop.index %}
                     <label class="list-group-item d-flex align-items-center gap-2" for="{{ dest_id }}">
                         <input type="radio" class="form-check-input flex-shrink-0" name="orient-destination"
                                id="{{ dest_id }}" value="FT · {{ name }} ({{ modalite }})">
                         <span>{{ name }}</span>
+                        <span class="text-muted fs-sm ms-2">{{ portfolio }} personnes suivies</span>
                         <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info ms-auto">{{ modalite }}</span>
                     </label>
                     {% endfor %}
