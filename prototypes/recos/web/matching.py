@@ -397,6 +397,73 @@ def compute_recommendations(
     }
 
 
+CONTRAINTE_KEYWORD_TO_CATEGORY = [
+    ("mobilité", "mobilite"),
+    ("logement", "logement"),
+    ("financi", "financieres"),
+    ("santé", "sante"),
+    ("administrati", "administratif"),
+    ("judiciaire", "administratif"),
+    ("lecture", "francais"),
+    ("écriture", "francais"),
+    ("calcul", "francais"),
+    ("français", "francais"),
+    ("familial", "famille"),
+    ("numérique", "numerique"),
+]
+
+
+def _category_for_contrainte(libelle: str) -> str | None:
+    low = libelle.lower()
+    for kw, cat in CONTRAINTE_KEYWORD_TO_CATEGORY:
+        if kw in low:
+            return cat
+    return None
+
+
+def get_contrainte_services(beneficiary: Beneficiary, services: list[Service]) -> list[dict]:
+    """Return services matching the beneficiary's declared contraintes, grouped by contrainte."""
+    diagnostic = json.loads(beneficiary.diagnostic_data) if beneficiary.diagnostic_data else {}
+    tc = diagnostic.get("thematiqueContrainte") or {}
+    raw_contraintes = [
+        c
+        for c in tc.get("contraintes") or []
+        if c.get("valeur") and c["valeur"] not in ("NON_ABORDEE", "NON_ABORDE")
+    ]
+    if not raw_contraintes:
+        return []
+
+    person_city = _person_city(beneficiary)
+    person_city_lower = person_city.lower() if person_city else None
+
+    def _nearby(svc: Service) -> bool:
+        if not svc.commune or not person_city_lower:
+            return True
+        sc = svc.commune.lower()
+        return sc == person_city_lower or (person_city_lower in LILLE_METRO and sc in LILLE_METRO)
+
+    impact_weight = {"FORT": 3, "MOYEN": 2, "FAIBLE": 1, "NON_RENSEIGNE": 0}
+    result = []
+    for c in raw_contraintes:
+        cat = _category_for_contrainte(c.get("libelle") or "")
+        if not cat:
+            continue
+        matching = [s for s in services if s.category == cat and _nearby(s)]
+        if not matching:
+            continue
+        result.append(
+            {
+                "contrainte": c,
+                "services": matching,
+                "est_prioritaire": bool(c.get("estPrioritaire")),
+                "impact": c.get("impact") or "NON_RENSEIGNE",
+            }
+        )
+
+    result.sort(key=lambda r: (not r["est_prioritaire"], -impact_weight.get(r["impact"], 0)))
+    return result
+
+
 def get_services_for_beneficiary(beneficiary: Beneficiary, services: list[Service]) -> dict[str, list[Service]]:
     """Return services grouped by category_label, filtered by proximity."""
     person_city = _person_city(beneficiary)

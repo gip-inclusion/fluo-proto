@@ -47,8 +47,8 @@
                         <a class="nav-link" id="solutions-tab" data-bs-toggle="tab" href="#solutions"
                            role="tab" aria-controls="solutions" aria-selected="false">
                             Solutions recommandées
-                            {% if results.by_type %}
-                            <span class="badge rounded-pill badge-xs bg-info text-white ms-1">{{ results.by_type|length }}</span>
+                            {% if contrainte_solutions %}
+                            <span class="badge rounded-pill badge-xs bg-info text-white ms-1">{{ contrainte_solutions|length }}</span>
                             {% endif %}
                         </a>
                     </li>
@@ -108,30 +108,33 @@
                             {% endif %}
                         {% endif %}
 
-                        {# Recommendations — one card per solution type #}
-                        {% if results.by_type %}
-                        {% for type_label, solutions_list in results.by_type.items() %}
-                        {% set best = solutions_list[0] %}
-                        {% set others_count = solutions_list|length - 1 %}
+                        {# Recommendations — one card per contrainte with matching services from data-inclusion #}
+                        {% if contrainte_solutions %}
+                        {% for entry in contrainte_solutions %}
+                        {% set c = entry.contrainte %}
+                        {% set svcs = entry.services %}
+                        {% set best = svcs[0] %}
+                        {% set others_count = svcs|length - 1 %}
                         <div class="c-box p-0 mb-3 mb-md-4">
-                            <div class="px-3 px-lg-4 py-2 border-bottom d-flex justify-content-between align-items-center">
-                                <span class="h4 mb-0">{{ type_label }}</span>
-                                {% if others_count > 0 %}
-                                <a href="#search" class="btn-link btn-ico fs-sm flex-shrink-0" data-bs-toggle="tab" role="tab">
-                                    <span>{{ others_count }} autre{{ "s" if others_count > 1 }} solution{{ "s" if others_count > 1 }} de ce type</span>
-                                    <i class="ri-arrow-right-s-line fw-medium" aria-hidden="true"></i>
-                                </a>
-                                {% endif %}
+                            <div class="px-3 px-lg-4 py-2 border-bottom d-flex justify-content-between align-items-center gap-2">
+                                <span class="h4 mb-0">{{ c.libelle }}</span>
+                                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                    {% if entry.impact and entry.impact not in ("NON_RENSEIGNE", "NON_ABORDEE", "NON_ABORDE") %}
+                                    {% set impact_class = {"FORT": "bg-danger-lighter text-danger", "MOYEN": "bg-warning-lighter text-warning", "FAIBLE": "bg-info-lighter text-info"}.get(entry.impact, "bg-secondary-lighter text-secondary") %}
+                                    <span class="badge rounded-pill text-nowrap badge-sm {{ impact_class }}">Impact {{ entry.impact|lower }}</span>
+                                    {% endif %}
+                                    {% if entry.est_prioritaire %}
+                                    <span class="badge rounded-pill text-nowrap badge-sm bg-danger-lighter text-danger">Prioritaire</span>
+                                    {% endif %}
+                                </div>
                             </div>
                             <div class="p-3 p-lg-4">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h3 class="h6 mb-0">{{ best.structure_name or best.name }}</h3>
-                                    {% if best.places_disponibles > 0 %}
-                                    <span class="badge rounded-pill badge-sm bg-success-lighter text-success flex-shrink-0">{{ best.places_disponibles }} place{{ "s" if best.places_disponibles > 1 else "" }}</span>
-                                    {% else %}
-                                    <span class="badge rounded-pill badge-sm bg-danger-lighter text-danger flex-shrink-0">Saturé</span>
-                                    {% endif %}
+                                    <span class="badge rounded-pill badge-sm bg-info-lighter text-info flex-shrink-0">{{ best.category_label }}</span>
                                 </div>
+
+                                <p class="fs-sm fw-medium mb-2">{{ best.name }}</p>
 
                                 {% if best.commune %}
                                 <p class="text-muted fs-sm mb-2">
@@ -141,127 +144,41 @@
                                 {% endif %}
 
                                 {% if best.description %}
-                                <p class="fs-sm mb-2">{{ best.description[:150] }}{% if best.description|length > 150 %}...{% endif %}</p>
+                                <p class="fs-sm mb-0">{{ best.description[:200] }}{% if best.description|length > 200 %}…{% endif %}</p>
                                 {% endif %}
 
-                                {# Compatibilité diagnostic #}
-                                {% if ns_diag_besoins.items or ns_diag_contraintes.items %}
+                                {% if c.situations or c.objectifs %}
                                 <div class="mt-3">
-                                    <p class="fs-sm fw-bold mb-1">Compatibilité avec le diagnostic</p>
-                                    <div class="d-flex flex-wrap gap-1" style="margin-left: -3px;">
-                                        {% for besoin in ns_diag_besoins.items[:3] %}
-                                        <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
-                                            <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
-                                            {{ besoin }}
-                                        </span>
+                                    <p class="fs-sm fw-bold mb-1">Contexte de la contrainte</p>
+                                    <ul class="list-unstyled mb-0">
+                                        {% for s in c.situations or [] %}
+                                        {% if s.libelle %}
+                                        <li class="text-muted fs-sm">· {{ s.libelle }}</li>
+                                        {% endif %}
                                         {% endfor %}
-                                        {% for libelle, est_prio in ns_diag_contraintes.items[:2] %}
-                                        <span class="badge badge-sm rounded-pill {% if est_prio %}bg-danger-lighter text-danger{% else %}bg-info-lighter text-info{% endif %}">
-                                            <i class="ri-{% if est_prio %}alert-line{% else %}information-line{% endif %}" aria-hidden="true"></i>
-                                            {{ libelle }}
-                                        </span>
+                                        {% for o in c.objectifs or [] %}
+                                        {% if o.libelle %}
+                                        <li class="text-muted fs-sm">→ {{ o.libelle }}</li>
+                                        {% endif %}
                                         {% endfor %}
-                                    </div>
+                                    </ul>
                                 </div>
                                 {% endif %}
-
-                                {# Éligibilité #}
-                                <div class="mb-0 mt-3">
-                                    <p class="fs-sm fw-bold mb-1">Éligibilité à la solution</p>
-                                    {% set iae_types = ["aci", "ei", "etti", "ai"] %}
-                                    {% set age = None %}
-                                    {% if b.person_birthdate %}
-                                        {% set birth_year = b.person_birthdate[:4]|int %}
-                                        {% set age = 2026 - birth_year %}
-                                    {% endif %}
-                                    <div class="d-flex flex-wrap gap-1" style="margin-left: -3px;">
-                                        {% if best.solution_type in iae_types %}
-                                            {% set has_pass = "PASS IAE valide" in (b.eligibilites or "") %}
-                                            {% if has_pass %}
-                                            <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
-                                                <i class="ri-pass-valid-line" aria-hidden="true"></i>
-                                                PASS&nbsp;IAE valide
-                                            </span>
-                                            {% else %}
-                                            <span class="badge badge-sm rounded-pill bg-warning-lighter text-warning">
-                                                <i class="ri-error-warning-line" aria-hidden="true"></i>
-                                                Éligibilité IAE à valider
-                                            </span>
-                                            {% endif %}
-                                        {% elif best.solution_type == "e2c" %}
-                                            {% if age and age <= 25 %}
-                                            <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
-                                                <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
-                                                {{ age }} ans — éligible (16-25 ans)
-                                            </span>
-                                            {% else %}
-                                            <span class="badge badge-sm rounded-pill bg-warning-lighter text-warning">
-                                                <i class="ri-error-warning-line" aria-hidden="true"></i>
-                                                Critère d'âge à vérifier
-                                            </span>
-                                            {% endif %}
-                                        {% elif best.solution_type == "epide" %}
-                                            {% if age and age >= 18 and age <= 25 %}
-                                            <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
-                                                <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
-                                                {{ age }} ans — éligible (18-25 ans)
-                                            </span>
-                                            {% else %}
-                                            <span class="badge badge-sm rounded-pill bg-warning-lighter text-warning">
-                                                <i class="ri-error-warning-line" aria-hidden="true"></i>
-                                                Critère d'âge à vérifier
-                                            </span>
-                                            {% endif %}
-                                        {% elif best.solution_type == "plie" %}
-                                            <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
-                                                <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
-                                                Réside sur le territoire
-                                            </span>
-                                        {% elif best.solution_type == "geiq" %}
-                                            <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
-                                                <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
-                                                Éligible — pas de PASS IAE requis
-                                            </span>
-                                        {% elif best.solution_type == "prepa_competences" %}
-                                            <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
-                                                <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
-                                                Demandeur d'emploi inscrit
-                                            </span>
-                                        {% elif best.solution_type == "cui_cae" %}
-                                            <span class="badge badge-sm rounded-pill bg-success-lighter text-success">
-                                                <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
-                                                Éligible au dispositif
-                                            </span>
-                                        {% else %}
-                                            <span class="badge badge-sm rounded-pill bg-warning-lighter text-warning">
-                                                <i class="ri-error-warning-line" aria-hidden="true"></i>
-                                                Éligibilité à valider
-                                            </span>
-                                        {% endif %}
-                                    </div>
-                                </div>
                             </div>
 
-                            <div class="border-top px-3 px-lg-4 py-3 d-flex justify-content-end gap-2">
-                                <a href="/solution/{{ best.id }}?from={{ b.id }}" class="btn btn-outline-primary btn-sm btn-ico">
-                                    <i class="ri-eye-line fw-medium" aria-hidden="true"></i>
-                                    <span>Voir le détail</span>
+                            {% if others_count > 0 %}
+                            <div class="border-top px-3 px-lg-4 py-3">
+                                <a href="#search" class="btn-link btn-ico fs-sm" data-bs-toggle="tab" role="tab">
+                                    <span>{{ others_count }} autre{{ "s" if others_count > 1 }} service{{ "s" if others_count > 1 }} pour cette contrainte</span>
+                                    <i class="ri-arrow-right-s-line fw-medium" aria-hidden="true"></i>
                                 </a>
-                                <button type="button" class="btn btn-primary btn-sm btn-ico prescribe-btn"
-                                        data-bs-toggle="modal" data-bs-target="#prescribeModal"
-                                        data-beneficiary-id="{{ b.id }}"
-                                        data-solution-id="{{ best.id }}"
-                                        data-solution-name="{{ best.name }}"
-                                        data-solution-type="{{ best.type_label }}">
-                                    <i class="ri-send-plane-line fw-medium" aria-hidden="true"></i>
-                                    <span>Prescrire</span>
-                                </button>
                             </div>
+                            {% endif %}
                         </div>
                         {% endfor %}
                         {% else %}
                         <div class="c-box mb-3 mb-md-4">
-                            <p class="text-muted mb-0">Aucune recommandation disponible pour ce profil.</p>
+                            <p class="text-muted mb-0">Aucune contrainte à couvrir pour ce profil.</p>
                         </div>
                         {% endif %}
 

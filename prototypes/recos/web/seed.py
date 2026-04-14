@@ -317,6 +317,7 @@ THEMATIQUE_TO_CATEGORY = {
     "preparer-sa-candidature": ("Emploi", "emploi"),
     "choisir-un-metier": ("Emploi", "emploi"),
     "difficultes-administratives-ou-juridiques": ("Démarches administratives", "administratif"),
+    "difficultes-financieres": ("Difficultés financières", "financieres"),
     "sante": ("Santé", "sante"),
     "logement-hebergement": ("Logement", "logement"),
     "famille": ("Famille et parentalité", "famille"),

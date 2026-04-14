@@ -7,7 +7,13 @@ from sqlmodel import Session, select
 
 from ..config import BENEFICIARY_TYPES
 from ..database import engine
-from ..matching import compute_age, compute_beneficiary_types, compute_recommendations, get_services_for_beneficiary
+from ..matching import (
+    compute_age,
+    compute_beneficiary_types,
+    compute_recommendations,
+    get_contrainte_services,
+    get_services_for_beneficiary,
+)
 from ..models import Beneficiary, Prescription, Professional, Service, Solution, Structure
 
 router = APIRouter()
@@ -102,6 +108,7 @@ async def detail_beneficiary(request: Request, id: int):
         # Services grouped by category
         all_services = session.exec(select(Service)).all()
         services_grouped = get_services_for_beneficiary(b, all_services)
+        contrainte_solutions = get_contrainte_services(b, all_services)
     return _templates(request).TemplateResponse(
         "beneficiary_detail.html",
         {
@@ -113,6 +120,7 @@ async def detail_beneficiary(request: Request, id: int):
             "prescriptions": prescriptions,
             "results": results,
             "services_grouped": services_grouped,
+            "contrainte_solutions": contrainte_solutions,
         },
     )
 
