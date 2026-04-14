@@ -7,6 +7,7 @@
     <link rel="shortcut icon" href="/static/vendor/theme-inclusion/images/favicon.ico" type="image/ico">
     <link rel="stylesheet" href="/static/vendor/theme-inclusion/stylesheets/app.css">
     <link rel="stylesheet" href="/static/css/itou.css">
+    {% block head_extra %}{% endblock %}
 </head>
 <body class="l-authenticated">
     <header role="banner" id="header">
@@ -96,5 +97,6 @@
     <script src="/static/vendor/jquery/jquery.min.js"></script>
     <script src="/static/vendor/bootstrap/popper.min.js"></script>
     <script src="/static/vendor/bootstrap/bootstrap.min.js"></script>
+    {% block scripts_extra %}{% endblock %}
 </body>
 </html>

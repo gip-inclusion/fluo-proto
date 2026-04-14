@@ -61,6 +61,12 @@
                         <label class="form-check-label" for="ft-toggle">Personnes accompagnées par France Travail</label>
                     </div>
                     {% if ft_only %}
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="over5-toggle"
+                               name="over5" value="1"
+                               {% if over5_only %}checked{% endif %}>
+                        <label class="form-check-label" for="over5-toggle">Depuis + 5 mois</label>
+                    </div>
                     <div class="dropdown">
                         <button class="btn btn-outline-primary dropdown-toggle" type="button"
                                 data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
@@ -147,6 +153,9 @@
                                     {% if b.modalite %}
                                         France Travail
                                         <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ b.modalite }}</span>
+                                        {% if b._modalite_months is not none and b._modalite_months > 5 %}
+                                        <span class="badge rounded-pill text-nowrap badge-sm bg-warning-lighter text-warning">Depuis + 5 mois</span>
+                                        {% endif %}
                                     {% elif b._structure %}
                                         {{ b._structure.name }} ({{ b._structure.type_acronym }})
                                     {% else %}

@@ -3,12 +3,12 @@
 
 {% if diagnostic %}
 <div class="c-box mb-3 mb-md-4 bg-success-lightest border-success">
-    <h3>Synthèse diagnostic</h3>
+    <h3 class="h5">Synthèse diagnostic</h3>
 
     {# ── Projet pro ── #}
     {% set diag = diagnostic.besoinsParDiagnostic[0].diagnostic if diagnostic.besoinsParDiagnostic else none %}
     {% if diag and diag.nomMetier %}
-    <h4>Projet</h4>
+    <h4 class="h6">Projet</h4>
     <ul class="list-unstyled mb-0">
         <li class="d-flex align-items-center gap-2 mb-1">
             <i class="ri-circle-fill text-success" style="font-size: 0.6rem;" aria-hidden="true"></i>
@@ -30,7 +30,7 @@
     {% endfor %}
     {% if ns_besoins.items %}
     <hr class="my-3">
-    <h4>Besoins</h4>
+    <h4 class="h6">Besoins</h4>
     <ul class="list-unstyled mb-0">
         {% for besoin in ns_besoins.items %}
         <li class="d-flex align-items-center gap-2 mb-1">
@@ -52,7 +52,7 @@
         {% endfor %}
         {% if ns_contraintes.items %}
         <hr class="my-3">
-        <h4>Contraintes</h4>
+        <h4 class="h6">Contraintes</h4>
         <ul class="list-unstyled mb-0">
             {% for c in ns_contraintes.items %}
             <li class="mb-2">
@@ -87,7 +87,7 @@
         </ul>
         {% elif tc.declareSansContrainte and tc.declareSansContrainte.flag %}
         <hr class="my-3">
-        <h4>Contraintes</h4>
+        <h4 class="h6">Contraintes</h4>
         <ul class="list-unstyled mb-0">
             <li class="d-flex align-items-center gap-2 mb-1">
                 <i class="ri-circle-fill text-success" style="font-size: 0.6rem;" aria-hidden="true"></i>
@@ -101,7 +101,7 @@
     {% set pa = diagnostic.pouvoirAgir if diagnostic.pouvoirAgir else none %}
     {% if pa and (pa.confiance or pa.accompagnement) %}
     <hr class="my-3">
-    <h4>Autonomie</h4>
+    <h4 class="h6">Autonomie</h4>
     <ul class="list-unstyled mb-0">
         <li class="d-flex align-items-center gap-2 mb-1">
             {% if pa.confiance == "OUI" and pa.accompagnement != "OUI" %}
@@ -125,7 +125,7 @@
         {% if an.contrainte and an.contrainte.valeur == "OUI" %}{% set num_ok = false %}{% endif %}
         {% if an.besoin and an.besoin.valeur == "BESOIN" %}{% set num_ok = false %}{% endif %}
     <hr class="my-3">
-    <h4>Numérique</h4>
+    <h4 class="h6">Numérique</h4>
     <ul class="list-unstyled mb-0">
         <li class="d-flex align-items-center gap-2 mb-1">
             {% if num_ok %}
@@ -140,9 +140,10 @@
     {% endif %}
 
     <hr class="my-3">
-    <a href="#diagnostic" class="btn-link btn-ico fs-sm" data-bs-toggle="tab" role="tab">
+    <button type="button" class="btn btn-link btn-ico fs-sm p-0"
+            data-bs-toggle="modal" data-bs-target="#diagnostic-modal">
         <i class="ri-eye-line fw-medium" aria-hidden="true"></i>
         <span>Diagnostic complet</span>
-    </a>
+    </button>
 </div>
 {% endif %}

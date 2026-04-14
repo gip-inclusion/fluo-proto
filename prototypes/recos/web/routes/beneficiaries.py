@@ -8,10 +8,15 @@ from sqlmodel import Session, select
 from ..config import BENEFICIARY_TYPES
 from ..database import engine
 from ..matching import (
+    COMMUNE_COORDS,
     compute_age,
     compute_beneficiary_types,
+    compute_modalite_months,
     compute_recommendations,
+    get_auteuil_services,
     get_contrainte_services,
+    get_iae_geiq_solutions,
+    get_projet_pro,
     get_services_for_beneficiary,
 )
 from ..models import Beneficiary, Prescription, Professional, Service, Solution, Structure
@@ -39,6 +44,7 @@ async def list_beneficiaries(request: Request):
     selected_modalite = request.query_params.get("modalite") or ""
     if selected_modalite not in ft_modalites:
         selected_modalite = ""
+    over5_only = request.query_params.get("over5") == "1"
     with Session(engine) as session:
         beneficiaries = session.exec(select(Beneficiary).order_by(Beneficiary.person_last_name)).all()
         structure_ids = [b.structure_referente_id for b in beneficiaries if b.structure_referente_id]
@@ -50,12 +56,17 @@ async def list_beneficiaries(request: Request):
             b._types = compute_beneficiary_types(b)
             b._structure = structures.get(b.structure_referente_id)
             b._age = compute_age(b.person_birthdate)
+            b._modalite_months = compute_modalite_months(b)
         if selected_types:
             beneficiaries = [b for b in beneficiaries if any(t in b._types for t in selected_types)]
         if ft_only:
             beneficiaries = [b for b in beneficiaries if b.modalite]
             if selected_modalite:
                 beneficiaries = [b for b in beneficiaries if b.modalite == selected_modalite]
+            if over5_only:
+                beneficiaries = [
+                    b for b in beneficiaries if b._modalite_months is not None and b._modalite_months > 5
+                ]
     return _templates(request).TemplateResponse(
         "beneficiary_list.html",
         {
@@ -67,6 +78,7 @@ async def list_beneficiaries(request: Request):
             "ft_only": ft_only,
             "ft_modalites": ft_modalites,
             "selected_modalite": selected_modalite if ft_only else "",
+            "over5_only": over5_only and ft_only,
         },
     )
 
@@ -79,6 +91,8 @@ async def detail_beneficiary(request: Request, id: int):
             return HTMLResponse("Not found", status_code=404)
         b._eligibility_list = json.loads(b.eligibilites) if b.eligibilites else []
         b._age = compute_age(b.person_birthdate)
+        b._modalite_months = compute_modalite_months(b)
+        b._types = compute_beneficiary_types(b)
         structure = None
         if b.structure_referente_id:
             structure = session.get(Structure, b.structure_referente_id)
@@ -119,6 +133,65 @@ async def detail_beneficiary(request: Request, id: int):
             )
             if has_active_contrainte:
                 plie_solution = next((s for s in all_solutions if s.solution_type == "plie"), None)
+        # Map center coords from beneficiary commune
+        from ..matching import _person_city  # local import to avoid cycle
+        city = (_person_city(b) or "").lower().strip()
+        beneficiary_coords = COMMUNE_COORDS.get(city)
+        # Jeunes paths (EPIDE, E2C) — only for beneficiaries aged 16-25
+        jeunes_solutions: list = []
+        age = b._age
+        if age is not None and 16 <= age <= 25:
+            jeunes_solutions = [
+                s
+                for s in all_solutions
+                if s.solution_type in {"epide", "e2c"}
+                and (s.age_min is None or age >= s.age_min)
+                and (s.age_max is None or age <= s.age_max)
+            ]
+        # IAE / GEIQ for RSA/QPV/DETLD suivi FT
+        projet = get_projet_pro(b)
+        iae_solutions, geiq_solutions = get_iae_geiq_solutions(
+            b, all_solutions, compute_beneficiary_types(b), (projet or {}).get("rome_code")
+        )
+        auteuil_services = get_auteuil_services(b, all_services, age, bool(projet and projet.get("nom_metier")))
+
+        def _coords_for(obj):
+            lat = getattr(obj, "latitude", None)
+            lng = getattr(obj, "longitude", None)
+            if lat is not None and lng is not None:
+                return (lat, lng)
+            commune = ((getattr(obj, "commune", None) or "").lower()).strip()
+            return COMMUNE_COORDS.get(commune)
+
+        map_points: list[dict] = []
+        def _add_point(obj, label):
+            coords = _coords_for(obj)
+            if not coords:
+                return
+            map_points.append(
+                {
+                    "lat": coords[0],
+                    "lng": coords[1],
+                    "title": obj.name,
+                    "structure": getattr(obj, "structure_name", "") or "",
+                    "commune": obj.commune or "",
+                    "label": label,
+                }
+            )
+
+        for entry in contrainte_solutions:
+            for s in entry["services"]:
+                _add_point(s, entry["contrainte"].get("libelle") or "Contrainte")
+        if plie_solution:
+            _add_point(plie_solution, "PLIE")
+        for s in jeunes_solutions:
+            _add_point(s, s.type_label)
+        for s in iae_solutions:
+            _add_point(s, s.type_label)
+        for s in geiq_solutions:
+            _add_point(s, "GEIQ")
+        for s in auteuil_services:
+            _add_point(s, "Apprentis d'Auteuil")
     return _templates(request).TemplateResponse(
         "beneficiary_detail.html",
         {
@@ -132,6 +205,13 @@ async def detail_beneficiary(request: Request, id: int):
             "services_grouped": services_grouped,
             "contrainte_solutions": contrainte_solutions,
             "plie_solution": plie_solution,
+            "beneficiary_coords": beneficiary_coords,
+            "projet_pro": projet,
+            "jeunes_solutions": jeunes_solutions,
+            "iae_solutions": iae_solutions,
+            "geiq_solutions": geiq_solutions,
+            "auteuil_services": auteuil_services,
+            "map_points": map_points,
         },
     )
 

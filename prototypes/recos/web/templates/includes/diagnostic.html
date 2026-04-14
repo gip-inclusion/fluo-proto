@@ -40,7 +40,7 @@
 
         {% if ns_parcours.has_content %}
         <div class="c-box mb-3 mb-md-4">
-            <h3>
+            <h3 class="h5">
                 <i class="ri-route-line fw-medium" aria-hidden="true"></i>
                 Parcours
             </h3>
@@ -51,7 +51,7 @@
 
             {# Disposition #}
             {% if decl_orient and (decl_orient.elements or decl_orient.santeDeclare) %}
-            <h4 class="mt-3">Disposition</h4>
+            <h4 class="h6 mt-3">Disposition</h4>
             {% for el in decl_orient.elements or [] %}
             {{ dot("info", el) }}
             {% endfor %}
@@ -69,7 +69,7 @@
                 {% set ns_droits.has_content = true %}
             {% endif %}
             {% if ns_droits.has_content %}
-            <h4 class="mt-3">Droits et démarches</h4>
+            <h4 class="h6 mt-3">Droits et démarches</h4>
             {% if ofii %}
             {% if ofii.beneficiaireCIR %}
             {{ dot("info", "Bénéficiaire du Contrat d'Intégration Républicaine") }}
@@ -100,7 +100,7 @@
         {% set diag = diagnostic.besoinsParDiagnostic[0].diagnostic if diagnostic.besoinsParDiagnostic else none %}
         {% if diag %}
         <div class="c-box mb-3 mb-md-4">
-            <h3>
+            <h3 class="h5">
                 <i class="ri-compass-3-line fw-medium" aria-hidden="true"></i>
                 Projet professionnel
             </h3>
@@ -156,7 +156,7 @@
 
         {% if ns_contraintes.items or ns_besoins.items %}
         <div class="c-box mb-3 mb-md-4">
-            <h3>
+            <h3 class="h5">
                 <i class="ri-alert-line fw-medium" aria-hidden="true"></i>
                 Contraintes et besoins
             </h3>
@@ -210,7 +210,7 @@
         </div>
         {% elif tc and tc.declareSansContrainte and tc.declareSansContrainte.flag %}
         <div class="c-box mb-3 mb-md-4">
-            <h3>
+            <h3 class="h5">
                 <i class="ri-alert-line fw-medium" aria-hidden="true"></i>
                 Contraintes et besoins
             </h3>
@@ -233,7 +233,7 @@
 
         {% if ns_forces.items %}
         <div class="c-box mb-3 mb-md-4">
-            <h3>
+            <h3 class="h5">
                 <i class="ri-star-line fw-medium" aria-hidden="true"></i>
                 Points forts
             </h3>
@@ -263,7 +263,7 @@
 
         {% if ns_auto.has_content %}
         <div class="c-box mb-3 mb-md-4">
-            <h3>
+            <h3 class="h5">
                 <i class="ri-computer-line fw-medium" aria-hidden="true"></i>
                 Autonomie et numérique
             </h3>

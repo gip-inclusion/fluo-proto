@@ -1,6 +1,32 @@
 {% extends "base.html" %}
 {% block title %}{{ b.person_last_name }} {{ b.person_first_name }}{% endblock %}
+{% block head_extra %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+    [data-bs-toggle="collapse"] .collapse-chevron { transition: transform .2s ease; }
+    [data-bs-toggle="collapse"]:not(.collapsed) .collapse-chevron { transform: rotate(180deg); }
+</style>
+{% endblock %}
 {% block content %}
+{% macro render_contacts(obj) %}
+{% if obj.telephone or obj.courriel or obj.site_web or obj.contact_nom_prenom %}
+<div class="mt-3 pt-3 border-top d-flex flex-wrap gap-3 fs-sm">
+    {% if obj.contact_nom_prenom %}
+    <span class="text-muted"><i class="ri-user-line fw-medium" aria-hidden="true"></i> {{ obj.contact_nom_prenom }}</span>
+    {% endif %}
+    {% if obj.telephone %}
+    <a href="tel:{{ obj.telephone|replace(' ', '') }}" class="btn-link"><i class="ri-phone-line fw-medium" aria-hidden="true"></i> {{ obj.telephone }}</a>
+    {% endif %}
+    {% if obj.courriel %}
+    <a href="mailto:{{ obj.courriel }}" class="btn-link"><i class="ri-mail-line fw-medium" aria-hidden="true"></i> {{ obj.courriel }}</a>
+    {% endif %}
+    {% if obj.site_web %}
+    <a href="{{ obj.site_web }}" target="_blank" rel="noopener" class="btn-link"><i class="ri-global-line fw-medium" aria-hidden="true"></i> Site web</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endmacro %}
 <section class="s-title-02">
     <div class="s-title-02__container container">
         <div class="s-title-02__row row">
@@ -17,14 +43,26 @@
                             {{ b.person_last_name }} {{ b.person_first_name }}
                             {% if b.modalite %}
                             <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ b.modalite }}</span>
+                            {% if b._modalite_months is not none and b._modalite_months > 5 %}
+                            <span class="badge rounded-pill text-nowrap badge-base bg-warning-lighter text-warning">Depuis + 5 mois</span>
+                            {% endif %}
                             {% elif structure %}
                             <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
                             {% endif %}
                         </h1>
-                        <p class="text-muted mb-0">
-                            {% if b._age is not none %}{{ b._age }} ans{% endif %}
-                            {% if b._age is not none and b.person_address %} · {% endif %}
-                            {% if b.person_address %}{{ b.person_address }}{% endif %}
+                        <p class="mb-0">
+                            {% if b._age is not none or b.person_address %}
+                            <button type="button" id="locate-address-pill"
+                                    class="btn btn-sm bg-white border rounded-pill px-3 py-1 d-inline-flex align-items-center gap-2 shadow-sm text-muted"
+                                    data-bs-toggle="modal" data-bs-target="#locate-modal"
+                                    aria-label="Modifier l'âge, l'adresse et le rayon">
+                                {% if b._age is not none %}<span id="locate-age-display">{{ b._age }} ans</span>{% endif %}
+                                {% if b._age is not none and b.person_address %}<span class="text-muted">·</span>{% endif %}
+                                {% if b.person_address %}
+                                <span id="locate-address-display">{{ b.person_address }}</span>
+                                {% endif %}
+                            </button>
+                            {% endif %}
                         </p>
                     </div>
                 </div>
@@ -38,25 +76,19 @@
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="diagnostic-tab" data-bs-toggle="tab" href="#diagnostic"
-                           role="tab" aria-controls="diagnostic" aria-selected="false">
-                            Diagnostic
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
                         <a class="nav-link" id="solutions-tab" data-bs-toggle="tab" href="#solutions"
                            role="tab" aria-controls="solutions" aria-selected="false">
                             Solutions recommandées
-                            {% set reco_count = (contrainte_solutions|length) + (1 if plie_solution else 0) %}
+                            {% set reco_count = (contrainte_solutions|length) + (1 if plie_solution else 0) + (jeunes_solutions|length) + (iae_solutions|length) + (geiq_solutions|length) + (auteuil_services|length) %}
                             {% if reco_count %}
                             <span class="badge rounded-pill badge-xs bg-info text-white ms-1">{{ reco_count }}</span>
                             {% endif %}
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="search-tab" data-bs-toggle="tab" href="#search"
-                           role="tab" aria-controls="search" aria-selected="false">
-                            Rechercher un service ou une solution
+                        <a class="nav-link" id="projet-tab" data-bs-toggle="tab" href="#projet"
+                           role="tab" aria-controls="projet" aria-selected="false">
+                            Emplois &amp; formations recommandés
                         </a>
                     </li>
                 </ul>
@@ -71,20 +103,43 @@
             {# ── Tab 1: Informations générales ── #}
             <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
                 {% include "includes/general_info.html" %}
-            </div>
-
-            {# ── Tab 2: Diagnostic ── #}
-            <div class="tab-pane fade" id="diagnostic" role="tabpanel" aria-labelledby="diagnostic-tab">
+                <h2 class="h3 mt-4 mb-3">Diagnostic complet</h2>
                 {% include "includes/diagnostic.html" %}
             </div>
 
             {# ── Tab 3: Solutions recommandées ── #}
             <div class="tab-pane fade" id="solutions" role="tabpanel" aria-labelledby="solutions-tab">
                 <div class="s-section__row row">
-                    <div class="s-section__col col-12 col-lg-4 col-xxxl-3 order-1 order-lg-2">
-                        {% include "includes/diagnostic_summary.html" %}
+                    <div class="s-section__col col-12 col-lg-5 col-xxxl-4 order-1 order-lg-2">
+                        <div class="c-box mb-3 mb-md-4 p-0" style="position: sticky; top: 4rem;">
+                            <div id="locate-map" style="height: 360px; border-radius: 6px; overflow: hidden;"></div>
+                        </div>
                     </div>
-                    <div class="s-section__col col-12 col-lg-8 col-xxxl-9 order-2 order-lg-1">
+                    <div class="s-section__col col-12 col-lg-7 col-xxxl-8 order-2 order-lg-1">
+
+                        {# Collapsible Synthèse diagnostic #}
+                        <div class="mb-3 mb-md-4">
+                            <button class="btn btn-outline-primary btn-ico w-100 d-flex justify-content-between align-items-center gap-3 collapsed"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#synthese-collapse"
+                                    aria-expanded="false" aria-controls="synthese-collapse">
+                                <span class="d-flex align-items-center gap-2 flex-wrap">
+                                    <span>
+                                        <i class="ri-clipboard-line fw-medium" aria-hidden="true"></i>
+                                        Synthèse diagnostic
+                                    </span>
+                                    {% for t in b._types %}
+                                    {% set color = beneficiary_type_colors.get(t, 'bg-secondary') %}
+                                    {% set text_color = color.replace('bg-', 'text-') %}
+                                    <span class="badge rounded-pill text-nowrap badge-sm {{ color }}-lighter {{ text_color }}">{{ t }}</span>
+                                    {% endfor %}
+                                </span>
+                                <i class="ri-arrow-down-s-line fw-medium collapse-chevron" aria-hidden="true"></i>
+                            </button>
+                            <div class="collapse mt-3" id="synthese-collapse">
+                                {% include "includes/diagnostic_summary.html" %}
+                            </div>
+                        </div>
+
 
                         {# Collect diagnostic signals for "why" display #}
                         {% set ns_diag_besoins = namespace(items=[]) %}
@@ -109,34 +164,8 @@
                             {% endif %}
                         {% endif %}
 
-                        {# PLIE path suggestion — for France Travail beneficiaries with at least one active contrainte #}
-                        {% if plie_solution %}
-                        <div class="c-box p-0 mb-3 mb-md-4 border-warning">
-                            <div class="px-3 px-lg-4 py-2 border-bottom d-flex justify-content-between align-items-center gap-2">
-                                <span class="h4 mb-0">Solution de parcours</span>
-                                <span class="badge rounded-pill text-nowrap badge-sm bg-warning-lighter text-warning">Levée des freins</span>
-                            </div>
-                            <div class="p-3 p-lg-4">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h3 class="h6 mb-0">{{ plie_solution.name }}</h3>
-                                    <span class="badge rounded-pill badge-sm bg-info-lighter text-info flex-shrink-0">{{ plie_solution.type_label }}</span>
-                                </div>
-                                {% if plie_solution.commune %}
-                                <p class="text-muted fs-sm mb-2">
-                                    <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
-                                    {{ plie_solution.commune }}{% if plie_solution.code_postal %} ({{ plie_solution.code_postal }}){% endif %}
-                                </p>
-                                {% endif %}
-                                {% if plie_solution.description %}
-                                <p class="fs-sm mb-2">{{ plie_solution.description }}</p>
-                                {% endif %}
-                                <p class="fs-sm text-muted mb-0">
-                                    <i class="ri-lightbulb-flash-line fw-medium" aria-hidden="true"></i>
-                                    Recommandé : au moins une contrainte à lever et accompagnement France Travail en cours.
-                                </p>
-                            </div>
-                        </div>
-                        {% endif %}
+                        {# ────── Section : Contraintes personnelles ────── #}
+                        <h2 class="h3 mt-2 mb-3">Levée des contraintes</h2>
 
                         {# Recommendations — one card per contrainte with matching services from data-inclusion #}
                         {% if contrainte_solutions %}
@@ -147,7 +176,7 @@
                         {% set others_count = svcs|length - 1 %}
                         <div class="c-box p-0 mb-3 mb-md-4">
                             <div class="px-3 px-lg-4 py-2 border-bottom d-flex justify-content-between align-items-center gap-2">
-                                <span class="h4 mb-0">{{ c.libelle }}</span>
+                                <h3 class="h5 mb-0">{{ c.libelle }}</h3>
                                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                     {% if entry.impact and entry.impact not in ("NON_RENSEIGNE", "NON_ABORDEE", "NON_ABORDE") %}
                                     {% set impact_class = {"FORT": "bg-danger-lighter text-danger", "MOYEN": "bg-warning-lighter text-warning", "FAIBLE": "bg-info-lighter text-info"}.get(entry.impact, "bg-secondary-lighter text-secondary") %}
@@ -160,7 +189,7 @@
                             </div>
                             <div class="p-3 p-lg-4">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h3 class="h6 mb-0">{{ best.structure_name or best.name }}</h3>
+                                    <h4 class="h6 mb-0">{{ best.structure_name or best.name }}</h4>
                                     <span class="badge rounded-pill badge-sm bg-info-lighter text-info flex-shrink-0">{{ best.category_label }}</span>
                                 </div>
 
@@ -177,18 +206,20 @@
                                 <p class="fs-sm mb-0">{{ best.description[:200] }}{% if best.description|length > 200 %}…{% endif %}</p>
                                 {% endif %}
 
+                                {{ render_contacts(best) }}
+
                                 {% if c.situations or c.objectifs %}
-                                <div class="mt-3">
-                                    <p class="fs-sm fw-bold mb-1">Contexte de la contrainte</p>
+                                <div class="mt-3 p-3 rounded bg-info-lighter">
+                                    <p class="fs-sm fw-bold mb-1 text-info">Contexte de la contrainte</p>
                                     <ul class="list-unstyled mb-0">
                                         {% for s in c.situations or [] %}
                                         {% if s.libelle %}
-                                        <li class="text-muted fs-sm">· {{ s.libelle }}</li>
+                                        <li class="fs-sm">· {{ s.libelle }}</li>
                                         {% endif %}
                                         {% endfor %}
                                         {% for o in c.objectifs or [] %}
                                         {% if o.libelle %}
-                                        <li class="text-muted fs-sm">→ {{ o.libelle }}</li>
+                                        <li class="fs-sm">→ {{ o.libelle }}</li>
                                         {% endif %}
                                         {% endfor %}
                                     </ul>
@@ -198,10 +229,9 @@
 
                             {% if others_count > 0 %}
                             <div class="border-top px-3 px-lg-4 py-3">
-                                <a href="#search" class="btn-link btn-ico fs-sm" data-bs-toggle="tab" role="tab">
-                                    <span>{{ others_count }} autre{{ "s" if others_count > 1 }} service{{ "s" if others_count > 1 }} pour cette contrainte</span>
-                                    <i class="ri-arrow-right-s-line fw-medium" aria-hidden="true"></i>
-                                </a>
+                                <span class="text-muted fs-sm">
+                                    {{ others_count }} autre{{ "s" if others_count > 1 }} service{{ "s" if others_count > 1 }} pour cette contrainte
+                                </span>
                             </div>
                             {% endif %}
                         </div>
@@ -209,6 +239,174 @@
                         {% else %}
                         <div class="c-box mb-3 mb-md-4">
                             <p class="text-muted mb-0">Aucune contrainte à couvrir pour ce profil.</p>
+                        </div>
+                        {% endif %}
+
+                        {# ────── Section : Parcours structurés ────── #}
+                        {% set epide_solutions = jeunes_solutions|selectattr('solution_type', 'equalto', 'epide')|list %}
+                        {% set e2c_solutions = jeunes_solutions|selectattr('solution_type', 'equalto', 'e2c')|list %}
+                        {% if iae_solutions or auteuil_services or plie_solution or epide_solutions or e2c_solutions or geiq_solutions %}
+                        <h2 class="h3 mt-4 mb-3">Parcours structurés</h2>
+                        {% endif %}
+
+                        {# IAE — Emplois d'insertion (RSA/QPV/DETLD + suivi FT, proximité) #}
+                        {% if iae_solutions %}
+                        <div class="c-box p-0 mb-3 mb-md-4">
+                            <div class="px-3 px-lg-4 py-2 border-bottom d-flex justify-content-between align-items-center gap-2">
+                                <h3 class="h5 mb-0">Emplois d'insertion (SIAE)</h3>
+                                <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ iae_solutions|length }} offre{{ "s" if iae_solutions|length > 1 else "" }}</span>
+                            </div>
+                            <div class="p-3 p-lg-4">
+                                <p class="fs-sm text-muted mb-3">
+                                    <i class="ri-lightbulb-flash-line fw-medium" aria-hidden="true"></i>
+                                    Recommandé : éligibilité IAE (RSA, QPV ou DETLD) et accompagnement France Travail en cours.
+                                </p>
+                                {% for s in iae_solutions %}
+                                <div class="{% if not loop.first %}mt-3 pt-3 border-top{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <h4 class="h6 mb-0">{{ s.name }}</h4>
+                                        <div class="d-flex gap-1 flex-shrink-0">
+                                            <span class="badge rounded-pill badge-sm bg-info-lighter text-info">{{ s.type_label }}</span>
+                                            {% if s.places_disponibles > 0 %}
+                                            <span class="badge rounded-pill badge-sm bg-success-lighter text-success">{{ s.places_disponibles }} place{{ "s" if s.places_disponibles > 1 else "" }}</span>
+                                            {% else %}
+                                            <span class="badge rounded-pill badge-sm bg-danger-lighter text-danger">Saturé</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if s.commune %}
+                                    <p class="text-muted fs-sm mb-1">
+                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
+                                        {{ s.commune }}{% if s.code_postal %} ({{ s.code_postal }}){% endif %}
+                                    </p>
+                                    {% endif %}
+                                    {% if s.description %}
+                                    <p class="fs-sm mb-0">{{ s.description }}</p>
+                                    {% endif %}
+                                    {{ render_contacts(s) }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# Apprentis d'Auteuil — services DORA matchés au profil #}
+                        {% if auteuil_services %}
+                        <div class="c-box p-0 mb-3 mb-md-4 border-primary">
+                            <div class="px-3 px-lg-4 py-2 border-bottom d-flex justify-content-between align-items-center gap-2">
+                                <h3 class="h5 mb-0">Parcours Apprentis d'Auteuil</h3>
+                                <span class="badge rounded-pill text-nowrap badge-sm bg-primary-lighter text-primary">{{ auteuil_services|length }} service{{ "s" if auteuil_services|length > 1 else "" }}</span>
+                            </div>
+                            <div class="p-3 p-lg-4">
+                                {% for s in auteuil_services %}
+                                <div class="{% if not loop.first %}mt-3 pt-3 border-top{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <h4 class="h6 mb-0">{{ s.name }}</h4>
+                                        <span class="badge rounded-pill badge-sm bg-info-lighter text-info flex-shrink-0">{{ s.category_label }}</span>
+                                    </div>
+                                    <p class="text-muted fs-sm mb-1">
+                                        <i class="ri-building-line fw-medium" aria-hidden="true"></i> {{ s.structure_name }}
+                                        {% if s.commune %}
+                                        <span class="mx-1">·</span>
+                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i> {{ s.commune }}{% if s.code_postal %} ({{ s.code_postal }}){% endif %}
+                                        {% endif %}
+                                    </p>
+                                    {% if s.description %}
+                                    <p class="fs-sm mb-0">{{ s.description }}</p>
+                                    {% endif %}
+                                    {{ render_contacts(s) }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# PLIE path suggestion — for France Travail beneficiaries with at least one active contrainte #}
+                        {% if plie_solution %}
+                        <div class="c-box p-0 mb-3 mb-md-4 border-warning">
+                            <div class="px-3 px-lg-4 py-2 border-bottom">
+                                <h3 class="h5 mb-0">PLIE</h3>
+                            </div>
+                            <div class="p-3 p-lg-4">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h4 class="h6 mb-0">{{ plie_solution.name }}</h4>
+                                    <span class="badge rounded-pill badge-sm bg-info-lighter text-info flex-shrink-0">{{ plie_solution.type_label }}</span>
+                                </div>
+                                {% if plie_solution.commune %}
+                                <p class="text-muted fs-sm mb-2">
+                                    <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
+                                    {{ plie_solution.commune }}{% if plie_solution.code_postal %} ({{ plie_solution.code_postal }}){% endif %}
+                                </p>
+                                {% endif %}
+                                {% if plie_solution.description %}
+                                <p class="fs-sm mb-2">{{ plie_solution.description }}</p>
+                                {% endif %}
+                                <p class="fs-sm text-muted mb-0">
+                                    <i class="ri-lightbulb-flash-line fw-medium" aria-hidden="true"></i>
+                                    Recommandé : au moins une contrainte à lever et accompagnement France Travail en cours.
+                                </p>
+                                {{ render_contacts(plie_solution) }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# EPIDE then E2C — Jeunes paths #}
+                        {% for s in epide_solutions + e2c_solutions %}
+                        <div class="c-box p-0 mb-3 mb-md-4 border-success">
+                            <div class="px-3 px-lg-4 py-2 border-bottom d-flex justify-content-between align-items-center gap-2">
+                                <h3 class="h5 mb-0">{{ s.type_label }}</h3>
+                                <span class="badge rounded-pill text-nowrap badge-sm bg-success-lighter text-success">Jeunes {{ s.age_min or 16 }}-{{ s.age_max or 25 }} ans</span>
+                            </div>
+                            <div class="p-3 p-lg-4">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h4 class="h6 mb-0">{{ s.name }}</h4>
+                                </div>
+                                {% if s.commune %}
+                                <p class="text-muted fs-sm mb-2">
+                                    <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
+                                    {{ s.commune }}{% if s.code_postal %} ({{ s.code_postal }}){% endif %}
+                                </p>
+                                {% endif %}
+                                {% if s.description %}
+                                <p class="fs-sm mb-0">{{ s.description }}</p>
+                                {% endif %}
+                                {{ render_contacts(s) }}
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {# GEIQ — Alternance (RSA/QPV/DETLD + suivi FT, proximité + ROME match) #}
+                        {% if geiq_solutions %}
+                        <div class="c-box p-0 mb-3 mb-md-4">
+                            <div class="px-3 px-lg-4 py-2 border-bottom d-flex justify-content-between align-items-center gap-2">
+                                <h3 class="h5 mb-0">Alternance (GEIQ)</h3>
+                                <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ geiq_solutions|length }} offre{{ "s" if geiq_solutions|length > 1 else "" }}</span>
+                            </div>
+                            <div class="p-3 p-lg-4">
+                                {% for s in geiq_solutions %}
+                                <div class="{% if not loop.first %}mt-3 pt-3 border-top{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                        <h4 class="h6 mb-0">{{ s.name }}</h4>
+                                        <div class="d-flex gap-1 flex-shrink-0">
+                                            <span class="badge rounded-pill badge-sm bg-info-lighter text-info">{{ s.type_label }}</span>
+                                            {% if s.rome_code %}
+                                            <span class="badge rounded-pill badge-sm bg-success-lighter text-success">ROME {{ s.rome_code }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if s.commune %}
+                                    <p class="text-muted fs-sm mb-1">
+                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
+                                        {{ s.commune }}{% if s.code_postal %} ({{ s.code_postal }}){% endif %}
+                                    </p>
+                                    {% endif %}
+                                    {% if s.description %}
+                                    <p class="fs-sm mb-0">{{ s.description }}</p>
+                                    {% endif %}
+                                    {{ render_contacts(s) }}
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
                         {% endif %}
 
@@ -240,156 +438,191 @@
                 </div>
             </div>
 
-            {# ── Tab 4: Rechercher un service ou une solution ── #}
-            {% set category_icons = {
-                "Mobilité": "ri-car-line",
-                "Numérique": "ri-computer-line",
-                "Formation": "ri-book-open-line",
-                "Emploi": "ri-briefcase-line",
-                "Démarches administratives": "ri-file-text-line",
-                "Santé": "ri-heart-pulse-line",
-                "Logement": "ri-home-4-line",
-                "Famille et parentalité": "ri-parent-line",
-                "Remobilisation": "ri-mental-health-line",
-                "Français et compétences de base": "ri-translate-2",
-            } %}
-            <div class="tab-pane fade" id="search" role="tabpanel" aria-labelledby="search-tab">
+            {# ── Tab 4: Emplois & formations recommandés ── #}
+            <div class="tab-pane fade" id="projet" role="tabpanel" aria-labelledby="projet-tab">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12">
-                        {# Search bar + filters #}
+                        {% if projet_pro and projet_pro.nom_metier %}
+                        {% set search_q = projet_pro.nom_metier|urlencode %}
                         <div class="c-box mb-3 mb-md-4">
-                            <div class="d-flex gap-2 align-items-center mb-3">
-                                <input type="text" class="form-control" placeholder="Rechercher un service, une structure..." disabled>
-                                <div class="btn-dropdown-filter-group d-flex gap-2 flex-shrink-0">
-                                    <button class="btn btn-dropdown-filter" disabled>Employeurs (SIAE)</button>
-                                    <button class="btn btn-dropdown-filter" disabled>Services d'insertion</button>
-                                    <button class="btn btn-dropdown-filter" disabled>Solutions de parcours</button>
+                            <div class="d-flex flex-wrap align-items-center gap-3">
+                                <i class="ri-compass-3-line fw-medium text-primary fs-lg" aria-hidden="true"></i>
+                                <div class="flex-grow-1">
+                                    <h3 class="h5 mb-0">{{ projet_pro.nom_metier }}</h3>
+                                    {% if projet_pro.rome_code %}
+                                    <p class="text-muted fs-sm mb-0">ROME {{ projet_pro.rome_code }}{% if projet_pro.rome_libelle %} — {{ projet_pro.rome_libelle }}{% endif %}</p>
+                                    {% endif %}
                                 </div>
                             </div>
-                            <p class="text-muted fs-sm mb-0">
-                                <i class="ri-information-line fw-medium" aria-hidden="true"></i>
-                                Moteur de recherche — fonctionnalité à venir. Les résultats ci-dessous sont filtrés par proximité.
+
+                            {% if projet_pro.insights %}
+                            {% set ins = projet_pro.insights %}
+                            {% set tension_class = {"Forte": "bg-danger-lighter text-danger", "Modérée": "bg-warning-lighter text-warning", "Faible": "bg-success-lighter text-success"}.get(ins.tension, "bg-secondary-lighter text-secondary") %}
+                            <hr class="my-3">
+                            <div class="row g-3">
+                                <div class="col-6 col-md-3">
+                                    <p class="text-muted fs-xs mb-1">Tension du métier</p>
+                                    <span class="badge rounded-pill badge-base {{ tension_class }}">{{ ins.tension }}</span>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <p class="text-muted fs-xs mb-1">Salaire médian</p>
+                                    <p class="fs-sm fw-bold mb-0">{{ ins.salaire_median }}</p>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <p class="text-muted fs-xs mb-1">Demandeurs d'emploi (Hauts-de-France)</p>
+                                    <p class="fs-sm fw-bold mb-0">{{ ins.demandeurs_emploi_region }}</p>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <p class="text-muted fs-xs mb-1">Offres actives (Hauts-de-France)</p>
+                                    <p class="fs-sm fw-bold mb-0">{{ ins.offres_actives_region }}</p>
+                                </div>
+                            </div>
+                            {% if ins.competences_cles %}
+                            <hr class="my-3">
+                            <p class="text-muted fs-xs mb-2">Compétences clés</p>
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for comp in ins.competences_cles %}
+                                <span class="badge rounded-pill badge-sm bg-info-lighter text-info">{{ comp }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <p class="text-muted fs-xs mt-3 mb-0">
+                                <i class="ri-information-line" aria-hidden="true"></i>
+                                Données inspirées de l'API France Travail « Accès emploi / demandeurs d'emploi » — valeurs indicatives.
                             </p>
+                            {% endif %}
                         </div>
 
-                        {# Employeurs #}
-                        {% if results.employeurs %}
-                        <h3 class="h6 mb-3">
-                            <i class="ri-building-line fw-medium" aria-hidden="true"></i>
-                            Employeurs inclusifs (SIAE et GEIQ)
-                            <span class="text-muted fs-sm fw-normal ms-1">({{ results.employeurs|length }})</span>
-                        </h3>
-                        <div class="c-box mb-3 mb-md-4">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Structure</th>
-                                            <th>Type</th>
-                                            <th>Commune</th>
-                                            <th>Places</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for s in results.employeurs %}
-                                        <tr class="align-middle">
-                                            <td class="fw-medium">{{ s.name }}</td>
-                                            <td><span class="badge rounded-pill badge-sm bg-info-lighter text-info">{{ s.type_label }}</span></td>
-                                            <td>{{ s.commune or "—" }}</td>
-                                            <td>
-                                                {% if s.places_disponibles > 0 %}
-                                                <span class="badge rounded-pill badge-sm bg-success-lighter text-success">{{ s.places_disponibles }} place{{ "s" if s.places_disponibles > 1 else "" }}</span>
-                                                {% else %}
-                                                <span class="badge rounded-pill badge-sm bg-danger-lighter text-danger">Saturé</span>
-                                                {% endif %}
-                                            </td>
-                                            <td class="text-end">
-                                                <a href="/solution/{{ s.id }}?from={{ b.id }}" class="btn btn-link btn-ico btn-sm">
-                                                    <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                        {# Offres d'emploi #}
+                        <div class="d-flex justify-content-between align-items-baseline mb-3">
+                            <h3 class="h5 mb-0">
+                                <i class="ri-briefcase-line fw-medium" aria-hidden="true"></i>
+                                Offres d'emploi
+                                <span class="text-muted fs-sm fw-normal ms-1">({{ projet_pro.offres|length }})</span>
+                            </h3>
+                            <a href="https://candidat.francetravail.fr/offres/recherche?motsCles={{ search_q }}&lieux=59" target="_blank" rel="noopener"
+                               class="btn-link btn-ico fs-sm">
+                                <span>Voir toutes les offres sur France Travail</span>
+                                <i class="ri-external-link-line fw-medium" aria-hidden="true"></i>
+                            </a>
                         </div>
-                        {% endif %}
-
-                        {# Services d'insertion grouped by category #}
-                        {% if services_grouped %}
-                        {% for category_label, svc_list in services_grouped.items() %}
-                        <h3 class="h6 mb-3">
-                            <i class="{{ category_icons.get(category_label, 'ri-service-line') }} fw-medium" aria-hidden="true"></i>
-                            {{ category_label }}
-                            <span class="text-muted fs-sm fw-normal ms-1">({{ svc_list|length }})</span>
-                        </h3>
-                        {% for s in svc_list %}
+                        {% for o in projet_pro.offres %}
                         <div class="c-box mb-3">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h4 class="h6 mb-1">{{ s.name }}</h4>
-                                    {% if s.structure_name %}
-                                    <p class="text-muted fs-sm mb-1">
-                                        <i class="ri-building-line fw-medium" aria-hidden="true"></i>
-                                        {{ s.structure_name }}
-                                    </p>
-                                    {% endif %}
-                                    {% if s.commune %}
-                                    <p class="text-muted fs-sm mb-1">
-                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
-                                        {{ s.commune }}{% if s.code_postal %} ({{ s.code_postal }}){% endif %}
-                                    </p>
-                                    {% endif %}
-                                    {% if s.description %}
-                                    <p class="fs-sm mb-0">{{ s.description[:120] }}{% if s.description|length > 120 %}...{% endif %}</p>
-                                    {% endif %}
-                                </div>
-                                <a href="#" class="btn btn-outline-primary btn-sm btn-ico ms-3 flex-shrink-0">
-                                    <span>Voir</span>
-                                    <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
-                                </a>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% endfor %}
-                        {% endif %}
-
-                        {# Solutions de parcours #}
-                        {% if results.parcours %}
-                        <h3 class="h6 mb-3">
-                            <i class="ri-compass-line fw-medium" aria-hidden="true"></i>
-                            Solutions de parcours
-                            <span class="text-muted fs-sm fw-normal ms-1">({{ results.parcours|length }})</span>
-                        </h3>
-                        {% for s in results.parcours %}
-                        <div class="c-box mb-3">
-                            <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
                                 <div>
                                     <h4 class="h6 mb-1">
-                                        {{ s.structure_name or s.name }}
-                                        <span class="badge rounded-pill badge-sm bg-info-lighter text-info">{{ s.type_label }}</span>
+                                        {{ o.titre }}
+                                        <span class="badge rounded-pill badge-sm bg-info-lighter text-info">{{ o.contrat }}</span>
                                     </h4>
-                                    {% if s.commune %}
                                     <p class="text-muted fs-sm mb-1">
-                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
-                                        {{ s.commune }}
+                                        <i class="ri-building-line fw-medium" aria-hidden="true"></i> {{ o.structure }}
+                                        <span class="mx-1">·</span>
+                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i> {{ o.lieu }}
+                                        {% if o.salaire %}
+                                        <span class="mx-1">·</span>
+                                        <i class="ri-money-euro-circle-line fw-medium" aria-hidden="true"></i> {{ o.salaire }}
+                                        {% endif %}
                                     </p>
-                                    {% endif %}
-                                    {% if s.description %}
-                                    <p class="fs-sm mb-0">{{ s.description[:120] }}{% if s.description|length > 120 %}...{% endif %}</p>
+                                    {% if o.description %}
+                                    <p class="fs-sm mb-0">{{ o.description }}</p>
                                     {% endif %}
                                 </div>
-                                <a href="/solution/{{ s.id }}?from={{ b.id }}" class="btn btn-outline-primary btn-sm btn-ico ms-3 flex-shrink-0">
+                                <a href="https://candidat.francetravail.fr/offres/recherche?motsCles={{ search_q }}" target="_blank" rel="noopener"
+                                   class="btn btn-outline-primary btn-sm btn-ico flex-shrink-0">
                                     <span>Voir</span>
-                                    <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+                                    <i class="ri-external-link-line fw-medium" aria-hidden="true"></i>
                                 </a>
                             </div>
                         </div>
                         {% endfor %}
-                        {% endif %}
 
+                        {# Formations #}
+                        <div class="d-flex justify-content-between align-items-baseline mb-3 mt-4">
+                            <h3 class="h5 mb-0">
+                                <i class="ri-book-open-line fw-medium" aria-hidden="true"></i>
+                                Formations
+                                <span class="text-muted fs-sm fw-normal ms-1">({{ projet_pro.formations|length }})</span>
+                            </h3>
+                            <a href="https://candidat.francetravail.fr/formations/recherche?idQuoi={{ search_q }}" target="_blank" rel="noopener"
+                               class="btn-link btn-ico fs-sm">
+                                <span>Voir toutes les formations</span>
+                                <i class="ri-external-link-line fw-medium" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                        {% for f in projet_pro.formations %}
+                        <div class="c-box mb-3">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div>
+                                    <h4 class="h6 mb-1">{{ f.titre }}</h4>
+                                    <p class="text-muted fs-sm mb-0">
+                                        <i class="ri-building-line fw-medium" aria-hidden="true"></i> {{ f.structure }}
+                                        <span class="mx-1">·</span>
+                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i> {{ f.lieu }}
+                                        <span class="mx-1">·</span>
+                                        <i class="ri-time-line fw-medium" aria-hidden="true"></i> {{ f.duree }}
+                                        {% if f.rentree %}
+                                        <span class="mx-1">·</span>
+                                        <i class="ri-calendar-line fw-medium" aria-hidden="true"></i> Rentrée : {{ f.rentree }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <a href="https://candidat.francetravail.fr/formations/recherche?idQuoi={{ search_q }}" target="_blank" rel="noopener"
+                                   class="btn btn-outline-primary btn-sm btn-ico flex-shrink-0">
+                                    <span>Voir</span>
+                                    <i class="ri-external-link-line fw-medium" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {# Immersions #}
+                        <div class="d-flex justify-content-between align-items-baseline mb-3 mt-4">
+                            <h3 class="h5 mb-0">
+                                <i class="ri-seedling-line fw-medium" aria-hidden="true"></i>
+                                Immersions professionnelles
+                                <span class="text-muted fs-sm fw-normal ms-1">({{ projet_pro.immersions|length }})</span>
+                            </h3>
+                            <a href="https://immersion-facile.beta.gouv.fr/recherche{% if projet_pro.rome_code %}?rome={{ projet_pro.rome_code }}&place=Lille{% endif %}" target="_blank" rel="noopener"
+                               class="btn-link btn-ico fs-sm">
+                                <span>Voir sur Immersion Facilitée</span>
+                                <i class="ri-external-link-line fw-medium" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                        {% for im in projet_pro.immersions %}
+                        <div class="c-box mb-3">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div>
+                                    <h4 class="h6 mb-1">
+                                        {{ im.titre }}
+                                        <span class="badge rounded-pill badge-sm bg-info-lighter text-info">{{ im.dispositif }}</span>
+                                    </h4>
+                                    <p class="text-muted fs-sm mb-0">
+                                        <i class="ri-building-line fw-medium" aria-hidden="true"></i> {{ im.structure }}
+                                        <span class="mx-1">·</span>
+                                        <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i> {{ im.lieu }}
+                                        <span class="mx-1">·</span>
+                                        <i class="ri-time-line fw-medium" aria-hidden="true"></i> {{ im.duree }}
+                                    </p>
+                                </div>
+                                <a href="https://immersion-facile.beta.gouv.fr/recherche{% if projet_pro.rome_code %}?rome={{ projet_pro.rome_code }}&place=Lille{% endif %}" target="_blank" rel="noopener"
+                                   class="btn btn-outline-primary btn-sm btn-ico flex-shrink-0">
+                                    <span>Voir</span>
+                                    <i class="ri-external-link-line fw-medium" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="c-box mb-3 mb-md-4">
+                            <h3 class="h5">
+                                <i class="ri-compass-3-line fw-medium" aria-hidden="true"></i>
+                                Projet professionnel non défini
+                            </h3>
+                            <p class="text-muted mb-0">
+                                Aucun projet professionnel n'est actuellement renseigné dans le diagnostic. Un travail de définition du projet est recommandé avant de proposer des offres d'emploi, formations ou immersions ciblées.
+                            </p>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -451,5 +684,125 @@ window.addEventListener('load', function() {
         });
     });
 });
+</script>
+
+{# ── Diagnostic complet modal ── #}
+<div class="modal fade" id="diagnostic-modal" tabindex="-1" aria-labelledby="diagnostic-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="diagnostic-modal-label">Diagnostic complet</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                {% include "includes/diagnostic.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Edit address & radius modal ── #}
+<div class="modal fade" id="locate-modal" tabindex="-1" aria-labelledby="locate-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="locate-modal-label">Âge, adresse et rayon</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="locate-modal-age" class="form-label fs-sm">Âge</label>
+                    <input type="number" class="form-control" id="locate-modal-age" min="0" max="120"
+                           value="{{ b._age if b._age is not none else '' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="locate-modal-address" class="form-label fs-sm">Adresse</label>
+                    <input type="text" class="form-control" id="locate-modal-address"
+                           value="{{ b.person_address or '' }}"
+                           placeholder="Adresse du bénéficiaire">
+                </div>
+                <div class="mb-2 d-flex justify-content-between align-items-baseline">
+                    <label for="locate-modal-radius" class="form-label fs-sm mb-0">Rayon</label>
+                    <span class="fs-sm fw-bold"><span id="locate-modal-radius-value">20</span> km</span>
+                </div>
+                <input type="range" class="form-range" id="locate-modal-radius"
+                       min="1" max="50" step="1" value="20"
+                       oninput="document.getElementById('locate-modal-radius-value').textContent = this.value;">
+                <div class="d-flex justify-content-between text-muted fs-xs">
+                    <span>1 km</span>
+                    <span>50 km</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="locate-modal-apply">Appliquer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+(function() {
+    var mapEl = document.getElementById('locate-map');
+    if (!mapEl || typeof L === 'undefined') return;
+
+    var lilleCenter = [50.633, 3.058];
+    var center = {% if beneficiary_coords %}[{{ beneficiary_coords[0] }}, {{ beneficiary_coords[1] }}]{% else %}lilleCenter{% endif %};
+    var mapPoints = [
+        {% for p in map_points %}
+        {"title": {{ p.title|tojson }}, "structure": {{ p.structure|tojson }}, "commune": {{ p.commune|tojson }}, "label": {{ p.label|tojson }}, "lat": {{ p.lat }}, "lng": {{ p.lng }}},
+        {% endfor %}
+    ];
+
+    var map = L.map('locate-map').setView(lilleCenter, 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 18
+    }).addTo(map);
+
+    {% if beneficiary_coords %}
+    L.circleMarker(center, {radius: 8, color: '#0063cb', fillColor: '#0063cb', fillOpacity: 1})
+        .addTo(map)
+        .bindPopup('<strong>{{ b.person_last_name }} {{ b.person_first_name }}</strong><br><span class="text-muted">{{ b.person_address }}</span>');
+    var radiusCircle = L.circle(center, {radius: 20000, color: '#0063cb', fillColor: '#0063cb', fillOpacity: 0.08, weight: 1}).addTo(map);
+    window.updateLocateRadius = function(km) { radiusCircle.setRadius(km * 1000); };
+    {% endif %}
+
+    var markers = [];
+    mapPoints.forEach(function(p) {
+        var m = L.marker([p.lat, p.lng]).addTo(map);
+        var struct = p.structure ? '<strong>' + p.structure + '</strong><br>' : '';
+        m.bindPopup(struct + p.title + '<br><span class="text-muted">' + p.commune + ' · ' + p.label + '</span>');
+        markers.push(m);
+    });
+
+
+    // Leaflet needs a resize when its tab becomes visible
+    document.querySelectorAll('a[data-bs-toggle="tab"][href="#solutions"]').forEach(function(tab) {
+        tab.addEventListener('shown.bs.tab', function() { setTimeout(function() { map.invalidateSize(); }, 50); });
+    });
+
+    // Apply changes from the edit address/radius modal
+    var applyBtn = document.getElementById('locate-modal-apply');
+    if (applyBtn) {
+        applyBtn.addEventListener('click', function() {
+            var newAge = document.getElementById('locate-modal-age').value;
+            var newAddr = document.getElementById('locate-modal-address').value;
+            var newRadius = +document.getElementById('locate-modal-radius').value;
+            var ageDisplay = document.getElementById('locate-age-display');
+            var addrDisplay = document.getElementById('locate-address-display');
+            if (ageDisplay && newAge) ageDisplay.textContent = newAge + ' ans';
+            if (addrDisplay) addrDisplay.textContent = newAddr;
+            {% if beneficiary_coords %}if (radiusCircle) radiusCircle.setRadius(newRadius * 1000);{% endif %}
+            var modal = bootstrap.Modal.getInstance(document.getElementById('locate-modal'));
+            if (modal) modal.hide();
+        });
+    }
+
+})();
 </script>
 {% endblock %}
