@@ -109,6 +109,16 @@ async def detail_beneficiary(request: Request, id: int):
         all_services = session.exec(select(Service)).all()
         services_grouped = get_services_for_beneficiary(b, all_services)
         contrainte_solutions = get_contrainte_services(b, all_services)
+        # Suggest PLIE when beneficiary is followed by France Travail and has at least one active contrainte
+        plie_solution = None
+        if b.modalite and not b.structure_referente_id:
+            tc = (diagnostic or {}).get("thematiqueContrainte") or {}
+            has_active_contrainte = any(
+                c.get("valeur") and c["valeur"] not in ("NON_ABORDEE", "NON_ABORDE")
+                for c in (tc.get("contraintes") or [])
+            )
+            if has_active_contrainte:
+                plie_solution = next((s for s in all_solutions if s.solution_type == "plie"), None)
     return _templates(request).TemplateResponse(
         "beneficiary_detail.html",
         {
@@ -121,6 +131,7 @@ async def detail_beneficiary(request: Request, id: int):
             "results": results,
             "services_grouped": services_grouped,
             "contrainte_solutions": contrainte_solutions,
+            "plie_solution": plie_solution,
         },
     )
 

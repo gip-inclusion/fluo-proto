@@ -47,8 +47,9 @@
                         <a class="nav-link" id="solutions-tab" data-bs-toggle="tab" href="#solutions"
                            role="tab" aria-controls="solutions" aria-selected="false">
                             Solutions recommandées
-                            {% if contrainte_solutions %}
-                            <span class="badge rounded-pill badge-xs bg-info text-white ms-1">{{ contrainte_solutions|length }}</span>
+                            {% set reco_count = (contrainte_solutions|length) + (1 if plie_solution else 0) %}
+                            {% if reco_count %}
+                            <span class="badge rounded-pill badge-xs bg-info text-white ms-1">{{ reco_count }}</span>
                             {% endif %}
                         </a>
                     </li>
@@ -106,6 +107,35 @@
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
+                        {% endif %}
+
+                        {# PLIE path suggestion — for France Travail beneficiaries with at least one active contrainte #}
+                        {% if plie_solution %}
+                        <div class="c-box p-0 mb-3 mb-md-4 border-warning">
+                            <div class="px-3 px-lg-4 py-2 border-bottom d-flex justify-content-between align-items-center gap-2">
+                                <span class="h4 mb-0">Solution de parcours</span>
+                                <span class="badge rounded-pill text-nowrap badge-sm bg-warning-lighter text-warning">Levée des freins</span>
+                            </div>
+                            <div class="p-3 p-lg-4">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h3 class="h6 mb-0">{{ plie_solution.name }}</h3>
+                                    <span class="badge rounded-pill badge-sm bg-info-lighter text-info flex-shrink-0">{{ plie_solution.type_label }}</span>
+                                </div>
+                                {% if plie_solution.commune %}
+                                <p class="text-muted fs-sm mb-2">
+                                    <i class="ri-map-pin-line fw-medium" aria-hidden="true"></i>
+                                    {{ plie_solution.commune }}{% if plie_solution.code_postal %} ({{ plie_solution.code_postal }}){% endif %}
+                                </p>
+                                {% endif %}
+                                {% if plie_solution.description %}
+                                <p class="fs-sm mb-2">{{ plie_solution.description }}</p>
+                                {% endif %}
+                                <p class="fs-sm text-muted mb-0">
+                                    <i class="ri-lightbulb-flash-line fw-medium" aria-hidden="true"></i>
+                                    Recommandé : au moins une contrainte à lever et accompagnement France Travail en cours.
+                                </p>
+                            </div>
+                        </div>
                         {% endif %}
 
                         {# Recommendations — one card per contrainte with matching services from data-inclusion #}
