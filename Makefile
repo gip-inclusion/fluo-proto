@@ -9,7 +9,7 @@ ARGS = $(filter-out $@,$(MAKECMDGOALS))
 %:
 	@:
 
-.PHONY: help new provision deploy dev reseed urls lint fmt update-assets
+.PHONY: help new provision deploy dev reseed reseed-remote urls lint fmt update-assets
 
 help: ## Print targets
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -63,6 +63,22 @@ reseed: ## Drop + reseed a proto's local DB — usage: make reseed <name>
 	docker compose exec -T db psql -U "$$proto" -d "$$proto" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" && \
 	DATABASE_URL="postgresql+psycopg://$$proto:$$proto@localhost:5432/$$proto" \
 		uv run python -m web.seed
+
+reseed-remote: ## Drop + reseed a proto's Scaleway DB — usage: make reseed-remote <name>
+	@proto=$(firstword $(ARGS)); \
+	test -n "$$proto" || { echo "usage: make reseed-remote <proto>"; exit 1; }; \
+	test -d "prototypes/$$proto" || { echo "error: prototypes/$$proto does not exist"; exit 1; }; \
+	container_id=$$(scw container container list name="$$proto" -o json | jq -r '.[0].id'); \
+	test -n "$$container_id" && test "$$container_id" != "null" || { echo "error: no Scaleway container named $$proto"; exit 1; }; \
+	db_url=$$(scw container container get "$$container_id" -o json | jq -r '.environment_variables.DATABASE_URL'); \
+	test -n "$$db_url" && test "$$db_url" != "null" || { echo "error: DATABASE_URL not set on container $$proto"; exit 1; }; \
+	psql_url=$$(echo "$$db_url" | sed 's|postgresql+psycopg://|postgresql://|'); \
+	echo "WARNING: this will DROP and reseed the Scaleway database for '$$proto'."; \
+	read -p "Type the proto name to confirm: " confirm; \
+	test "$$confirm" = "$$proto" || { echo "aborted"; exit 1; }; \
+	psql "$$psql_url" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" && \
+	cd "prototypes/$$proto" && \
+	DATABASE_URL="$$db_url" uv run python -m web.seed
 
 urls: ## Print all proto names and their Scaleway URLs
 	@scw container container list -o json | jq -r '.[] | "\(.name)\t\(.domain_name)"'

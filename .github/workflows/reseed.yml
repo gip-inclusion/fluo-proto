@@ -1,0 +1,68 @@
+name: Reseed
+
+on:
+  workflow_dispatch:
+    inputs:
+      proto:
+        description: 'Proto name whose Scaleway DB will be DROPPED and reseeded'
+        required: true
+      confirm:
+        description: 'Type the proto name again to confirm (destructive)'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  reseed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Confirm proto name
+        env:
+          PROTO: ${{ github.event.inputs.proto }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+        run: |
+          test "$PROTO" = "$CONFIRM" || { echo "confirmation mismatch: '$CONFIRM' != '$PROTO'"; exit 1; }
+          test -d "prototypes/$PROTO" || { echo "prototypes/$PROTO does not exist"; exit 1; }
+
+      - name: Install Scaleway CLI
+        run: |
+          SCW_URL=$(curl -fsSL https://api.github.com/repos/scaleway/scaleway-cli/releases/latest | grep -o 'https://[^"]*linux_amd64' | head -1)
+          curl -fsSL "$SCW_URL" -o /usr/local/bin/scw
+          chmod +x /usr/local/bin/scw
+
+      - name: Configure Scaleway CLI
+        env:
+          SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+        run: |
+          scw init secret-key="$SCW_SECRET_KEY" access-key="$SCW_ACCESS_KEY" \
+            organization-id="${{ secrets.SCW_ORG_ID }}" \
+            project-id="${{ secrets.SCW_PROJECT_ID }}" \
+            send-telemetry=false with-ssh-key=false install-autocomplete=false
+
+      - name: Install psql + uv
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch DATABASE_URL from container
+        env:
+          PROTO: ${{ github.event.inputs.proto }}
+        run: |
+          container_id=$(scw container container list name="$PROTO" -o json | jq -r '.[0].id')
+          test -n "$container_id" && test "$container_id" != "null" || { echo "no Scaleway container named $PROTO"; exit 1; }
+          db_url=$(scw container container get "$container_id" -o json | jq -r '.environment_variables.DATABASE_URL')
+          test -n "$db_url" && test "$db_url" != "null" || { echo "DATABASE_URL not set on container $PROTO"; exit 1; }
+          echo "DATABASE_URL=$db_url" >> "$GITHUB_ENV"
+          echo "PSQL_URL=$(echo "$db_url" | sed 's|postgresql+psycopg://|postgresql://|')" >> "$GITHUB_ENV"
+
+      - name: Drop schema + reseed
+        working-directory: prototypes/${{ github.event.inputs.proto }}
+        run: |
+          psql "$PSQL_URL" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+          uv run python -m web.seed
