@@ -61,8 +61,15 @@ jobs:
           echo "DATABASE_URL=$db_url" >> "$GITHUB_ENV"
           echo "PSQL_URL=$(echo "$db_url" | sed 's|postgresql+psycopg://|postgresql://|')" >> "$GITHUB_ENV"
 
-      - name: Drop schema + reseed
+      - name: Drop tables + reseed
         working-directory: prototypes/${{ github.event.inputs.proto }}
         run: |
-          psql "$PSQL_URL" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+          psql "$PSQL_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          DO $$ DECLARE r RECORD;
+          BEGIN
+            FOR r IN SELECT tablename FROM pg_tables WHERE schemaname = 'public' LOOP
+              EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.tablename) || ' CASCADE';
+            END LOOP;
+          END $$;
+          SQL
           uv run python -m web.seed
