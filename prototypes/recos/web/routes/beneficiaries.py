@@ -64,9 +64,7 @@ async def list_beneficiaries(request: Request):
             if selected_modalite:
                 beneficiaries = [b for b in beneficiaries if b.modalite == selected_modalite]
             if over5_only:
-                beneficiaries = [
-                    b for b in beneficiaries if b._modalite_months is not None and b._modalite_months > 5
-                ]
+                beneficiaries = [b for b in beneficiaries if b._modalite_months is not None and b._modalite_months > 5]
     return _templates(request).TemplateResponse(
         "beneficiary_list.html",
         {
@@ -135,6 +133,7 @@ async def detail_beneficiary(request: Request, id: int):
                 plie_solution = next((s for s in all_solutions if s.solution_type == "plie"), None)
         # Map center coords from beneficiary commune
         from ..matching import _person_city  # local import to avoid cycle
+
         city = (_person_city(b) or "").lower().strip()
         beneficiary_coords = COMMUNE_COORDS.get(city)
         # Jeunes paths (EPIDE, E2C) — only for beneficiaries aged 16-25
@@ -164,6 +163,7 @@ async def detail_beneficiary(request: Request, id: int):
             return COMMUNE_COORDS.get(commune)
 
         map_points: list[dict] = []
+
         def _add_point(obj, label):
             coords = _coords_for(obj)
             if not coords:

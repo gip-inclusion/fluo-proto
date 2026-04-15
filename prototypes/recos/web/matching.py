@@ -289,7 +289,14 @@ def get_projet_pro(beneficiary: Beneficiary) -> dict | None:
         return None
     rome = METIER_TO_ROME.get(nom_metier)
     if not rome:
-        return {"nom_metier": nom_metier, "rome_code": None, "rome_libelle": None, "offres": [], "formations": [], "immersions": []}
+        return {
+            "nom_metier": nom_metier,
+            "rome_code": None,
+            "rome_libelle": None,
+            "offres": [],
+            "formations": [],
+            "immersions": [],
+        }
     rome_code, rome_libelle = rome
     mock = PROJET_PRO_MOCK.get(rome_code, {"offres": [], "formations": [], "immersions": []})
     return {
@@ -629,9 +636,7 @@ def get_contrainte_services(beneficiary: Beneficiary, services: list[Service]) -
     diagnostic = json.loads(beneficiary.diagnostic_data) if beneficiary.diagnostic_data else {}
     tc = diagnostic.get("thematiqueContrainte") or {}
     raw_contraintes = [
-        c
-        for c in tc.get("contraintes") or []
-        if c.get("valeur") and c["valeur"] not in ("NON_ABORDEE", "NON_ABORDE")
+        c for c in tc.get("contraintes") or [] if c.get("valeur") and c["valeur"] not in ("NON_ABORDEE", "NON_ABORDE")
     ]
     if not raw_contraintes:
         return []
@@ -701,18 +706,12 @@ def get_auteuil_services(
         person_city = (_person_city(beneficiary) or "").lower()
         svc_city = (svc.commune or "").lower()
         reachable = (
-            not svc_city
-            or svc_city == person_city
-            or (person_city in LILLE_METRO and svc_city in LILLE_REACHABLE)
+            not svc_city or svc_city == person_city or (person_city in LILLE_METRO and svc_city in LILLE_REACHABLE)
         )
         if not reachable:
             continue
         # Profile fit
-        fits = (
-            svc.category in contrainte_categories
-            or is_young
-            or (has_projet_pro and svc.category == "emploi")
-        )
+        fits = svc.category in contrainte_categories or is_young or (has_projet_pro and svc.category == "emploi")
         if fits:
             result.append(svc)
     return result
