@@ -1,5 +1,4 @@
 import json
-import sqlite3
 from pathlib import Path
 
 from sqlmodel import Session
@@ -351,40 +350,13 @@ THEMATIQUE_TO_CATEGORY = {
     "lecture-ecriture-calcul": ("Français et compétences de base", "francais"),
 }
 
-DATA_INCLUSION_DB = str(Path(__file__).resolve().parents[3] / "data-inclusion.db")
+DATA_INCLUSION_FIXTURE = Path(__file__).resolve().parent.parent / "data" / "data_inclusion_services.json"
 
 
 def _seed_services(session: Session) -> None:
-    """Seed Service records from data-inclusion.db SQLite database."""
-    conn = sqlite3.connect(DATA_INCLUSION_DB)
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT s.nom, s.thematiques, s.commune, s.code_postal, s.description,
-               s.latitude, s.longitude,
-               COALESCE(s.telephone, st.telephone) as telephone,
-               COALESCE(s.courriel, st.courriel) as courriel,
-               s.contact_nom_prenom,
-               st.site_web,
-               st.nom as structure_name
-        FROM services s
-        LEFT JOIN structures st ON s.structure_id = st.id
-        WHERE s.code_postal IN ('59000','59100','59200','59260','59650','59800')
-          AND s.thematiques IS NOT NULL
-          AND s.thematiques != '[]'
-          AND s.thematiques != ''
-        ORDER BY
-            CASE s.code_postal
-                WHEN '59000' THEN 1
-                WHEN '59800' THEN 2
-                WHEN '59260' THEN 3
-                WHEN '59650' THEN 4
-                WHEN '59100' THEN 5
-                WHEN '59200' THEN 6
-            END,
-            s.nom
-    """)
+    """Seed Service records from the committed data-inclusion fixture."""
+    with open(DATA_INCLUSION_FIXTURE) as f:
+        fixture = json.load(f)
 
     # Track how many per category to ensure variety
     category_counts: dict[str, int] = {}
@@ -392,7 +364,7 @@ def _seed_services(session: Session) -> None:
     seen_names: set[str] = set()
     services_added = 0
 
-    for row in cur.fetchall():
+    for row in fixture["lille_metro"]:
         if services_added >= 30:
             break
 
@@ -453,23 +425,7 @@ def _seed_services(session: Session) -> None:
         services_added += 1
 
     # ── Supplementary: Apprentis d'Auteuil services across Hauts-de-France ──
-    cur.execute("""
-        SELECT s.nom, s.thematiques, s.commune, s.code_postal, s.description,
-               s.latitude, s.longitude,
-               COALESCE(s.telephone, st.telephone) as telephone,
-               COALESCE(s.courriel, st.courriel) as courriel,
-               s.contact_nom_prenom,
-               st.site_web,
-               st.nom as structure_name
-        FROM services s
-        JOIN structures st ON s.structure_id = st.id
-        WHERE LOWER(st.nom) LIKE '%auteuil%'
-          AND s.source = 'dora'
-          AND s.thematiques IS NOT NULL
-          AND s.thematiques NOT IN ('[]', '')
-          AND (s.code_postal LIKE '59%' OR s.code_postal LIKE '62%' OR s.code_postal LIKE '80%')
-    """)
-    for row in cur.fetchall():
+    for row in fixture["auteuil"]:
         name = row["nom"]
         if not name or name in seen_names:
             continue
@@ -505,8 +461,6 @@ def _seed_services(session: Session) -> None:
         )
         session.add(svc)
         seen_names.add(name)
-
-    conn.close()
 
 
 def seed() -> None:
