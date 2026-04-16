@@ -61,9 +61,10 @@
                         <h1 class="mb-1">
                             {{ b.person_last_name }} {{ b.person_first_name }}
                             {% if b.modalite %}
-                            <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ b.modalite }}</span>
                             {% if b._modalite_months is not none and b._modalite_months > 5 %}
-                            <span class="badge rounded-pill text-nowrap badge-base bg-warning-lighter text-warning">Depuis + 5 mois</span>
+                            <span class="badge rounded-pill text-nowrap badge-base bg-warning-lighter text-warning">{{ b.modalite }} · Depuis + 5 mois</span>
+                            {% else %}
+                            <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ b.modalite }}</span>
                             {% endif %}
                             {% elif structure %}
                             <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
