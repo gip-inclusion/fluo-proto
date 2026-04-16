@@ -94,30 +94,6 @@
                     </div>
                 </div>
 
-                <ul class="s-tabs-01__nav nav nav-tabs mt-4 mb-0" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info"
-                           role="tab" aria-controls="info" aria-selected="true">
-                            Informations générales
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="solutions-tab" data-bs-toggle="tab" href="#solutions"
-                           role="tab" aria-controls="solutions" aria-selected="false">
-                            Solutions recommandées
-                            {% set reco_count = (contrainte_solutions|length) + (1 if plie_solution else 0) + (jeunes_solutions|length) + (iae_solutions|length) + (geiq_solutions|length) + (auteuil_services|length) %}
-                            {% if reco_count %}
-                            <span class="badge rounded-pill badge-xs bg-info text-white ms-1">{{ reco_count }}</span>
-                            {% endif %}
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="projet-tab" data-bs-toggle="tab" href="#projet"
-                           role="tab" aria-controls="projet" aria-selected="false">
-                            Emplois &amp; formations recommandés
-                        </a>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
@@ -125,16 +101,27 @@
 
 <section class="s-section">
     <div class="s-section__container container-fluid">
-        <div class="tab-content">
-            {# ── Tab 1: Informations générales ── #}
-            <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
-                {% include "includes/general_info.html" %}
-                <h2 class="h3 mt-4 mb-3">Diagnostic complet</h2>
-                {% include "includes/diagnostic.html" %}
+        <div class="d-flex justify-content-center mb-4" role="tablist">
+            <div class="btn-group" role="group" aria-label="Vue des recommandations">
+                <button type="button" class="btn btn-outline-primary active" id="solutions-tab"
+                        data-bs-toggle="tab" data-bs-target="#solutions"
+                        role="tab" aria-controls="solutions" aria-selected="true">
+                    Solutions
+                    {% set reco_count = (contrainte_solutions|length) + (1 if plie_solution else 0) + (jeunes_solutions|length) + (iae_solutions|length) + (geiq_solutions|length) + (auteuil_services|length) %}
+                    {% if reco_count %}
+                    <span class="badge rounded-pill badge-xs bg-info text-white ms-1">{{ reco_count }}</span>
+                    {% endif %}
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="projet-tab"
+                        data-bs-toggle="tab" data-bs-target="#projet"
+                        role="tab" aria-controls="projet" aria-selected="false">
+                    Emplois et formations
+                </button>
             </div>
-
-            {# ── Tab 3: Solutions recommandées ── #}
-            <div class="tab-pane fade" id="solutions" role="tabpanel" aria-labelledby="solutions-tab">
+        </div>
+        <div class="tab-content">
+            {# ── Solutions recommandées ── #}
+            <div class="tab-pane fade show active" id="solutions" role="tabpanel" aria-labelledby="solutions-tab">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12 col-lg-5 col-xxxl-4 order-1 order-lg-2">
                         <div style="position: sticky; top: 12rem;">
