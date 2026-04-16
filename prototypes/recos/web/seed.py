@@ -68,6 +68,17 @@ PROFILES = [
         "eligibilites": ["Éligible EPIDE"],
         "nb_prescriptions": 2,
     },
+    {
+        "file": "jeune-sans-diagnostic.json",
+        "person_phone": "06 44 55 66 77",
+        "person_email": "l.martin@example.fr",
+        "person_birthdate": "2005-09-12",
+        "person_address": "22 rue de Wazemmes, 59000 Lille",
+        "structure_key": None,
+        "referent_key": "ft_referent",
+        "eligibilites": [],
+        "nb_prescriptions": 0,
+    },
 ]
 
 
