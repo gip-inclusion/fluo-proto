@@ -188,6 +188,7 @@ SOLUTIONS = [
         "telephone": "03 20 12 34 56",
         "courriel": "contact@geiq-metiers-verts.fr",
         "site_web": "https://geiq-metiers-verts.fr",
+        "lien_source": "https://emplois.inclusion.beta.gouv.fr/company/job_description/124708/card?back_url=/search/job-descriptions/results%3Fcity%3Dlille-59%26distance%3D25%26kinds%3DGEIQ",
     },
     # ── PLIE ──
     {
