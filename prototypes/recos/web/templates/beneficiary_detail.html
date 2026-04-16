@@ -11,13 +11,14 @@
         font-weight: 600;
     }
     .segmented-control .btn:not(.active) {
-        background-color: #e9ecef;
-        border-color: #d9dae1;
-        color: #343a40;
+        background-color: #e9ecef !important;
+        border-color: #d9dae1 !important;
+        color: #343a40 !important;
     }
-    .segmented-control .btn:not(.active):hover {
-        background-color: #dee2e6;
-        color: #212529;
+    .segmented-control .btn:not(.active):hover,
+    .segmented-control .btn:not(.active):focus {
+        background-color: #dee2e6 !important;
+        color: #212529 !important;
     }
 </style>
 {% endblock %}
