@@ -885,6 +885,40 @@ window.addEventListener('load', function() {
             <div class="modal-body">
                 <div class="container-fluid">
                     {% include "includes/general_info.html" %}
+
+                    <h2 class="h3 mt-4 mb-3">Solutions mobilisées</h2>
+                    {% set mobilized_solutions = [
+                        ("Modalité Renforcé — France Travail Lille Centre", "2025-09-12", "En cours"),
+                        ("Atelier Mobilité — Wimoov Lille", "2025-11-04", "Terminée"),
+                        ("PLIE Lille Avenirs", "2026-01-18", "En cours"),
+                        ("ACI Jardins de Cocagne Lille", "2026-02-27", "En attente"),
+                    ] %}
+                    <div class="c-box mb-3 mb-md-4 p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Solution</th>
+                                        <th scope="col">Date de mobilisation</th>
+                                        <th scope="col">Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for name, date, status in mobilized_solutions %}
+                                    <tr>
+                                        <td>{{ name }}</td>
+                                        <td>{{ date }}</td>
+                                        <td>
+                                            {% set status_class = {"En cours": "bg-info-lighter text-info", "Terminée": "bg-success-lighter text-success", "En attente": "bg-warning-lighter text-warning"}.get(status, "bg-secondary-lighter text-secondary") %}
+                                            <span class="badge rounded-pill text-nowrap badge-sm {{ status_class }}">{{ status }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <h2 class="h3 mt-4 mb-3">Diagnostic complet</h2>
                     {% include "includes/diagnostic.html" %}
                 </div>
