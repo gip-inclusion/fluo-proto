@@ -121,6 +121,15 @@ async def detail_beneficiary(request: Request, id: int):
         all_services = session.exec(select(Service)).all()
         services_grouped = get_services_for_beneficiary(b, all_services)
         contrainte_solutions = get_contrainte_services(b, all_services)
+        from ..matching import _category_for_contrainte  # local import
+
+        matched_categories = sorted(
+            {
+                cat
+                for entry in contrainte_solutions
+                if (cat := _category_for_contrainte(entry["contrainte"].get("libelle") or ""))
+            }
+        )
         # Suggest PLIE when beneficiary is followed by France Travail and has at least one active contrainte
         plie_solution = None
         if b.modalite and not b.structure_referente_id:
@@ -212,6 +221,7 @@ async def detail_beneficiary(request: Request, id: int):
             "geiq_solutions": geiq_solutions,
             "auteuil_services": auteuil_services,
             "map_points": map_points,
+            "matched_categories": matched_categories,
         },
     )
 
