@@ -58,17 +58,23 @@
                 </div>
                 <div class="c-title text-center">
                     <div class="c-title__main">
-                        <h1>
-                            {{ b.person_last_name }} {{ b.person_first_name }}
-                            {% if b.modalite %}
-                            <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ b.modalite }}</span>
-                            {% if b._modalite_months is not none and b._modalite_months > 5 %}
-                            <span class="badge rounded-pill text-nowrap badge-base bg-warning-lighter text-warning">Depuis + 5 mois</span>
-                            {% endif %}
-                            {% elif structure %}
-                            <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
-                            {% endif %}
-                        </h1>
+                        <button type="button"
+                                class="btn btn-link text-decoration-none p-0 border-0 bg-transparent d-inline-flex align-items-center gap-2"
+                                data-bs-toggle="modal" data-bs-target="#infos-modal"
+                                aria-label="Ouvrir les informations générales">
+                            <i class="ri-user-line ri-xl fw-medium text-primary" aria-hidden="true"></i>
+                            <h1 class="mb-0">
+                                {{ b.person_last_name }} {{ b.person_first_name }}
+                                {% if b.modalite %}
+                                <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ b.modalite }}</span>
+                                {% if b._modalite_months is not none and b._modalite_months > 5 %}
+                                <span class="badge rounded-pill text-nowrap badge-base bg-warning-lighter text-warning">Depuis + 5 mois</span>
+                                {% endif %}
+                                {% elif structure %}
+                                <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
+                                {% endif %}
+                            </h1>
+                        </button>
                         {% if b._age is not none or b.person_address %}
                         <p class="mb-0 d-flex justify-content-center">
                             <button type="button" id="locate-address-pill"
@@ -752,6 +758,25 @@ window.addEventListener('load', function() {
     });
 });
 </script>
+
+{# ── Informations générales full-screen modal ── #}
+<div class="modal fade" id="infos-modal" tabindex="-1" aria-labelledby="infos-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="infos-modal-label">{{ b.person_last_name }} {{ b.person_first_name }} — Informations générales</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    {% include "includes/general_info.html" %}
+                    <h2 class="h3 mt-4 mb-3">Diagnostic complet</h2>
+                    {% include "includes/diagnostic.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {# ── Diagnostic complet modal ── #}
 <div class="modal fade" id="diagnostic-modal" tabindex="-1" aria-labelledby="diagnostic-modal-label" aria-hidden="true">
