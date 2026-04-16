@@ -109,7 +109,10 @@
                                     {% if projet_pro.rome_code %}{{ projet_pro.rome_code }} — {% endif %}{{ projet_pro.nom_metier if projet_pro.nom_metier|length <= 30 else projet_pro.nom_metier[:30] + '…' }}
                                 </span>
                                 {% else %}
-                                <span class="fst-italic">Projet pro non défini</span>
+                                <span class="text-primary text-decoration-underline d-inline-flex align-items-center gap-1">
+                                    <i class="ri-add-line fw-medium" aria-hidden="true"></i>
+                                    Définir un projet pro
+                                </span>
                                 {% endif %}
                                 <span class="d-inline-flex align-items-center justify-content-center bg-marche text-white rounded-circle" style="width: 2rem; height: 2rem;">
                                     <i class="ri-search-line" aria-hidden="true"></i>
