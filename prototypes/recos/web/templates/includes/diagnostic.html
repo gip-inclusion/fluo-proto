@@ -38,8 +38,68 @@
             {% set ns_parcours.has_content = true %}
         {% endif %}
 
-        {% if ns_parcours.has_content %}
+        {# Projet professionnel #}
+        {% set diag = diagnostic.besoinsParDiagnostic[0].diagnostic if diagnostic.besoinsParDiagnostic else none %}
+
+        {# Contraintes et besoins #}
+        {% set tc = diagnostic.thematiqueContrainte %}
+        {% set ns_besoins = namespace(items=[]) %}
+        {% set ns_contraintes = namespace(items=[]) %}
+        {% for bp in diagnostic.besoinsParDiagnostic or [] %}
+            {% for th in bp.thematiquesBesoins or [] %}
+                {% for b_item in th.besoins or [] %}
+                    {% if b_item.valeur == "BESOIN" %}
+                        {% set ns_besoins.items = ns_besoins.items + [(th.libelle, b_item.libelle)] %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+        {% if tc %}
+            {% for c in tc.contraintes or [] %}
+                {% if c.valeur and c.valeur != "NON_ABORDEE" and c.valeur != "NON_ABORDE" %}
+                    {% set ns_contraintes.items = ns_contraintes.items + [c] %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% set ns_cb = namespace(has_content=false) %}
+        {% if ns_contraintes.items or ns_besoins.items %}
+            {% set ns_cb.has_content = true %}
+        {% elif tc and tc.declareSansContrainte and tc.declareSansContrainte.flag %}
+            {% set ns_cb.has_content = true %}
+        {% endif %}
+
+        {# Points forts #}
+        {% set ns_forces = namespace(items=[]) %}
+        {% for bp in diagnostic.besoinsParDiagnostic or [] %}
+            {% for th in bp.thematiquesBesoins or [] %}
+                {% for b_item in th.besoins or [] %}
+                    {% if b_item.valeur == "POINT_FORT" %}
+                        {% set ns_forces.items = ns_forces.items + [b_item.libelle] %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+
+        {# Autonomie et numérique #}
+        {% set pa = diagnostic.pouvoirAgir if diagnostic.pouvoirAgir is defined else none %}
+        {% set an = diagnostic.autonomieNumerique if diagnostic.autonomieNumerique is defined else none %}
+        {% set ns_auto = namespace(has_content=false) %}
+        {% if pa and (pa.confiance or pa.accompagnement) %}
+            {% set ns_auto.has_content = true %}
+        {% endif %}
+        {% if an %}
+            {% if an.contrainte and an.contrainte.valeur and an.contrainte.valeur not in ("NON_ABORDEE", "NON_ABORDE") %}
+                {% set ns_auto.has_content = true %}
+            {% endif %}
+            {% if an.besoin and an.besoin.valeur and an.besoin.valeur != "NON_EXPLORE" %}
+                {% set ns_auto.has_content = true %}
+            {% endif %}
+        {% endif %}
+
+        {% set ns_any = namespace(rendered=false) %}
         <div class="c-box mb-3 mb-md-4">
+
+        {% if ns_parcours.has_content %}
             <h3 class="h4">
                 <i class="ri-route-line fw-medium" aria-hidden="true"></i>
                 Parcours
@@ -93,13 +153,11 @@
             {% endif %}
             {% endif %}
             {% endif %}
-        </div>
+            {% set ns_any.rendered = true %}
         {% endif %}
 
-        {# ── Projet professionnel ── #}
-        {% set diag = diagnostic.besoinsParDiagnostic[0].diagnostic if diagnostic.besoinsParDiagnostic else none %}
         {% if diag %}
-        <div class="c-box mb-3 mb-md-4">
+            {% if ns_any.rendered %}<hr class="my-4">{% endif %}
             <h3 class="h4">
                 <i class="ri-compass-3-line fw-medium" aria-hidden="true"></i>
                 Projet professionnel
@@ -130,37 +188,17 @@
             {% endif %}
 
             {{ agent_line(diag.agent, diag.dateMiseAJour) }}
-        </div>
+            {% set ns_any.rendered = true %}
         {% endif %}
 
-        {# ── Contraintes et besoins ── #}
-        {% set tc = diagnostic.thematiqueContrainte %}
-        {% set ns_besoins = namespace(items=[]) %}
-        {% set ns_contraintes = namespace(items=[]) %}
-        {% for bp in diagnostic.besoinsParDiagnostic or [] %}
-            {% for th in bp.thematiquesBesoins or [] %}
-                {% for b_item in th.besoins or [] %}
-                    {% if b_item.valeur == "BESOIN" %}
-                        {% set ns_besoins.items = ns_besoins.items + [(th.libelle, b_item.libelle)] %}
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
-        {% endfor %}
-        {% if tc %}
-            {% for c in tc.contraintes or [] %}
-                {% if c.valeur and c.valeur != "NON_ABORDEE" and c.valeur != "NON_ABORDE" %}
-                    {% set ns_contraintes.items = ns_contraintes.items + [c] %}
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-
-        {% if ns_contraintes.items or ns_besoins.items %}
-        <div class="c-box mb-3 mb-md-4">
+        {% if ns_cb.has_content %}
+            {% if ns_any.rendered %}<hr class="my-4">{% endif %}
             <h3 class="h4">
                 <i class="ri-alert-line fw-medium" aria-hidden="true"></i>
                 Contraintes et besoins
             </h3>
 
+            {% if ns_contraintes.items or ns_besoins.items %}
             {% for c in ns_contraintes.items %}
             <div class="mb-2">
                 <div class="d-flex align-items-center gap-2">
@@ -207,32 +245,15 @@
             {% endif %}
             {{ agent_line(tc.agent, tc.dateExploration) }}
             {% endif %}
-        </div>
-        {% elif tc and tc.declareSansContrainte and tc.declareSansContrainte.flag %}
-        <div class="c-box mb-3 mb-md-4">
-            <h3 class="h4">
-                <i class="ri-alert-line fw-medium" aria-hidden="true"></i>
-                Contraintes et besoins
-            </h3>
+            {% else %}
             {{ dot("success", "Aucune contrainte personnelle déclarée") }}
             {{ dot("success", "Aucun besoin identifié") }}
-        </div>
+            {% endif %}
+            {% set ns_any.rendered = true %}
         {% endif %}
 
-        {# ── Points forts ── #}
-        {% set ns_forces = namespace(items=[]) %}
-        {% for bp in diagnostic.besoinsParDiagnostic or [] %}
-            {% for th in bp.thematiquesBesoins or [] %}
-                {% for b_item in th.besoins or [] %}
-                    {% if b_item.valeur == "POINT_FORT" %}
-                        {% set ns_forces.items = ns_forces.items + [b_item.libelle] %}
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
-        {% endfor %}
-
         {% if ns_forces.items %}
-        <div class="c-box mb-3 mb-md-4">
+            {% if ns_any.rendered %}<hr class="my-4">{% endif %}
             <h3 class="h4">
                 <i class="ri-star-line fw-medium" aria-hidden="true"></i>
                 Points forts
@@ -240,29 +261,11 @@
             {% for force in ns_forces.items %}
             {{ dot("success", force) }}
             {% endfor %}
-        </div>
-        {% endif %}
-
-        {# ── Autonomie et numérique ── #}
-        {% set pa = diagnostic.pouvoirAgir if diagnostic.pouvoirAgir is defined else none %}
-        {% set an = diagnostic.autonomieNumerique if diagnostic.autonomieNumerique is defined else none %}
-
-        {# Check if there's actual content to show #}
-        {% set ns_auto = namespace(has_content=false) %}
-        {% if pa and (pa.confiance or pa.accompagnement) %}
-            {% set ns_auto.has_content = true %}
-        {% endif %}
-        {% if an %}
-            {% if an.contrainte and an.contrainte.valeur and an.contrainte.valeur not in ("NON_ABORDEE", "NON_ABORDE") %}
-                {% set ns_auto.has_content = true %}
-            {% endif %}
-            {% if an.besoin and an.besoin.valeur and an.besoin.valeur != "NON_EXPLORE" %}
-                {% set ns_auto.has_content = true %}
-            {% endif %}
+            {% set ns_any.rendered = true %}
         {% endif %}
 
         {% if ns_auto.has_content %}
-        <div class="c-box mb-3 mb-md-4">
+            {% if ns_any.rendered %}<hr class="my-4">{% endif %}
             <h3 class="h4">
                 <i class="ri-computer-line fw-medium" aria-hidden="true"></i>
                 Autonomie et numérique
@@ -303,8 +306,10 @@
             {% endif %}
             {{ agent_line(an.agent, an.dateExploration) }}
             {% endif %}
-        </div>
+            {% set ns_any.rendered = true %}
         {% endif %}
+
+        </div>
 
         {% endif %}{# end if diagnostic #}
     </div>
