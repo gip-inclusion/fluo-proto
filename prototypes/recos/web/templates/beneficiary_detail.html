@@ -34,7 +34,7 @@
 </p>
 {% endmacro %}
 {% macro render_orienter(obj) %}
-{% set url = obj.lien_mobilisation if obj.lien_mobilisation is defined and obj.lien_mobilisation else (obj.lien_source if obj.lien_source is defined and obj.lien_source else obj.site_web) %}
+{% set url = obj.lien_source if obj.lien_source is defined and obj.lien_source else obj.site_web %}
 {% if url %}
 <div class="mt-3 pt-3 border-top d-flex justify-content-end">
     <a href="{{ url }}" target="_blank" rel="noopener"
