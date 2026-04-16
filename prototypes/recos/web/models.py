@@ -55,6 +55,7 @@ class Solution(SQLModel, table=True):
     courriel: str | None = None
     contact_nom_prenom: str | None = None
     site_web: str | None = None
+    lien_source: str | None = None  # DORA service page (used by Orienter button)
     rome_code: str | None = None  # main ROME for GEIQ / role matching
 
 

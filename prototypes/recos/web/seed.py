@@ -204,7 +204,8 @@ SOLUTIONS = [
         "telephone": "03 20 95 57 67",
         "courriel": "contact@plielilleavenir.fr",
         "contact_nom_prenom": "Nathalie DUCROCQ",
-        "site_web": "https://www.plielilleavenir.fr",
+        "site_web": "https://lilleavenirs.fr/",
+        "lien_source": "https://dora.inclusion.gouv.fr/services/lille-avenirs-plan-local-pour-lins",
     },
     # ── E2C ──
     {
@@ -498,6 +499,7 @@ def seed() -> None:
                 courriel=sol_data.get("courriel"),
                 contact_nom_prenom=sol_data.get("contact_nom_prenom"),
                 site_web=sol_data.get("site_web"),
+                lien_source=sol_data.get("lien_source"),
                 rome_code=sol_data.get("rome_code"),
             )
             session.add(sol)
