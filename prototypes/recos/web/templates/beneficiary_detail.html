@@ -27,6 +27,18 @@
 </div>
 {% endif %}
 {% endmacro %}
+{% macro render_orienter(obj) %}
+{% set url = obj.lien_mobilisation if obj.lien_mobilisation is defined and obj.lien_mobilisation else (obj.lien_source if obj.lien_source is defined and obj.lien_source else obj.site_web) %}
+{% if url %}
+<div class="mt-3 d-flex justify-content-end">
+    <a href="{{ url }}" target="_blank" rel="noopener"
+       class="btn btn-primary btn-sm btn-ico">
+        <i class="ri-external-link-line fw-medium" aria-hidden="true"></i>
+        <span>Orienter</span>
+    </a>
+</div>
+{% endif %}
+{% endmacro %}
 <section class="s-title-02">
     <div class="s-title-02__container container">
         <div class="s-title-02__row row">
@@ -207,6 +219,7 @@
                                 {% endif %}
 
                                 {{ render_contacts(best) }}
+                                {{ render_orienter(best) }}
 
                                 {% if c.situations or c.objectifs %}
                                 <div class="mt-3 p-3 rounded bg-info-lighter">
@@ -284,6 +297,7 @@
                                     <p class="fs-sm mb-0">{{ s.description }}</p>
                                     {% endif %}
                                     {{ render_contacts(s) }}
+                                    {{ render_orienter(s) }}
                                 </div>
                                 {% endfor %}
                             </div>
@@ -315,6 +329,7 @@
                                     <p class="fs-sm mb-0">{{ s.description }}</p>
                                     {% endif %}
                                     {{ render_contacts(s) }}
+                                    {{ render_orienter(s) }}
                                 </div>
                                 {% endfor %}
                             </div>
@@ -346,6 +361,7 @@
                                     Recommandé : au moins une contrainte à lever et accompagnement France Travail en cours.
                                 </p>
                                 {{ render_contacts(plie_solution) }}
+                                {{ render_orienter(plie_solution) }}
                             </div>
                         </div>
                         {% endif %}
@@ -371,6 +387,7 @@
                                 <p class="fs-sm mb-0">{{ s.description }}</p>
                                 {% endif %}
                                 {{ render_contacts(s) }}
+                                {{ render_orienter(s) }}
                             </div>
                         </div>
                         {% endfor %}
@@ -404,6 +421,7 @@
                                     <p class="fs-sm mb-0">{{ s.description }}</p>
                                     {% endif %}
                                     {{ render_contacts(s) }}
+                                    {{ render_orienter(s) }}
                                 </div>
                                 {% endfor %}
                             </div>

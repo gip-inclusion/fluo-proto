@@ -418,6 +418,9 @@ def _seed_services(session: Session) -> None:
             courriel=row["courriel"],
             contact_nom_prenom=row["contact_nom_prenom"],
             site_web=row["site_web"],
+            source=row.get("source"),
+            lien_source=row.get("lien_source"),
+            lien_mobilisation=row.get("lien_mobilisation"),
         )
         session.add(svc)
         seen_names.add(name)
@@ -458,6 +461,9 @@ def _seed_services(session: Session) -> None:
             courriel=row["courriel"],
             contact_nom_prenom=row["contact_nom_prenom"],
             site_web=row["site_web"],
+            source=row.get("source"),
+            lien_source=row.get("lien_source"),
+            lien_mobilisation=row.get("lien_mobilisation"),
         )
         session.add(svc)
         seen_names.add(name)

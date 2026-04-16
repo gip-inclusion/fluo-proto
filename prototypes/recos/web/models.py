@@ -26,6 +26,9 @@ class Service(SQLModel, table=True):
     courriel: str | None = None
     contact_nom_prenom: str | None = None
     site_web: str | None = None
+    source: str | None = None  # data-inclusion source: "dora", "emplois", etc.
+    lien_source: str | None = None  # service page on original source
+    lien_mobilisation: str | None = None  # orientation URL (DORA /orienter)
 
 
 class Solution(SQLModel, table=True):
