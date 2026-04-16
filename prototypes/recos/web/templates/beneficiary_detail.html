@@ -72,15 +72,17 @@
                         {% if b._age is not none or b.person_address %}
                         <p class="mb-0 d-flex justify-content-center">
                             <button type="button" id="locate-address-pill"
-                                    class="btn btn-sm bg-white border rounded-pill px-3 py-1 d-inline-flex align-items-center gap-2 shadow-sm text-muted"
+                                    class="btn bg-white border rounded-pill ps-4 pe-2 py-2 d-inline-flex align-items-center gap-3 shadow-sm text-muted fw-normal"
                                     data-bs-toggle="modal" data-bs-target="#locate-modal"
                                     aria-label="Modifier l'âge, l'adresse et le rayon">
-                                <i class="ri-search-line fw-medium" aria-hidden="true"></i>
                                 {% if b._age is not none %}<span id="locate-age-display">{{ b._age }} ans</span>{% endif %}
                                 {% if b._age is not none and b.person_address %}<span class="text-muted">·</span>{% endif %}
                                 {% if b.person_address %}
                                 <span id="locate-address-display">{{ b.person_address }}</span>
                                 {% endif %}
+                                <span class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle" style="width: 2rem; height: 2rem;">
+                                    <i class="ri-search-line" aria-hidden="true"></i>
+                                </span>
                             </button>
                         </p>
                         {% endif %}
