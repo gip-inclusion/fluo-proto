@@ -46,7 +46,7 @@
 </div>
 {% endif %}
 {% endmacro %}
-<section class="s-title-02">
+<section class="s-title-02 bg-info-lighter">
     <div class="s-title-02__container container">
         <div class="s-title-02__row row">
             <div class="s-title-02__col col-12">
@@ -56,7 +56,7 @@
                         <span>Retour à la liste</span>
                     </a>
                 </div>
-                <div class="c-title">
+                <div class="c-title text-center">
                     <div class="c-title__main">
                         <h1>
                             {{ b.person_last_name }} {{ b.person_first_name }}
@@ -69,24 +69,32 @@
                             <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
                             {% endif %}
                         </h1>
-                        <p class="mb-0">
-                            {% if b._age is not none or b.person_address %}
+                        {% if b._age is not none or b.person_address %}
+                        <p class="mb-0 d-flex justify-content-center">
                             <button type="button" id="locate-address-pill"
                                     class="btn btn-sm bg-white border rounded-pill px-3 py-1 d-inline-flex align-items-center gap-2 shadow-sm text-muted"
                                     data-bs-toggle="modal" data-bs-target="#locate-modal"
                                     aria-label="Modifier l'âge, l'adresse et le rayon">
+                                <i class="ri-search-line fw-medium" aria-hidden="true"></i>
                                 {% if b._age is not none %}<span id="locate-age-display">{{ b._age }} ans</span>{% endif %}
                                 {% if b._age is not none and b.person_address %}<span class="text-muted">·</span>{% endif %}
                                 {% if b.person_address %}
                                 <span id="locate-address-display">{{ b.person_address }}</span>
                                 {% endif %}
                             </button>
-                            {% endif %}
                         </p>
+                        {% endif %}
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-                {# Tabs #}
+<section class="s-tabs-01">
+    <div class="s-tabs-01__container container">
+        <div class="s-tabs-01__row row">
+            <div class="s-tabs-01__col col-12">
                 <ul class="s-tabs-01__nav nav nav-tabs mb-0" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link active" id="info-tab" data-bs-toggle="tab" href="#info"
