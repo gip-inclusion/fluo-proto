@@ -152,6 +152,7 @@
                                         <p class="mb-2 d-flex justify-content-center align-items-center gap-2 flex-wrap">
                                             <button type="button"
                                                     class="btn bg-white border rounded-pill ps-4 pe-2 py-2 d-inline-flex align-items-center gap-3 shadow-sm text-muted fw-normal"
+                                                    data-bs-toggle="modal" data-bs-target="#search-locate-modal"
                                                     aria-label="Modifier l'adresse, le rayon et le projet pro">
                                                 <span id="search-address-display">59000 Lille <span class="text-muted">+ 20 km</span></span>
                                                 <span class="text-muted">·</span>
@@ -162,6 +163,7 @@
                                             </button>
                                             <button type="button"
                                                     class="btn bg-white border rounded-pill py-2 px-4 shadow-sm d-inline-flex align-items-center gap-2 text-muted fw-normal"
+                                                    data-bs-toggle="modal" data-bs-target="#search-filter-modal"
                                                     aria-label="Filtrer les recommandations">
                                                 <i class="ri-filter-3-line fw-medium" aria-hidden="true"></i>
                                                 <span>Filtres</span>
@@ -190,4 +192,116 @@
         </div>
     </div>
 </div>
+
+{# ── Search: Adresse / rayon / projet pro modal ── #}
+<div class="modal fade" id="search-locate-modal" tabindex="-1" aria-labelledby="search-locate-modal-label" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="search-locate-modal-label">Adresse, rayon et projet pro</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="search-locate-address" class="form-label fs-sm">Adresse</label>
+                    <input type="text" class="form-control" id="search-locate-address"
+                           value="59000 Lille" placeholder="Code postal + ville">
+                </div>
+                <div class="mb-2 d-flex justify-content-between align-items-baseline">
+                    <label for="search-locate-radius" class="form-label fs-sm mb-0">Rayon</label>
+                    <span class="fs-sm fw-bold"><span id="search-locate-radius-value">20</span> km</span>
+                </div>
+                <input type="range" class="form-range" id="search-locate-radius"
+                       min="1" max="50" step="1" value="20"
+                       oninput="document.getElementById('search-locate-radius-value').textContent = this.value;">
+                <div class="d-flex justify-content-between text-muted fs-xs mb-3">
+                    <span>1 km</span>
+                    <span>50 km</span>
+                </div>
+                <div class="mb-3">
+                    <label for="search-locate-projet" class="form-label fs-sm">Projet professionnel</label>
+                    <input type="text" class="form-control" id="search-locate-projet"
+                           list="search-rome-suggestions"
+                           placeholder="Métier, code ROME ou description en langage naturel">
+                    <datalist id="search-rome-suggestions">
+                        <option value="A1101 — Conduite d'engins agricoles et forestiers"></option>
+                        <option value="A1202 — Entretien des espaces verts"></option>
+                        <option value="F1601 — Gros œuvre et maçonnerie du bâtiment"></option>
+                        <option value="G1603 — Personnel polyvalent en cuisine"></option>
+                        <option value="K2204 — Nettoyage de locaux"></option>
+                        <option value="M1805 — Études et développement informatique"></option>
+                        <option value="N1103 — Magasinage et préparation de commandes"></option>
+                    </datalist>
+                    <div class="form-text fs-xs">
+                        Saisissez librement un métier, un code ROME (ex. M1805) ou décrivez en quelques mots ce que la personne veut faire.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Appliquer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Search: Filtres modal ── #}
+<div class="modal fade" id="search-filter-modal" tabindex="-1" aria-labelledby="search-filter-modal-label" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="search-filter-modal-label">Filtrer les solutions</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <h4 class="h5 mb-3">Thématiques de contraintes personnelles</h4>
+                    <div class="row">
+                        {% for key, label in [('mobilite', 'Mobilité'), ('logement', 'Logement'), ('financieres', 'Difficultés financières'), ('sante', 'Santé'), ('administratif', 'Démarches administratives'), ('francais', 'Français et compétences de base'), ('famille', 'Famille et parentalité'), ('numerique', 'Numérique'), ('remobilisation', 'Remobilisation')] %}
+                        <div class="col-12 col-sm-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="search-cat-{{ key }}" name="categorie" value="{{ key }}">
+                                <label class="form-check-label" for="search-cat-{{ key }}">{{ label }}</label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <hr class="my-4">
+                    <h4 class="h5 mb-3">Type d'acteur</h4>
+                    <div class="row">
+                        {% for key, label in [('ACI', "ACI — Atelier chantier d'insertion"), ('AI', 'AI — Association intermédiaire'), ('EA', 'EA — Entreprise adaptée'), ('EATT', 'EATT — Entreprise adaptée de travail temporaire'), ('EI', "EI — Entreprise d'insertion"), ('EITI', "EITI — Entreprise d'insertion par le travail indépendant"), ('ETTI', "ETTI — Entreprise de travail temporaire d'insertion"), ('GEIQ', "GEIQ — Groupement d'employeurs"), ('OPCS', 'OPCS — Organisation porteuse de la clause sociale'), ('PLIE', 'PLIE'), ('E2C', 'E2C — École de la deuxième chance'), ('EPIDE', 'EPIDE'), ('AUTEUIL', "Apprentis d'Auteuil")] %}
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="search-acteur-{{ key }}" name="acteur" value="{{ key }}" checked>
+                                <label class="form-check-label" for="search-acteur-{{ key }}">{{ label }}</label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Appliquer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    ['search-locate-modal', 'search-filter-modal'].forEach(function (id) {
+        var m = document.getElementById(id);
+        if (!m) return;
+        m.addEventListener('show.bs.modal', function () {
+            document.body.classList.add('modal-open-nested');
+        });
+        m.addEventListener('hidden.bs.modal', function () {
+            if (document.querySelector('.modal.show')) {
+                document.body.classList.add('modal-open');
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
