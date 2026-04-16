@@ -194,7 +194,7 @@
 </div>
 
 {# ── Search: Adresse / rayon / projet pro modal ── #}
-<div class="modal fade" id="search-locate-modal" tabindex="-1" aria-labelledby="search-locate-modal-label" aria-hidden="true" style="z-index: 1060;">
+<div class="modal fade" id="search-locate-modal" tabindex="-1" aria-labelledby="search-locate-modal-label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -246,7 +246,7 @@
 </div>
 
 {# ── Search: Filtres modal ── #}
-<div class="modal fade" id="search-filter-modal" tabindex="-1" aria-labelledby="search-filter-modal-label" aria-hidden="true" style="z-index: 1060;">
+<div class="modal fade" id="search-filter-modal" tabindex="-1" aria-labelledby="search-filter-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -289,25 +289,28 @@
 </div>
 
 <script>
-// Stacking fix for nested Bootstrap modals.
-document.addEventListener('show.bs.modal', function (e) {
-    var openCount = document.querySelectorAll('.modal.show').length;
-    var baseZ = 1055;
-    var stepZ = 20;
-    var z = baseZ + stepZ * openCount;
-    e.target.style.zIndex = z;
-    setTimeout(function () {
-        var bds = document.querySelectorAll('.modal-backdrop:not(.stacked)');
-        bds.forEach(function (b) {
-            b.style.zIndex = z - 10;
-            b.classList.add('stacked');
+// Temporarily hide the fullscreen search modal while a nested modal is open,
+// to avoid Bootstrap backdrop stacking issues. Reopen it when the nested closes.
+(function () {
+    var outer = document.getElementById('search-solution-modal');
+    if (!outer) return;
+    var outerInstance = null;
+    ['search-locate-modal', 'search-filter-modal'].forEach(function (id) {
+        var m = document.getElementById(id);
+        if (!m) return;
+        m.addEventListener('show.bs.modal', function () {
+            if (outer.classList.contains('show')) {
+                outerInstance = bootstrap.Modal.getInstance(outer);
+                outerInstance.hide();
+            }
         });
-    }, 0);
-});
-document.addEventListener('hidden.bs.modal', function () {
-    if (document.querySelector('.modal.show')) {
-        document.body.classList.add('modal-open');
-    }
-});
+        m.addEventListener('hidden.bs.modal', function () {
+            if (outerInstance) {
+                outerInstance.show();
+                outerInstance = null;
+            }
+        });
+    });
+})();
 </script>
 {% endblock %}
