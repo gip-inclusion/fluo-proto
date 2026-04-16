@@ -289,19 +289,25 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    ['search-locate-modal', 'search-filter-modal'].forEach(function (id) {
-        var m = document.getElementById(id);
-        if (!m) return;
-        m.addEventListener('show.bs.modal', function () {
-            document.body.classList.add('modal-open-nested');
+// Stacking fix for nested Bootstrap modals.
+document.addEventListener('show.bs.modal', function (e) {
+    var openCount = document.querySelectorAll('.modal.show').length;
+    var baseZ = 1055;
+    var stepZ = 20;
+    var z = baseZ + stepZ * openCount;
+    e.target.style.zIndex = z;
+    setTimeout(function () {
+        var bds = document.querySelectorAll('.modal-backdrop:not(.stacked)');
+        bds.forEach(function (b) {
+            b.style.zIndex = z - 10;
+            b.classList.add('stacked');
         });
-        m.addEventListener('hidden.bs.modal', function () {
-            if (document.querySelector('.modal.show')) {
-                document.body.classList.add('modal-open');
-            }
-        });
-    });
+    }, 0);
+});
+document.addEventListener('hidden.bs.modal', function () {
+    if (document.querySelector('.modal.show')) {
+        document.body.classList.add('modal-open');
+    }
 });
 </script>
 {% endblock %}
