@@ -50,30 +50,28 @@
     <div class="s-title-02__container container-fluid">
         <div class="s-title-02__row row">
             <div class="s-title-02__col col-12">
-                <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
+                <div class="c-prevstep">
                     <a href="/beneficiaries" class="btn btn-ico btn-link ps-0">
                         <i class="ri-arrow-drop-left-line ri-xl fw-medium" aria-hidden="true"></i>
                         <span>Retour à la liste</span>
                     </a>
-                    <button type="button"
-                            class="btn btn-link p-0 text-muted fs-sm text-decoration-underline"
-                            data-bs-toggle="modal" data-bs-target="#infos-modal">
-                        Voir le profil
-                    </button>
                 </div>
                 <div class="c-title text-center">
                     <div class="c-title__main">
-                        <h1 class="mb-2">
-                            {{ b.person_last_name }} {{ b.person_first_name }}
+                        <h1 class="mb-2 d-inline-flex align-items-center gap-2 flex-wrap justify-content-center">
+                            <span>{{ b.person_last_name }} {{ b.person_first_name }}</span>
                             {% if b.modalite %}
-                            {% if b._modalite_months is not none and b._modalite_months > 5 %}
-                            <span class="badge rounded-pill text-nowrap badge-base bg-warning-lighter text-warning">{{ b.modalite }} · Depuis + 5 mois</span>
-                            {% else %}
-                            <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ b.modalite }}</span>
-                            {% endif %}
+                            <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">
+                                {{ b.modalite }}{% if b._modalite_months is not none and b._modalite_months > 5 %} · Depuis + 5 mois{% endif %}
+                            </span>
                             {% elif structure %}
                             <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
                             {% endif %}
+                            <button type="button"
+                                    class="btn btn-link p-0 text-muted fs-sm text-decoration-underline align-self-center"
+                                    data-bs-toggle="modal" data-bs-target="#infos-modal">
+                                Voir le profil
+                            </button>
                         </h1>
                         {% if b._age is not none or b.person_address %}
                         <p class="mb-0 d-flex justify-content-center">
