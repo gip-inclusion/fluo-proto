@@ -27,6 +27,14 @@
 </div>
 {% endif %}
 {% endmacro %}
+{% macro render_recommande(text) %}
+<div class="pb-3 mb-3 mb-md-4 border-bottom">
+    <div class="p-3 rounded bg-info-lighter">
+        <p class="fs-sm fw-bold mb-1 text-info">Recommandé</p>
+        <p class="fs-sm mb-0">{{ text }}</p>
+    </div>
+</div>
+{% endmacro %}
 {% macro render_orienter(obj) %}
 {% set url = obj.lien_mobilisation if obj.lien_mobilisation is defined and obj.lien_mobilisation else (obj.lien_source if obj.lien_source is defined and obj.lien_source else obj.site_web) %}
 {% if url %}
@@ -298,10 +306,7 @@
                                 <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ iae_solutions|length }} offre{{ "s" if iae_solutions|length > 1 else "" }}</span>
                             </div>
                             <div class="p-3 p-lg-4">
-                                <p class="fs-sm text-muted mb-3">
-                                    <i class="ri-lightbulb-flash-line fw-medium" aria-hidden="true"></i>
-                                    Recommandé : éligibilité IAE (RSA, QPV ou DETLD) et accompagnement France Travail en cours.
-                                </p>
+                                {{ render_recommande("Éligibilité IAE (RSA, QPV ou DETLD) et accompagnement France Travail en cours.") }}
                                 {% for s in iae_solutions %}
                                 <div class="{% if not loop.first %}mt-3 pt-3 border-top{% endif %}">
                                     <div class="d-flex justify-content-between align-items-start mb-1">
@@ -340,6 +345,7 @@
                                 <span class="badge rounded-pill text-nowrap badge-sm bg-primary-lighter text-primary">{{ auteuil_services|length }} service{{ "s" if auteuil_services|length > 1 else "" }}</span>
                             </div>
                             <div class="p-3 p-lg-4">
+                                {{ render_recommande("Personne de 16-29 ans avec contraintes compatibles ou projet professionnel à construire.") }}
                                 {% for s in auteuil_services %}
                                 <div class="{% if not loop.first %}mt-3 pt-3 border-top{% endif %}">
                                     <div class="d-flex justify-content-between align-items-start mb-1">
@@ -371,6 +377,7 @@
                                 <h3 class="h5 mb-0">PLIE</h3>
                             </div>
                             <div class="p-3 p-lg-4">
+                                {{ render_recommande("Au moins une contrainte à lever et accompagnement France Travail en cours.") }}
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h4 class="h6 mb-0">{{ plie_solution.name }}</h4>
                                     <span class="badge rounded-pill badge-sm bg-info-lighter text-info flex-shrink-0">{{ plie_solution.type_label }}</span>
@@ -382,12 +389,8 @@
                                 </p>
                                 {% endif %}
                                 {% if plie_solution.description %}
-                                <p class="fs-sm mb-2">{{ plie_solution.description }}</p>
+                                <p class="fs-sm mb-0">{{ plie_solution.description }}</p>
                                 {% endif %}
-                                <p class="fs-sm text-muted mb-0">
-                                    <i class="ri-lightbulb-flash-line fw-medium" aria-hidden="true"></i>
-                                    Recommandé : au moins une contrainte à lever et accompagnement France Travail en cours.
-                                </p>
                                 {{ render_contacts(plie_solution) }}
                                 {{ render_orienter(plie_solution) }}
                             </div>
@@ -402,6 +405,11 @@
                                 <span class="badge rounded-pill text-nowrap badge-sm bg-success-lighter text-success">Jeunes {{ s.age_min or 16 }}-{{ s.age_max or 25 }} ans</span>
                             </div>
                             <div class="p-3 p-lg-4">
+                                {% if s.solution_type == 'epide' %}
+                                {{ render_recommande("Jeune de 17-25 ans, niveau infra-bac, volontaire pour un parcours résidentiel.") }}
+                                {% else %}
+                                {{ render_recommande("Jeune de 16-25 ans, sans diplôme ni qualification, sorti du système scolaire.") }}
+                                {% endif %}
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h4 class="h6 mb-0">{{ s.name }}</h4>
                                 </div>
@@ -428,6 +436,7 @@
                                 <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ geiq_solutions|length }} offre{{ "s" if geiq_solutions|length > 1 else "" }}</span>
                             </div>
                             <div class="p-3 p-lg-4">
+                                {{ render_recommande("Éligibilité IAE (RSA, QPV ou DETLD), accompagnement France Travail en cours et projet professionnel défini (correspondance ROME).") }}
                                 {% for s in geiq_solutions %}
                                 <div class="{% if not loop.first %}mt-3 pt-3 border-top{% endif %}">
                                     <div class="d-flex justify-content-between align-items-start mb-1">
