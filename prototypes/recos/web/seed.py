@@ -224,6 +224,7 @@ SOLUTIONS = [
         "courriel": "contact@e2c-grandlille.fr",
         "contact_nom_prenom": "Karim BENALI",
         "site_web": "https://e2c-grandlille.fr",
+        "lien_source": "https://dora.inclusion.gouv.fr/structures/ecole-de-la-deuxieme-fetk",
     },
     # ── EPIDE ──
     {
