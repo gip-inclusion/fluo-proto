@@ -902,7 +902,7 @@ window.addEventListener('load', function() {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="locate-modal-label">Âge, adresse et rayon</h3>
+                <h3 class="modal-title" id="locate-modal-label">Âge, adresse, rayon et projet pro</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
@@ -916,6 +916,38 @@ window.addEventListener('load', function() {
                     <input type="text" class="form-control" id="locate-modal-address"
                            value="{{ b.person_address or '' }}"
                            placeholder="Adresse du bénéficiaire">
+                </div>
+                <div class="mb-3">
+                    <label for="locate-modal-projet" class="form-label fs-sm">Projet professionnel</label>
+                    <input type="text" class="form-control" id="locate-modal-projet"
+                           list="rome-suggestions"
+                           value="{% if projet_pro and projet_pro.nom_metier %}{% if projet_pro.rome_code %}{{ projet_pro.rome_code }} — {% endif %}{{ projet_pro.nom_metier }}{% endif %}"
+                           placeholder="Métier, code ROME ou description en langage naturel">
+                    <datalist id="rome-suggestions">
+                        <option value="A1101 — Conduite d'engins agricoles et forestiers"></option>
+                        <option value="A1202 — Entretien des espaces verts"></option>
+                        <option value="A1411 — Horticulture et maraîchage"></option>
+                        <option value="F1601 — Gros œuvre et maçonnerie du bâtiment"></option>
+                        <option value="F1602 — Électricité bâtiment"></option>
+                        <option value="F1606 — Peinture en bâtiment"></option>
+                        <option value="G1603 — Personnel polyvalent en cuisine"></option>
+                        <option value="G1801 — Café, bar, brasserie"></option>
+                        <option value="G1803 — Service en restauration"></option>
+                        <option value="H3302 — Opérations manuelles d'assemblage"></option>
+                        <option value="J1501 — Soins d'hygiène, de confort du patient"></option>
+                        <option value="K1302 — Accompagnement médico-social"></option>
+                        <option value="K1303 — Assistance auprès d'enfants"></option>
+                        <option value="K1304 — Services domestiques"></option>
+                        <option value="K2204 — Nettoyage de locaux"></option>
+                        <option value="M1602 — Opérations administratives"></option>
+                        <option value="M1805 — Études et développement informatique"></option>
+                        <option value="N1103 — Magasinage et préparation de commandes"></option>
+                        <option value="N4105 — Conduite et livraison par tournées sur courte distance"></option>
+                        <option value="I1604 — Mécanique automobile et entretien de véhicules"></option>
+                    </datalist>
+                    <div class="form-text fs-xs">
+                        Saisis librement un métier, un code ROME (ex. M1805) ou décris en quelques mots ce que la personne veut faire.
+                    </div>
                 </div>
                 <div class="mb-2 d-flex justify-content-between align-items-baseline">
                     <label for="locate-modal-radius" class="form-label fs-sm mb-0">Rayon</label>
