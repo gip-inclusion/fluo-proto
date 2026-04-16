@@ -50,13 +50,12 @@
     <div class="s-title-02__container container">
         <div class="s-title-02__row row">
             <div class="s-title-02__col col-12">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/dashboard">Accueil</a></li>
-                        <li class="breadcrumb-item"><a href="/beneficiaries">Personnes accompagnées</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ b.person_last_name }} {{ b.person_first_name }}</li>
-                    </ol>
-                </nav>
+                <div class="c-prevstep">
+                    <a href="/beneficiaries" class="btn btn-ico btn-link ps-0">
+                        <i class="ri-arrow-drop-left-line ri-xl fw-medium" aria-hidden="true"></i>
+                        <span>Retour à la liste</span>
+                    </a>
+                </div>
                 <div class="c-title">
                     <div class="c-title__main">
                         <h1>
