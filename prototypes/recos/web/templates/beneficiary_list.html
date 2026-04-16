@@ -206,7 +206,7 @@
             <div class="modal-body">
                 <p class="text-muted" id="orient-summary"></p>
 
-                <h4 class="mt-2">France Travail</h4>
+                <h4 class="h6 mt-2">France Travail</h4>
                 <div class="list-group mb-4">
                     {% for name, modalite, portfolio in ft_counselors %}
                     {% set dest_id = 'dest-ft-' ~ loop.index %}
@@ -220,7 +220,7 @@
                     {% endfor %}
                 </div>
 
-                <h4>Partenaires</h4>
+                <h4 class="h6">Partenaires</h4>
                 <div class="list-group">
                     {% for p in partners %}
                     {% set dest_id = 'dest-partner-' ~ loop.index %}

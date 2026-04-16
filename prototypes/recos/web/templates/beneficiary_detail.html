@@ -195,7 +195,7 @@
                         <div class="c-box p-0 mb-3 mb-md-4">
                             <div class="px-3 px-lg-4 py-3 border-bottom">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <h3 class="h5 mb-0">{{ c.libelle }}</h3>
+                                    <h3 class="h4 mb-0">{{ c.libelle }}</h3>
                                     <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                         {% if entry.impact and entry.impact not in ("NON_RENSEIGNE", "NON_ABORDEE", "NON_ABORDE") %}
                                         {% set impact_class = {"FORT": "bg-danger-lighter text-danger", "MOYEN": "bg-warning-lighter text-warning", "FAIBLE": "bg-info-lighter text-info"}.get(entry.impact, "bg-secondary-lighter text-secondary") %}
@@ -303,7 +303,7 @@
                         <div class="c-box p-0 mb-3 mb-md-4">
                             <div class="px-3 px-lg-4 py-3 border-bottom">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <h3 class="h5 mb-0">Emplois d'insertion (SIAE)</h3>
+                                    <h3 class="h4 mb-0">Emplois d'insertion (SIAE)</h3>
                                     <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ iae_solutions|length }} offre{{ "s" if iae_solutions|length > 1 else "" }}</span>
                                 </div>
                                 {{ render_recommande("Éligibilité IAE (RSA, QPV ou DETLD) et accompagnement France Travail en cours.") }}
@@ -344,7 +344,7 @@
                         <div class="c-box p-0 mb-3 mb-md-4 border-primary">
                             <div class="px-3 px-lg-4 py-3 border-bottom">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <h3 class="h5 mb-0">Parcours Apprentis d'Auteuil</h3>
+                                    <h3 class="h4 mb-0">Parcours Apprentis d'Auteuil</h3>
                                     <span class="badge rounded-pill text-nowrap badge-sm bg-primary-lighter text-primary">{{ auteuil_services|length }} service{{ "s" if auteuil_services|length > 1 else "" }}</span>
                                 </div>
                                 {{ render_recommande("Personne de 16-29 ans avec contraintes compatibles ou projet professionnel à construire.") }}
@@ -378,7 +378,7 @@
                         {% if plie_solution %}
                         <div class="c-box p-0 mb-3 mb-md-4 border-warning">
                             <div class="px-3 px-lg-4 py-3 border-bottom">
-                                <h3 class="h5 mb-0">PLIE</h3>
+                                <h3 class="h4 mb-0">PLIE</h3>
                                 {{ render_recommande("Au moins une contrainte à lever et accompagnement France Travail en cours.") }}
                             </div>
                             <div class="p-3 p-lg-4">
@@ -406,7 +406,7 @@
                         <div class="c-box p-0 mb-3 mb-md-4 border-success">
                             <div class="px-3 px-lg-4 py-3 border-bottom">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <h3 class="h5 mb-0">{{ s.type_label }}</h3>
+                                    <h3 class="h4 mb-0">{{ s.type_label }}</h3>
                                     <span class="badge rounded-pill text-nowrap badge-sm bg-success-lighter text-success">Jeunes {{ s.age_min or 16 }}-{{ s.age_max or 25 }} ans</span>
                                 </div>
                                 {% if s.solution_type == 'epide' %}
@@ -439,7 +439,7 @@
                         <div class="c-box p-0 mb-3 mb-md-4">
                             <div class="px-3 px-lg-4 py-3 border-bottom">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <h3 class="h5 mb-0">Alternance (GEIQ)</h3>
+                                    <h3 class="h4 mb-0">Alternance (GEIQ)</h3>
                                     <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ geiq_solutions|length }} offre{{ "s" if geiq_solutions|length > 1 else "" }}</span>
                                 </div>
                                 {{ render_recommande("Éligibilité IAE (RSA, QPV ou DETLD), accompagnement France Travail en cours et projet professionnel défini (correspondance ROME).") }}
@@ -476,7 +476,7 @@
                         {# Prescriptions déjà envoyées #}
                         {% if prescriptions %}
                         <hr class="my-4">
-                        <h2 class="h5 mb-3">Prescriptions envoyées</h2>
+                        <h2 class="h3 mt-4 mb-3">Prescriptions envoyées</h2>
                         {% for p in prescriptions %}
                         <a href="/prescription/{{ p.id }}" class="c-box mb-3 d-block text-decoration-none">
                             <div class="d-flex justify-content-between align-items-start mb-2">
@@ -511,7 +511,7 @@
                             <div class="d-flex flex-wrap align-items-center gap-3">
                                 <i class="ri-compass-3-line fw-medium text-primary fs-lg" aria-hidden="true"></i>
                                 <div class="flex-grow-1">
-                                    <h3 class="h5 mb-0">{{ projet_pro.nom_metier }}</h3>
+                                    <h3 class="h4 mb-0">{{ projet_pro.nom_metier }}</h3>
                                     {% if projet_pro.rome_code %}
                                     <p class="text-muted fs-sm mb-0">ROME {{ projet_pro.rome_code }}{% if projet_pro.rome_libelle %} — {{ projet_pro.rome_libelle }}{% endif %}</p>
                                     {% endif %}
@@ -558,7 +558,7 @@
 
                         {# Offres d'emploi #}
                         <div class="d-flex justify-content-between align-items-baseline mb-3">
-                            <h3 class="h5 mb-0">
+                            <h3 class="h4 mb-0">
                                 <i class="ri-briefcase-line fw-medium" aria-hidden="true"></i>
                                 Offres d'emploi
                                 <span class="text-muted fs-sm fw-normal ms-1">({{ projet_pro.offres|length }})</span>
@@ -601,7 +601,7 @@
 
                         {# Formations #}
                         <div class="d-flex justify-content-between align-items-baseline mb-3 mt-4">
-                            <h3 class="h5 mb-0">
+                            <h3 class="h4 mb-0">
                                 <i class="ri-book-open-line fw-medium" aria-hidden="true"></i>
                                 Formations
                                 <span class="text-muted fs-sm fw-normal ms-1">({{ projet_pro.formations|length }})</span>
@@ -640,7 +640,7 @@
 
                         {# Immersions #}
                         <div class="d-flex justify-content-between align-items-baseline mb-3 mt-4">
-                            <h3 class="h5 mb-0">
+                            <h3 class="h4 mb-0">
                                 <i class="ri-seedling-line fw-medium" aria-hidden="true"></i>
                                 Immersions professionnelles
                                 <span class="text-muted fs-sm fw-normal ms-1">({{ projet_pro.immersions|length }})</span>
@@ -677,7 +677,7 @@
                         {% endfor %}
                         {% else %}
                         <div class="c-box mb-3 mb-md-4">
-                            <h3 class="h5">
+                            <h3 class="h4">
                                 <i class="ri-compass-3-line fw-medium" aria-hidden="true"></i>
                                 Projet professionnel non défini
                             </h3>

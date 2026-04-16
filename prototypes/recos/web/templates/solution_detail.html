@@ -72,7 +72,7 @@
 
                 {# Informations #}
                 <div class="c-box mb-3 mb-md-4">
-                    <h2 class="h5 mb-3">Informations</h2>
+                    <h2 class="h3 mt-4 mb-3">Informations</h2>
                     <dl class="list-data mb-0">
                         <div class="list-data__item">
                             <dt class="list-data__label">Type</dt>
@@ -105,7 +105,7 @@
 
                 {# Conditions d'admission #}
                 <div class="c-box mb-3 mb-md-4">
-                    <h2 class="h5 mb-3">Conditions d'admission</h2>
+                    <h2 class="h3 mt-4 mb-3">Conditions d'admission</h2>
                     {% if solution.conditions_admission %}
                     <p class="mb-3">{{ solution.conditions_admission }}</p>
                     {% endif %}
@@ -136,7 +136,7 @@
 
                 {# Disponibilité #}
                 <div class="c-box mb-3 mb-md-4">
-                    <h2 class="h5 mb-3">Disponibilité</h2>
+                    <h2 class="h3 mt-4 mb-3">Disponibilité</h2>
                     {% if solution.places_disponibles > 0 %}
                     <p class="mb-0">
                         <span class="badge rounded-pill badge-base bg-success">{{ solution.places_disponibles }} place{{ "s" if solution.places_disponibles > 1 else "" }} disponible{{ "s" if solution.places_disponibles > 1 else "" }}</span>
