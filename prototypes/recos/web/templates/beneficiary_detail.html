@@ -73,6 +73,11 @@
                             {% elif structure %}
                             <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
                             {% endif %}
+                            {% for t in b._types %}
+                            {% set color = beneficiary_type_colors.get(t, 'bg-secondary') %}
+                            {% set text_color = color.replace('bg-', 'text-') %}
+                            <span class="badge rounded-pill text-nowrap badge-base {{ color }}-lighter {{ text_color }}">{{ t }}</span>
+                            {% endfor %}
                         </h1>
                         {% if b._age is not none or b.person_address %}
                         <p class="mb-0 d-flex justify-content-center align-items-center gap-2 flex-wrap">
@@ -90,7 +95,7 @@
                                 </span>
                             </button>
                             <button type="button"
-                                    class="btn btn-outline-primary btn-ico rounded-pill py-2 px-3"
+                                    class="btn bg-white border rounded-pill py-2 px-4 shadow-sm d-inline-flex align-items-center gap-2 text-muted fw-normal"
                                     data-bs-toggle="modal" data-bs-target="#filter-modal"
                                     aria-label="Filtrer les recommandations">
                                 <i class="ri-filter-3-line fw-medium" aria-hidden="true"></i>
@@ -108,13 +113,16 @@
 
 <section class="s-section">
     <div class="s-section__container container-fluid">
-        <div class="d-flex justify-content-center mb-4" role="tablist">
-            <div class="btn-group" role="group" aria-label="Vue des recommandations">
+        {% set reco_count = (contrainte_solutions|length) + (1 if plie_solution else 0) + (jeunes_solutions|length) + (iae_solutions|length) + (geiq_solutions|length) + (auteuil_services|length) %}
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <p class="mb-0">
+                {{ reco_count }} solution{{ "s" if reco_count != 1 else "" }} trouvée{{ "s" if reco_count != 1 else "" }} correspondant au diagnostic socio-professionnel de {{ b.person_last_name }} {{ b.person_first_name }}
+            </p>
+            <div class="btn-group" role="tablist" aria-label="Vue des recommandations">
                 <button type="button" class="btn btn-outline-primary active" id="solutions-tab"
                         data-bs-toggle="tab" data-bs-target="#solutions"
                         role="tab" aria-controls="solutions" aria-selected="true">
                     Solutions
-                    {% set reco_count = (contrainte_solutions|length) + (1 if plie_solution else 0) + (jeunes_solutions|length) + (iae_solutions|length) + (geiq_solutions|length) + (auteuil_services|length) %}
                     {% if reco_count %}
                     <span class="badge rounded-pill badge-xs bg-info text-white ms-1">{{ reco_count }}</span>
                     {% endif %}
@@ -146,11 +154,6 @@
                                             <i class="ri-clipboard-line fw-medium" aria-hidden="true"></i>
                                             Synthèse diagnostic
                                         </span>
-                                        {% for t in b._types %}
-                                        {% set color = beneficiary_type_colors.get(t, 'bg-secondary') %}
-                                        {% set text_color = color.replace('bg-', 'text-') %}
-                                        <span class="badge rounded-pill text-nowrap badge-sm {{ color }}-lighter {{ text_color }}">{{ t }}</span>
-                                        {% endfor %}
                                     </span>
                                     <i class="ri-arrow-down-s-line fw-medium collapse-chevron" aria-hidden="true"></i>
                                 </button>
