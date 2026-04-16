@@ -100,7 +100,7 @@
                                 {% if b._age is not none %}<span id="locate-age-display">{{ b._age }} ans</span>{% endif %}
                                 {% if b._age is not none and b.person_address %}<span class="text-muted">·</span>{% endif %}
                                 {% if b.person_address %}
-                                <span id="locate-address-display">{{ b.person_address }}</span>
+                                <span id="locate-address-display">{{ b.person_address }} <span id="locate-radius-display" class="text-muted">+ 20 km</span></span>
                                 {% endif %}
                                 <span class="text-muted">·</span>
                                 {% if projet_pro and projet_pro.nom_metier %}
@@ -917,6 +917,17 @@ window.addEventListener('load', function() {
                            value="{{ b.person_address or '' }}"
                            placeholder="Adresse du bénéficiaire">
                 </div>
+                <div class="mb-2 d-flex justify-content-between align-items-baseline">
+                    <label for="locate-modal-radius" class="form-label fs-sm mb-0">Rayon</label>
+                    <span class="fs-sm fw-bold"><span id="locate-modal-radius-value">20</span> km</span>
+                </div>
+                <input type="range" class="form-range" id="locate-modal-radius"
+                       min="1" max="50" step="1" value="20"
+                       oninput="document.getElementById('locate-modal-radius-value').textContent = this.value;">
+                <div class="d-flex justify-content-between text-muted fs-xs mb-3">
+                    <span>1 km</span>
+                    <span>50 km</span>
+                </div>
                 <div class="mb-3">
                     <label for="locate-modal-projet" class="form-label fs-sm">Projet professionnel</label>
                     <input type="text" class="form-control" id="locate-modal-projet"
@@ -948,17 +959,6 @@ window.addEventListener('load', function() {
                     <div class="form-text fs-xs">
                         Saisis librement un métier, un code ROME (ex. M1805) ou décris en quelques mots ce que la personne veut faire.
                     </div>
-                </div>
-                <div class="mb-2 d-flex justify-content-between align-items-baseline">
-                    <label for="locate-modal-radius" class="form-label fs-sm mb-0">Rayon</label>
-                    <span class="fs-sm fw-bold"><span id="locate-modal-radius-value">20</span> km</span>
-                </div>
-                <input type="range" class="form-range" id="locate-modal-radius"
-                       min="1" max="50" step="1" value="20"
-                       oninput="document.getElementById('locate-modal-radius-value').textContent = this.value;">
-                <div class="d-flex justify-content-between text-muted fs-xs">
-                    <span>1 km</span>
-                    <span>50 km</span>
                 </div>
             </div>
             <div class="modal-footer">
