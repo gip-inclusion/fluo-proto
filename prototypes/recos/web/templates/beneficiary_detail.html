@@ -136,11 +136,13 @@
     <div class="s-section__container container-fluid">
         {% set reco_count = (contrainte_solutions|length) + (1 if plie_solution else 0) + (jeunes_solutions|length) + (iae_solutions|length) + (geiq_solutions|length) + (auteuil_services|length) %}
         {% set emplois_count = (projet_pro.offres|length + projet_pro.formations|length + projet_pro.immersions|length) if projet_pro else 0 %}
+        {% set has_socio_pro_diag = diagnostic and (diagnostic.besoinsParDiagnostic or diagnostic.thematiqueContrainte or diagnostic.pouvoirAgir or diagnostic.autonomieNumerique) %}
+        {% set match_context = "diagnostic socio-professionnel" if has_socio_pro_diag else "profil" %}
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <p class="mb-0" id="tab-count-label"
-               data-solutions-label="{{ reco_count }} solution{{ 's' if reco_count != 1 else '' }} trouvée{{ 's' if reco_count != 1 else '' }} correspondant au diagnostic socio-professionnel de {{ b.person_last_name }} {{ b.person_first_name }}"
+               data-solutions-label="{{ reco_count }} solution{{ 's' if reco_count != 1 else '' }} trouvée{{ 's' if reco_count != 1 else '' }} correspondant au {{ match_context }} de {{ b.person_last_name }} {{ b.person_first_name }}"
                data-projet-label="{{ emplois_count }} emploi{{ 's' if emplois_count != 1 else '' }} et formation{{ 's' if emplois_count != 1 else '' }} trouvé{{ 's' if emplois_count != 1 else '' }} pour {{ b.person_last_name }} {{ b.person_first_name }}">
-                {{ reco_count }} solution{{ "s" if reco_count != 1 else "" }} trouvée{{ "s" if reco_count != 1 else "" }} correspondant au diagnostic socio-professionnel de {{ b.person_last_name }} {{ b.person_first_name }}
+                {{ reco_count }} solution{{ "s" if reco_count != 1 else "" }} trouvée{{ "s" if reco_count != 1 else "" }} correspondant au {{ match_context }} de {{ b.person_last_name }} {{ b.person_first_name }}
             </p>
             <div class="btn-group segmented-control" role="tablist" aria-label="Vue des recommandations">
                 <button type="button" class="btn btn-outline-primary active" id="solutions-tab"

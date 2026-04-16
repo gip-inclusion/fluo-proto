@@ -342,25 +342,26 @@
 </div>
 
 <script>
-// Temporarily hide the fullscreen search modal while a nested modal is open,
-// to avoid Bootstrap backdrop stacking issues. Reopen it when the nested closes.
+// Swap between the fullscreen search modal and its nested locate/filter modals.
+// When a nested modal opens we hide the search modal; when the nested closes
+// we reopen the search modal (rather than returning to the dashboard).
 (function () {
     var outer = document.getElementById('search-solution-modal');
     if (!outer) return;
-    var outerInstance = null;
+    var pending = false;
     ['search-locate-modal', 'search-filter-modal'].forEach(function (id) {
         var m = document.getElementById(id);
         if (!m) return;
         m.addEventListener('show.bs.modal', function () {
             if (outer.classList.contains('show')) {
-                outerInstance = bootstrap.Modal.getInstance(outer);
-                outerInstance.hide();
+                pending = true;
+                bootstrap.Modal.getOrCreateInstance(outer).hide();
             }
         });
         m.addEventListener('hidden.bs.modal', function () {
-            if (outerInstance) {
-                outerInstance.show();
-                outerInstance = null;
+            if (pending) {
+                pending = false;
+                bootstrap.Modal.getOrCreateInstance(outer).show();
             }
         });
     });
