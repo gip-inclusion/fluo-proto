@@ -50,15 +50,20 @@
     <div class="s-title-02__container container-fluid">
         <div class="s-title-02__row row">
             <div class="s-title-02__col col-12">
-                <div class="c-prevstep">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
                     <a href="/beneficiaries" class="btn btn-ico btn-link ps-0">
                         <i class="ri-arrow-drop-left-line ri-xl fw-medium" aria-hidden="true"></i>
                         <span>Retour à la liste</span>
                     </a>
+                    <button type="button"
+                            class="btn btn-link p-0 text-muted fs-sm text-decoration-underline"
+                            data-bs-toggle="modal" data-bs-target="#infos-modal">
+                        Voir le profil
+                    </button>
                 </div>
                 <div class="c-title text-center">
                     <div class="c-title__main">
-                        <h1 class="mb-1">
+                        <h1 class="mb-2">
                             {{ b.person_last_name }} {{ b.person_first_name }}
                             {% if b.modalite %}
                             {% if b._modalite_months is not none and b._modalite_months > 5 %}
@@ -70,13 +75,6 @@
                             <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
                             {% endif %}
                         </h1>
-                        <p class="mb-2">
-                            <button type="button"
-                                    class="btn btn-link btn-sm p-0 text-muted fs-sm"
-                                    data-bs-toggle="modal" data-bs-target="#infos-modal">
-                                Voir le profil
-                            </button>
-                        </p>
                         {% if b._age is not none or b.person_address %}
                         <p class="mb-0 d-flex justify-content-center">
                             <button type="button" id="locate-address-pill"
