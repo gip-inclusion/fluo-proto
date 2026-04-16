@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/static/css/itou.css">
     {% block head_extra %}{% endblock %}
 </head>
-<body class="l-authenticated">
+<body class="{% block body_class %}l-authenticated{% endblock %}">
     <header role="banner" id="header">
         <section class="s-header-authenticated d-lg-none">
             <div class="s-header-authenticated__container container">
