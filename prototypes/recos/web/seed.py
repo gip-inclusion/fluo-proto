@@ -107,6 +107,7 @@ SOLUTIONS = [
         "requires_detld": True,
         "requires_qpv": True,
         "requires_physical": True,
+        "lien_source": "https://emplois.inclusion.beta.gouv.fr/recherche/siaes?city=lille-59&distance=25&kinds=ACI",
     },
     {
         "name": "Tissons la Solidarité",
@@ -121,6 +122,7 @@ SOLUTIONS = [
         "requires_brsa": True,
         "requires_detld": True,
         "requires_qpv": True,
+        "lien_source": "https://emplois.inclusion.beta.gouv.fr/recherche/siaes?city=tourcoing-59&distance=25&kinds=ACI",
     },
     {
         "name": "Atelier Bois Solidaire",
@@ -136,6 +138,7 @@ SOLUTIONS = [
         "requires_detld": True,
         "requires_qpv": True,
         "requires_physical": True,
+        "lien_source": "https://emplois.inclusion.beta.gouv.fr/recherche/siaes?city=villeneuve-d-ascq-59&distance=25&kinds=ACI",
     },
     # ── EI ──
     {
@@ -151,6 +154,7 @@ SOLUTIONS = [
         "requires_brsa": True,
         "requires_detld": True,
         "requires_qpv": True,
+        "lien_source": "https://emplois.inclusion.beta.gouv.fr/recherche/siaes?city=roubaix-59&distance=25&kinds=EI",
     },
     # ── GEIQ ──
     {
