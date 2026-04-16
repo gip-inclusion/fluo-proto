@@ -243,7 +243,8 @@ SOLUTIONS = [
         "telephone": "03 27 73 01 50",
         "courriel": "epide-cambrai@epide.fr",
         "contact_nom_prenom": "Julien LEFEBVRE",
-        "site_web": "https://www.epide.fr/centre/cambrai",
+        "site_web": "https://jeune.epide.fr/trouver-mon-centre/centre-epide-cambrai/",
+        "lien_source": "https://dora.inclusion.gouv.fr/services/ets-public-dinsertio-cfux-etablissement-public",
     },
     # ── CUI-CAE ──
     {
