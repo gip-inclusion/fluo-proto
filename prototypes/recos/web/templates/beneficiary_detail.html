@@ -314,7 +314,12 @@
                         {% endfor %}
                         {% else %}
                         <div class="c-box mb-3 mb-md-4">
-                            <p class="text-muted mb-0">Aucune contrainte à couvrir pour ce profil.</p>
+                            <p class="text-muted mb-3">Aucune contrainte à couvrir pour ce profil.</p>
+                            <button type="button" class="btn btn-primary btn-ico"
+                                    data-bs-toggle="modal" data-bs-target="#filter-modal">
+                                <i class="ri-search-line fw-medium" aria-hidden="true"></i>
+                                <span>Rechercher des solutions par thématique</span>
+                            </button>
                         </div>
                         {% endif %}
 
