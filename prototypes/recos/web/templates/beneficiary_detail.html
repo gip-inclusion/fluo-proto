@@ -7,6 +7,10 @@
 <style>
     [data-bs-toggle="collapse"] .collapse-chevron { transition: transform .2s ease; }
     [data-bs-toggle="collapse"]:not(.collapsed) .collapse-chevron { transform: rotate(180deg); }
+    .segmented-control .btn.active {
+        font-weight: 600;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+    }
 </style>
 {% endblock %}
 {% block content %}
@@ -118,14 +122,11 @@
             <p class="mb-0">
                 {{ reco_count }} solution{{ "s" if reco_count != 1 else "" }} trouvée{{ "s" if reco_count != 1 else "" }} correspondant au diagnostic socio-professionnel de {{ b.person_last_name }} {{ b.person_first_name }}
             </p>
-            <div class="btn-group" role="tablist" aria-label="Vue des recommandations">
+            <div class="btn-group segmented-control" role="tablist" aria-label="Vue des recommandations">
                 <button type="button" class="btn btn-outline-primary active" id="solutions-tab"
                         data-bs-toggle="tab" data-bs-target="#solutions"
                         role="tab" aria-controls="solutions" aria-selected="true">
                     Solutions
-                    {% if reco_count %}
-                    <span class="badge rounded-pill badge-xs bg-info text-white ms-1">{{ reco_count }}</span>
-                    {% endif %}
                 </button>
                 <button type="button" class="btn btn-outline-primary" id="projet-tab"
                         data-bs-toggle="tab" data-bs-target="#projet"
