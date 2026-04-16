@@ -50,11 +50,19 @@
                 </li>
                 <li>
                     <small>Email</small>
-                    <strong>{{ b.person_email or "" }}</strong>
+                    <strong>
+                        {% if b.person_email %}
+                        <a href="mailto:{{ b.person_email }}">{{ b.person_email }}</a>
+                        {% endif %}
+                    </strong>
                 </li>
                 <li>
                     <small>Téléphone</small>
-                    <strong>{{ b.person_phone or "" }}</strong>
+                    <strong>
+                        {% if b.person_phone %}
+                        <a href="tel:{{ b.person_phone|replace(' ', '') }}">{{ b.person_phone }}</a>
+                        {% endif %}
+                    </strong>
                 </li>
                 <li>
                     <small>Date de naissance</small>
