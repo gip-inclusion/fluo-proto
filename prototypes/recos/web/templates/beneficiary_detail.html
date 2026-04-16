@@ -129,35 +129,36 @@
             <div class="tab-pane fade" id="solutions" role="tabpanel" aria-labelledby="solutions-tab">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12 col-lg-5 col-xxxl-4 order-1 order-lg-2">
-                        <div class="c-box mb-3 mb-md-4 p-0" style="position: sticky; top: 4rem;">
-                            <div id="locate-map" style="height: 360px; border-radius: 6px; overflow: hidden;"></div>
+                        <div style="position: sticky; top: 6rem;">
+                            <div class="c-box mb-3 mb-md-4 p-0">
+                                <div id="locate-map" style="height: 360px; border-radius: 6px; overflow: hidden;"></div>
+                            </div>
+
+                            {# Collapsible Synthèse diagnostic #}
+                            <div class="mb-3 mb-md-4">
+                                <button class="btn btn-outline-primary btn-ico w-100 d-flex justify-content-between align-items-center gap-3 collapsed"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#synthese-collapse"
+                                        aria-expanded="false" aria-controls="synthese-collapse">
+                                    <span class="d-flex align-items-center gap-2 flex-wrap">
+                                        <span>
+                                            <i class="ri-clipboard-line fw-medium" aria-hidden="true"></i>
+                                            Synthèse diagnostic
+                                        </span>
+                                        {% for t in b._types %}
+                                        {% set color = beneficiary_type_colors.get(t, 'bg-secondary') %}
+                                        {% set text_color = color.replace('bg-', 'text-') %}
+                                        <span class="badge rounded-pill text-nowrap badge-sm {{ color }}-lighter {{ text_color }}">{{ t }}</span>
+                                        {% endfor %}
+                                    </span>
+                                    <i class="ri-arrow-down-s-line fw-medium collapse-chevron" aria-hidden="true"></i>
+                                </button>
+                                <div class="collapse mt-3" id="synthese-collapse">
+                                    {% include "includes/diagnostic_summary.html" %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="s-section__col col-12 col-lg-7 col-xxxl-8 order-2 order-lg-1">
-
-                        {# Collapsible Synthèse diagnostic #}
-                        <div class="mb-3 mb-md-4">
-                            <button class="btn btn-outline-primary btn-ico w-100 d-flex justify-content-between align-items-center gap-3 collapsed"
-                                    type="button" data-bs-toggle="collapse" data-bs-target="#synthese-collapse"
-                                    aria-expanded="false" aria-controls="synthese-collapse">
-                                <span class="d-flex align-items-center gap-2 flex-wrap">
-                                    <span>
-                                        <i class="ri-clipboard-line fw-medium" aria-hidden="true"></i>
-                                        Synthèse diagnostic
-                                    </span>
-                                    {% for t in b._types %}
-                                    {% set color = beneficiary_type_colors.get(t, 'bg-secondary') %}
-                                    {% set text_color = color.replace('bg-', 'text-') %}
-                                    <span class="badge rounded-pill text-nowrap badge-sm {{ color }}-lighter {{ text_color }}">{{ t }}</span>
-                                    {% endfor %}
-                                </span>
-                                <i class="ri-arrow-down-s-line fw-medium collapse-chevron" aria-hidden="true"></i>
-                            </button>
-                            <div class="collapse mt-3" id="synthese-collapse">
-                                {% include "includes/diagnostic_summary.html" %}
-                            </div>
-                        </div>
-
 
                         {# Collect diagnostic signals for "why" display #}
                         {% set ns_diag_besoins = namespace(items=[]) %}
