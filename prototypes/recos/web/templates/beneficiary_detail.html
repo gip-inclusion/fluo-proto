@@ -126,8 +126,11 @@
 <section class="s-section">
     <div class="s-section__container container-fluid">
         {% set reco_count = (contrainte_solutions|length) + (1 if plie_solution else 0) + (jeunes_solutions|length) + (iae_solutions|length) + (geiq_solutions|length) + (auteuil_services|length) %}
+        {% set emplois_count = (projet_pro.offres|length + projet_pro.formations|length + projet_pro.immersions|length) if projet_pro else 0 %}
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-            <p class="mb-0">
+            <p class="mb-0" id="tab-count-label"
+               data-solutions-label="{{ reco_count }} solution{{ 's' if reco_count != 1 else '' }} trouvée{{ 's' if reco_count != 1 else '' }} correspondant au diagnostic socio-professionnel de {{ b.person_last_name }} {{ b.person_first_name }}"
+               data-projet-label="{{ emplois_count }} emploi{{ 's' if emplois_count != 1 else '' }} et formation{{ 's' if emplois_count != 1 else '' }} trouvé{{ 's' if emplois_count != 1 else '' }} pour {{ b.person_last_name }} {{ b.person_first_name }}">
                 {{ reco_count }} solution{{ "s" if reco_count != 1 else "" }} trouvée{{ "s" if reco_count != 1 else "" }} correspondant au diagnostic socio-professionnel de {{ b.person_last_name }} {{ b.person_first_name }}
             </p>
             <div class="btn-group segmented-control" role="tablist" aria-label="Vue des recommandations">
@@ -761,6 +764,20 @@ window.addEventListener('load', function() {
             }
         });
     });
+    // Swap count label when switching between Solutions and Emplois et formations
+    var countLabel = document.getElementById('tab-count-label');
+    if (countLabel) {
+        document.querySelectorAll('.segmented-control [data-bs-toggle="tab"]').forEach(function(el) {
+            el.addEventListener('shown.bs.tab', function(e) {
+                var target = e.target.getAttribute('data-bs-target');
+                if (target === '#projet') {
+                    countLabel.textContent = countLabel.dataset.projetLabel;
+                } else {
+                    countLabel.textContent = countLabel.dataset.solutionsLabel;
+                }
+            });
+        });
+    }
 });
 </script>
 
