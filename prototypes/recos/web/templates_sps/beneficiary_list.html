@@ -108,7 +108,7 @@
                                 <th scope="col" class="w-40px"></th>
                                 <th scope="col">Informations générales</th>
                                 <th scope="col">Type</th>
-                                <th scope="col">Structure référente &amp; modalité</th>
+                                <th scope="col">Structure référente</th>
                                 <th scope="col" class="text-end w-50px"></th>
                             </tr>
                         </thead>
@@ -134,19 +134,7 @@
                                     <span class="badge rounded-pill text-nowrap badge-sm {{ light_color }} {{ text_color }}">{{ t }}</span>
                                     {% endfor %}
                                 </td>
-                                <td>
-                                    {% if b.modalite %}
-                                        France Travail
-                                        <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ b.modalite }}</span>
-                                        {% if b._modalite_months is not none and b._modalite_months > 5 %}
-                                        <span class="badge rounded-pill text-nowrap badge-sm bg-warning-lighter text-warning">Depuis + 5 mois</span>
-                                        {% endif %}
-                                    {% elif b._structure %}
-                                        {{ b._structure.name }} ({{ b._structure.type_acronym }})
-                                    {% else %}
-                                        <span class="text-muted">Inconnue</span>
-                                    {% endif %}
-                                </td>
+                                <td>Lille Avenirs (PLIE)</td>
                                 <td class="text-end w-50px">
                                     <a class="btn btn-sm btn-link btn-ico-only"
                                        href="/beneficiary/{{ b.id }}/profil"
