@@ -20,13 +20,6 @@
                     <div class="c-title__main">
                         <h1 class="mb-2 d-inline-flex align-items-center gap-2 flex-wrap justify-content-center">
                             <span>{{ b.person_last_name }} {{ b.person_first_name }}</span>
-                            {% if b.modalite %}
-                            <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">
-                                {{ b.modalite }}{% if b._modalite_months is not none and b._modalite_months > 5 %} · Depuis + 5 mois{% endif %}
-                            </span>
-                            {% elif structure %}
-                            <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">{{ structure.name }} ({{ structure.type_acronym }})</span>
-                            {% endif %}
                             {% for t in b._types %}
                             {% set color = beneficiary_type_colors.get(t, 'bg-secondary') %}
                             {% set text_color = color.replace('bg-', 'text-') %}
