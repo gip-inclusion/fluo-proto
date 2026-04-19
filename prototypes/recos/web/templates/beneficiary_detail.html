@@ -75,8 +75,9 @@
                 </div>
                 <div class="c-title text-center">
                     <div class="c-title__main">
+                        {% set has_solutions = (contrainte_solutions|length) + (1 if plie_solution else 0) + (jeunes_solutions|length) + (iae_solutions|length) + (geiq_solutions|length) + (auteuil_services|length) > 0 %}
                         <h1 class="mt-3 mb-4 d-inline-flex align-items-center gap-2 flex-wrap justify-content-center">
-                            <span>Trouver des solutions pour {{ b.person_first_name }} {{ b.person_last_name }}</span>
+                            <span>{% if has_solutions %}Solutions pour{% else %}Trouver des solutions pour{% endif %} {{ b.person_first_name }} {{ b.person_last_name }}</span>
                             {% if b.modalite %}
                             <span class="badge rounded-pill text-nowrap badge-base bg-info-lighter text-info">
                                 {{ b.modalite }}{% if b._modalite_months is not none and b._modalite_months > 5 %} · Depuis + 5 mois{% endif %}
