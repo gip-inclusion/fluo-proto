@@ -16,23 +16,13 @@
             </div>
             <ul class="list-data mb-0">
                 <li>
-                    {% if b.modalite %}
-                    <small>Modalité</small>
-                    <strong>{{ b.modalite }}</strong>
-                    {% elif structure %}
                     <small>Structure référente</small>
-                    <strong>{{ structure.name }} ({{ structure.type_acronym }})</strong>
-                    {% else %}
-                    <small>Modalité / structure</small>
-                    <i class="text-disabled">Inconnue</i>
-                    {% endif %}
+                    <strong>Lille Avenirs (PLIE)</strong>
                 </li>
-                {% if referent %}
                 <li>
-                    <small>{% if structure %}Accompagnateur·rice{% else %}Référent·e France Travail{% endif %}</small>
-                    <strong>{{ referent.first_name }} {{ referent.last_name }}{% if referent._structure %} — {{ referent._structure.name }}{% endif %}</strong>
+                    <small>Accompagnateur·rice</small>
+                    <strong>Sophie Dufour — Lille Avenirs</strong>
                 </li>
-                {% endif %}
             </ul>
 
             <hr class="my-4">
