@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% block title %}Personnes accompagnées{% endblock %}
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+                <div class="c-title">
+                    <div class="c-title__main">
+                        <h1>Personnes accompagnées</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+            <div class="col-12">
+                <div class="d-flex flex-column flex-md-row align-items-md-center mb-3 mb-md-4">
+                    <div class="flex-md-grow-1">
+                        <p class="mb-0">{{ result_count }} résultat{{ "s" if result_count != 1 else "" }}</p>
+                    </div>
+                </div>
+
+                <form method="get" action="/beneficiaries" class="d-flex flex-wrap align-items-center gap-3 mb-3 mb-md-4"
+                      onchange="this.submit()">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                            Type{% if selected_types %} ({{ selected_types|length }}){% endif %}
+                        </button>
+                        <ul class="dropdown-menu p-2" style="min-width: 220px;">
+                            {% for t in beneficiary_types %}
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="type" value="{{ t }}"
+                                           id="type-{{ t }}"
+                                           {% if t in selected_types %}checked{% endif %}>
+                                    <label class="form-check-label" for="type-{{ t }}">{{ t }}</label>
+                                </div>
+                            </li>
+                            {% endfor %}
+                            {% if selected_types %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-primary"
+                                   href="/beneficiaries{{ '?ft=1' if ft_only else '' }}">
+                                    Réinitialiser
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="ft-toggle"
+                               name="ft" value="1"
+                               {% if ft_only %}checked{% endif %}>
+                        <label class="form-check-label" for="ft-toggle">Personnes accompagnées par France Travail</label>
+                    </div>
+                    {% if ft_only %}
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="over5-toggle"
+                               name="over5" value="1"
+                               {% if over5_only %}checked{% endif %}>
+                        <label class="form-check-label" for="over5-toggle">Depuis + 5 mois</label>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                            Modalité{% if selected_modalite %} : {{ selected_modalite }}{% endif %}
+                        </button>
+                        <ul class="dropdown-menu p-2" style="min-width: 200px;">
+                            {% for m in ft_modalites %}
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="modalite" value="{{ m }}"
+                                           id="modalite-{{ loop.index }}"
+                                           {% if selected_modalite == m %}checked{% endif %}>
+                                    <label class="form-check-label" for="modalite-{{ loop.index }}">{{ m }}</label>
+                                </div>
+                            </li>
+                            {% endfor %}
+                            {% if selected_modalite %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                {% set reset_qs = [] %}
+                                {% for t in selected_types %}{% set _ = reset_qs.append('type=' ~ t) %}{% endfor %}
+                                {% set _ = reset_qs.append('ft=1') %}
+                                <a class="dropdown-item text-primary" href="/beneficiaries?{{ reset_qs|join('&') }}">
+                                    Réinitialiser
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    <div class="ms-auto">
+                        <button type="button" id="orient-btn" class="btn btn-primary btn-ico" disabled
+                                data-bs-toggle="modal" data-bs-target="#orient-modal">
+                            <i class="ri-send-plane-line fw-medium" aria-hidden="true"></i>
+                            <span>Orienter vers</span>
+                            <span id="orient-count"></span>
+                        </button>
+                    </div>
+                </form>
+
+                {% if beneficiaries %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <caption class="visually-hidden">Liste des personnes accompagnées</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="w-40px">
+                                    <input type="checkbox" class="form-check-input" id="select-all" aria-label="Tout sélectionner">
+                                </th>
+                                <th scope="col">Informations générales</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Structure référente &amp; modalité</th>
+                                <th scope="col" class="text-end w-50px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in beneficiaries %}
+                            <tr class="align-middle">
+                                <td>
+                                    <input type="checkbox" class="form-check-input row-check"
+                                           value="{{ b.id }}"
+                                           data-name="{{ b.person_last_name }} {{ b.person_first_name }}"
+                                           aria-label="Sélectionner {{ b.person_last_name }}">
+                                </td>
+                                <td>
+                                    <a class="btn-link" href="/beneficiary/{{ b.id }}/profil">
+                                        {{ b.person_last_name }} {{ b.person_first_name }}
+                                    </a>
+                                    <div class="small text-muted">
+                                        {% if b._age is not none %}{{ b._age }} ans{% endif %}
+                                        {% if b._age is not none and b.person_address %} · {% endif %}
+                                        {% if b.person_address %}{{ b.person_address }}{% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% for t in b._types %}
+                                    {% set color = beneficiary_type_colors.get(t, 'bg-secondary') %}
+                                    {% set light_color = color ~ '-lighter' %}
+                                    {% set text_color = color.replace('bg-', 'text-') %}
+                                    <span class="badge rounded-pill text-nowrap badge-sm {{ light_color }} {{ text_color }}">{{ t }}</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% if b.modalite %}
+                                        France Travail
+                                        <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ b.modalite }}</span>
+                                        {% if b._modalite_months is not none and b._modalite_months > 5 %}
+                                        <span class="badge rounded-pill text-nowrap badge-sm bg-warning-lighter text-warning">Depuis + 5 mois</span>
+                                        {% endif %}
+                                    {% elif b._structure %}
+                                        {{ b._structure.name }} ({{ b._structure.type_acronym }})
+                                    {% else %}
+                                        <span class="text-muted">Inconnue</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end w-50px">
+                                    <a class="btn btn-sm btn-link btn-ico-only"
+                                       href="/beneficiary/{{ b.id }}/profil"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="Voir ce dossier">
+                                        <i class="ri-arrow-drop-right-line fs-lg"
+                                           aria-label="Voir {{ b.person_last_name }}"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="c-box mb-3 mb-md-4">
+                    <p class="text-muted mb-0">Aucun dossier.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ── Orienter vers modal ── #}
+{% set ft_counselors = [
+    ("Yassine HAMIDI", "Renforcé", 45),
+    ("Valérie ESTEVE", "Guidé", 648),
+    ("Sandrine PEYROT", "Global", 52),
+    ("Marc DUPONT", "Essentiel", 812),
+    ("Sophie MARTIN", "Intensif", 38),
+] %}
+{% set partners = ["PLIE de Lille", "Conseil Départemental du Nord", "Mission Locale de Lille"] %}
+{% set modalite_accompagnements = ["Renforcé", "Guidé", "Essentiel", "Intensif", "Global"] %}
+<div class="modal fade" id="orient-modal" tabindex="-1" aria-labelledby="orient-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="orient-modal-label">Orienter vers</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted" id="orient-summary"></p>
+
+                <h4 class="h6 mt-2">France Travail</h4>
+                <div class="list-group mb-4">
+                    {% for name, modalite, portfolio in ft_counselors %}
+                    {% set dest_id = 'dest-ft-' ~ loop.index %}
+                    <label class="list-group-item d-flex align-items-center gap-2" for="{{ dest_id }}">
+                        <input type="radio" class="form-check-input flex-shrink-0" name="orient-destination"
+                               id="{{ dest_id }}" value="FT · {{ name }} ({{ modalite }})">
+                        <span>{{ name }}</span>
+                        <span class="text-muted fs-sm ms-2">{{ portfolio }} personnes suivies</span>
+                        <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info ms-auto">{{ modalite }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <h4 class="h6">Partenaires</h4>
+                <div class="list-group">
+                    {% for p in partners %}
+                    {% set dest_id = 'dest-partner-' ~ loop.index %}
+                    <label class="list-group-item d-flex align-items-center gap-2" for="{{ dest_id }}">
+                        <input type="radio" class="form-check-input flex-shrink-0" name="orient-destination"
+                               id="{{ dest_id }}" value="{{ p }}">
+                        <span>{{ p }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="orient-confirm">Confirmer l'orientation</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const rowChecks = document.querySelectorAll('.row-check');
+    const selectAll = document.getElementById('select-all');
+    const orientBtn = document.getElementById('orient-btn');
+    const orientCount = document.getElementById('orient-count');
+    const orientSummary = document.getElementById('orient-summary');
+    const orientConfirm = document.getElementById('orient-confirm');
+
+    function updateState() {
+        const checked = Array.from(rowChecks).filter(c => c.checked);
+        orientBtn.disabled = checked.length === 0;
+        orientCount.textContent = checked.length > 0 ? ` (${checked.length})` : '';
+        const names = checked.map(c => c.dataset.name);
+        orientSummary.textContent = names.length
+            ? `${names.length} bénéficiaire${names.length > 1 ? 's' : ''} : ${names.join(', ')}`
+            : '';
+        if (selectAll) {
+            selectAll.checked = checked.length > 0 && checked.length === rowChecks.length;
+            selectAll.indeterminate = checked.length > 0 && checked.length < rowChecks.length;
+        }
+    }
+
+    rowChecks.forEach(c => c.addEventListener('change', updateState));
+    if (selectAll) {
+        selectAll.addEventListener('change', (e) => {
+            rowChecks.forEach(c => c.checked = e.target.checked);
+            updateState();
+        });
+    }
+
+    orientConfirm.addEventListener('click', () => {
+        const dest = document.querySelector('input[name="orient-destination"]:checked');
+        if (!dest) { alert('Sélectionnez une destination.'); return; }
+        const n = Array.from(rowChecks).filter(c => c.checked).length;
+        alert(`${n} bénéficiaire${n > 1 ? 's' : ''} orienté${n > 1 ? 's' : ''} vers ${dest.value}.`);
+        bootstrap.Modal.getInstance(document.getElementById('orient-modal')).hide();
+    });
+
+    updateState();
+})();
+</script>
+{% endblock %}

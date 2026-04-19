@@ -13,6 +13,7 @@ from .config import (
     PRESCRIPTION_STATUS_LABELS,
     SERVICE_NAME,
     TAG_COLORS,
+    UI_VARIANT,
 )
 from .database import init_db
 from .routes import beneficiaries_router, placeholders_router
@@ -22,7 +23,10 @@ _dir = Path(__file__).parent
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=_dir / "static"), name="static")
 
-templates = Jinja2Templates(directory=_dir / "templates")
+_templates_dir = _dir / f"templates_{UI_VARIANT}" if UI_VARIANT != "recos" else _dir / "templates"
+if not _templates_dir.is_dir():
+    _templates_dir = _dir / "templates"
+templates = Jinja2Templates(directory=_templates_dir)
 templates.env.globals.update(
     {
         "service_name": SERVICE_NAME,

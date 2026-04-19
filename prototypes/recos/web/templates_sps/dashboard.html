@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+                <div class="c-title mb-3">
+                    <div class="c-title__main">
+                        <h1>Tableau de bord</h1>
+                    </div>
+                </div>
+                <p class="mb-3 mb-md-4 text-muted">France Travail Lille Centre</p>
+                <div class="mb-3">
+                    <a href="/search" class="form-control form-control-lg text-start text-muted text-decoration-none d-block">
+                        <i class="ri-search-line fw-medium me-2" aria-hidden="true"></i>Rechercher une solution...
+                    </a>
+                </div>
+
+                <div class="mb-3">
+                    <p class="fs-sm text-muted mb-2">
+                        <i class="ri-lightbulb-flash-line fw-medium" aria-hidden="true"></i>
+                        Idées
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">Solutions pour lever une contrainte mobilité</a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">SIAE autour de Lille</a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">Parcours jeune 16-25 ans</a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">Formation dans le numérique</a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">GEIQ métiers du BTP</a>
+                    </div>
+                </div>
+
+                <div class="mb-3 mb-md-4">
+                    <p class="fs-sm text-muted mb-2">
+                        <i class="ri-history-line fw-medium" aria-hidden="true"></i>
+                        Récent
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted d-inline-flex align-items-center gap-2">
+                            <i class="ri-search-line" aria-hidden="true"></i>ACI Lille + 25 km
+                        </a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted d-inline-flex align-items-center gap-2">
+                            <i class="ri-search-line" aria-hidden="true"></i>Services logement Roubaix
+                        </a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted d-inline-flex align-items-center gap-2">
+                            <i class="ri-search-line" aria-hidden="true"></i>EPIDE Cambrai
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xxl-3">
+            {# Card 1: Personnes accompagnées #}
+            <div class="col mb-3 mb-md-4">
+                <div class="c-box p-0 h-100">
+                    <div class="p-3 p-lg-4">
+                        <span class="h4 mb-0">Personnes accompagnées</span>
+                    </div>
+                    <div class="px-3 px-lg-4">
+                        <a href="/beneficiaries" class="btn btn-outline-primary btn-block btn-ico mb-3">
+                            <i class="ri-group-line ri-lg fw-normal" aria-hidden="true"></i>
+                            <span>Voir les 70 dossiers</span>
+                        </a>
+                        <ul class="list-unstyled mb-lg-5">
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="/beneficiaries" class="btn-link btn-ico">
+                                    <i class="ri-alert-line ri-lg fw-normal" aria-hidden="true"></i>
+                                    <span>Dossier sans solution</span>
+                                </a>
+                                <span class="badge rounded-pill badge-xs bg-danger-lighter text-danger">1</span>
+                            </li>
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="/prescriptions-received" class="btn-link btn-ico">
+                                    <i class="ri-mail-line ri-lg fw-normal" aria-hidden="true"></i>
+                                    <span>Réponses à des demandes d'orientation</span>
+                                </a>
+                                <span class="badge rounded-pill badge-xs bg-info-lighter text-info">5</span>
+                            </li>
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="/beneficiaries" class="btn-link btn-ico">
+                                    <i class="ri-time-line ri-lg fw-normal" aria-hidden="true"></i>
+                                    <span>Personne en fin de parcours</span>
+                                </a>
+                                <span class="badge rounded-pill badge-xs bg-warning-lighter text-warning">1</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {# Card 2: En ce moment sur mon territoire #}
+            <div class="col mb-3 mb-md-4">
+                <div class="c-box p-0 h-100">
+                    <div class="p-3 p-lg-4">
+                        <span class="h4 mb-0">En ce moment sur mon territoire</span>
+                    </div>
+                    <div class="px-3 px-lg-4">
+                        <ul class="list-unstyled mb-lg-5">
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="#" class="btn-link btn-ico">
+                                    <i class="ri-calendar-event-line ri-lg fw-normal" aria-hidden="true"></i>
+                                    <span>Prochain comité local</span>
+                                </a>
+                            </li>
+                            <li class="ps-4 mb-3">
+                                <span class="text-muted fs-sm">Personnes isolées et santé mentale — 15 avril, Maison de quartier Fives</span>
+                            </li>
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="#" class="btn-link btn-ico">
+                                    <i class="ri-add-circle-line ri-lg fw-normal" aria-hidden="true"></i>
+                                    <span>Nouveaux services référencés</span>
+                                </a>
+                                <span class="badge rounded-pill badge-xs bg-success-lighter text-success">4</span>
+                            </li>
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="#" class="btn-link btn-ico">
+                                    <i class="ri-briefcase-line ri-lg fw-normal" aria-hidden="true"></i>
+                                    <span>Nouvelles fiches de poste en SIAE</span>
+                                </a>
+                                <span class="badge rounded-pill badge-xs bg-info-lighter text-info">3</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {# Card 3: Organisation #}
+            <div class="col mb-3 mb-md-4">
+                <div class="c-box p-0 h-100">
+                    <div class="p-3 p-lg-4">
+                        <span class="h4 mb-0">Organisation</span>
+                    </div>
+                    <div class="px-3 px-lg-4">
+                        <ul class="list-unstyled mb-lg-5">
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="#" class="btn-link btn-ico">
+                                    <i class="ri-pencil-line ri-lg fw-normal" aria-hidden="true"></i>
+                                    <span>Modifier cette organisation</span>
+                                </a>
+                            </li>
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="#" class="btn-link btn-ico">
+                                    <i class="ri-eye-line ri-lg fw-normal" aria-hidden="true"></i>
+                                    <span>Voir la fiche publique</span>
+                                </a>
+                            </li>
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="#" class="btn-link btn-ico">
+                                    <i class="ri-team-line ri-lg fw-normal" aria-hidden="true"></i>
+                                    <span>Gérer les collaborateurs</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

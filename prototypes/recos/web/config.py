@@ -5,6 +5,8 @@ DATABASE_URL = os.environ.get(
     "postgresql+psycopg://recos:recos@localhost:5432/recos",
 )
 
+UI_VARIANT = os.environ.get("UI_VARIANT", "recos")
+
 SERVICE_NAME = "France Travail"
 
 MODALITE_LABELS = {
