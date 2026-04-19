@@ -1,0 +1,84 @@
+name: Deploy REA
+
+on:
+  push:
+    branches: [main]
+    paths: ['prototypes/recos/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-rea:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Scaleway CLI
+        run: |
+          SCW_URL=$(curl -fsSL https://api.github.com/repos/scaleway/scaleway-cli/releases/latest | grep -o 'https://[^"]*linux_amd64' | head -1)
+          curl -fsSL "$SCW_URL" -o /usr/local/bin/scw
+          chmod +x /usr/local/bin/scw
+
+      - name: Configure Scaleway CLI
+        env:
+          SCW_ACCESS_KEY: ${{ secrets.SCW_ACCESS_KEY }}
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+        run: |
+          scw init secret-key="$SCW_SECRET_KEY" access-key="$SCW_ACCESS_KEY" \
+            organization-id="${{ secrets.SCW_ORG_ID }}" \
+            project-id="${{ secrets.SCW_PROJECT_ID }}" \
+            send-telemetry=false with-ssh-key=false install-autocomplete=false
+
+      - name: Login to Scaleway container registry
+        env:
+          SCW_SECRET_KEY: ${{ secrets.SCW_SECRET_KEY }}
+          SCW_REGISTRY: ${{ secrets.SCW_REGISTRY }}
+        run: |
+          docker login "${SCW_REGISTRY%%/*}" -u nologin --password-stdin <<< "$SCW_SECRET_KEY"
+
+      - name: Build and push image
+        env:
+          SCW_REGISTRY: ${{ secrets.SCW_REGISTRY }}
+        run: |
+          docker buildx build --platform linux/amd64 \
+            -t "$SCW_REGISTRY/rea:latest" \
+            prototypes/recos --push
+
+      - name: Get DATABASE_URL from recos container
+        run: |
+          recos_id=$(scw container container list name=recos -o json | jq -r '.[0].id')
+          test -n "$recos_id" && test "$recos_id" != "null" || { echo "error: no recos container found"; exit 1; }
+          db_url=$(scw container container get "$recos_id" -o json | jq -r '.environment_variables.DATABASE_URL')
+          test -n "$db_url" && test "$db_url" != "null" || { echo "error: DATABASE_URL not found on recos"; exit 1; }
+          echo "DATABASE_URL=$db_url" >> "$GITHUB_ENV"
+
+      - name: Create or deploy REA container
+        env:
+          SCW_REGISTRY: ${{ secrets.SCW_REGISTRY }}
+        run: |
+          set -euo pipefail
+          existing=$(scw container container list name=rea -o json | jq -r '.[0].id // empty')
+          if [ -z "$existing" ]; then
+            echo "Creating new REA container..."
+            namespace_id=$(scw container container list name=recos -o json | jq -r '.[0].namespace_id')
+            scw container container create \
+              namespace-id="$namespace_id" \
+              region=fr-par \
+              name=rea \
+              registry-image="$SCW_REGISTRY/rea:latest" \
+              min-scale=1 \
+              max-scale=1 \
+              memory-limit=256 \
+              cpu-limit=140 \
+              privacy=public \
+              port=8080 \
+              protocol=http1 \
+              environment-variables.DATABASE_URL="$DATABASE_URL" \
+              environment-variables.UI_VARIANT=rea \
+              -o json
+            existing=$(scw container container list name=rea -o json | jq -r '.[0].id')
+          fi
+          echo "Deploying REA container $existing..."
+          scw container container deploy "$existing" region=fr-par
