@@ -132,7 +132,7 @@
                                            aria-label="Sélectionner {{ b.person_last_name }}">
                                 </td>
                                 <td>
-                                    <a class="btn-link" href="/beneficiary/{{ b.id }}">
+                                    <a class="btn-link" href="/beneficiary/{{ b.id }}/profil">
                                         {{ b.person_last_name }} {{ b.person_first_name }}
                                     </a>
                                     <div class="small text-muted">
@@ -164,7 +164,7 @@
                                 </td>
                                 <td class="text-end w-50px">
                                     <a class="btn btn-sm btn-link btn-ico-only"
-                                       href="/beneficiary/{{ b.id }}"
+                                       href="/beneficiary/{{ b.id }}/profil"
                                        data-bs-toggle="tooltip"
                                        data-bs-title="Voir ce dossier">
                                         <i class="ri-arrow-drop-right-line fs-lg"
