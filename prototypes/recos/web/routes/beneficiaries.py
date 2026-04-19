@@ -226,6 +226,38 @@ async def detail_beneficiary(request: Request, id: int):
     )
 
 
+@router.get("/beneficiary/{id}/profil", response_class=HTMLResponse)
+async def profil_beneficiary(request: Request, id: int):
+    with Session(engine) as session:
+        b = session.get(Beneficiary, id)
+        if not b:
+            return HTMLResponse("Not found", status_code=404)
+        b._age = compute_age(b.person_birthdate)
+        b._modalite_months = compute_modalite_months(b)
+        b._types = compute_beneficiary_types(b)
+        structure = None
+        if b.structure_referente_id:
+            structure = session.get(Structure, b.structure_referente_id)
+        referent = None
+        if b.referent_id:
+            referent = session.get(Professional, b.referent_id)
+            if referent and referent.structure_id:
+                referent._structure = session.get(Structure, referent.structure_id)
+            else:
+                referent._structure = None
+        diagnostic = json.loads(b.diagnostic_data) if b.diagnostic_data else None
+    return _templates(request).TemplateResponse(
+        "beneficiary_profil.html",
+        {
+            "request": request,
+            "b": b,
+            "structure": structure,
+            "referent": referent,
+            "diagnostic": diagnostic,
+        },
+    )
+
+
 @router.get("/solution/{id}", response_class=HTMLResponse)
 async def solution_detail(request: Request, id: int):
     from_id = request.query_params.get("from")
