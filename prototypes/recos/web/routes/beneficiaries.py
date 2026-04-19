@@ -36,6 +36,14 @@ async def dashboard(request: Request):
     )
 
 
+@router.get("/search", response_class=HTMLResponse)
+async def search(request: Request):
+    return _templates(request).TemplateResponse(
+        "search.html",
+        {"request": request},
+    )
+
+
 @router.get("/beneficiaries", response_class=HTMLResponse)
 async def list_beneficiaries(request: Request):
     selected_types = [t for t in request.query_params.getlist("type") if t in BENEFICIARY_TYPES]

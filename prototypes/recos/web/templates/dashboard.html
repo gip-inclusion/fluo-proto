@@ -12,11 +12,9 @@
                 </div>
                 <p class="mb-3 mb-md-4 text-muted">France Travail Lille Centre</p>
                 <div class="mb-3">
-                    <button type="button"
-                            class="form-control form-control-lg text-start text-muted"
-                            data-bs-toggle="modal" data-bs-target="#search-solution-modal">
+                    <a href="/search" class="form-control form-control-lg text-start text-muted text-decoration-none d-block">
                         <i class="ri-search-line fw-medium me-2" aria-hidden="true"></i>Rechercher une solution...
-                    </button>
+                    </a>
                 </div>
 
                 <div class="mb-3">
@@ -25,26 +23,11 @@
                         Idées
                     </p>
                     <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted"
-                                data-bs-toggle="modal" data-bs-target="#search-solution-modal">
-                            Solutions pour lever une contrainte mobilité
-                        </button>
-                        <button type="button" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted"
-                                data-bs-toggle="modal" data-bs-target="#search-solution-modal">
-                            SIAE autour de Lille
-                        </button>
-                        <button type="button" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted"
-                                data-bs-toggle="modal" data-bs-target="#search-solution-modal">
-                            Parcours jeune 16-25 ans
-                        </button>
-                        <button type="button" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted"
-                                data-bs-toggle="modal" data-bs-target="#search-solution-modal">
-                            Formation dans le numérique
-                        </button>
-                        <button type="button" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted"
-                                data-bs-toggle="modal" data-bs-target="#search-solution-modal">
-                            GEIQ métiers du BTP
-                        </button>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">Solutions pour lever une contrainte mobilité</a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">SIAE autour de Lille</a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">Parcours jeune 16-25 ans</a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">Formation dans le numérique</a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted">GEIQ métiers du BTP</a>
                     </div>
                 </div>
 
@@ -54,21 +37,15 @@
                         Récent
                     </p>
                     <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted d-inline-flex align-items-center gap-2"
-                                data-bs-toggle="modal" data-bs-target="#search-solution-modal">
-                            <i class="ri-search-line" aria-hidden="true"></i>
-                            ACI Lille + 25 km
-                        </button>
-                        <button type="button" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted d-inline-flex align-items-center gap-2"
-                                data-bs-toggle="modal" data-bs-target="#search-solution-modal">
-                            <i class="ri-search-line" aria-hidden="true"></i>
-                            Services logement Roubaix
-                        </button>
-                        <button type="button" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted d-inline-flex align-items-center gap-2"
-                                data-bs-toggle="modal" data-bs-target="#search-solution-modal">
-                            <i class="ri-search-line" aria-hidden="true"></i>
-                            EPIDE Cambrai
-                        </button>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted d-inline-flex align-items-center gap-2">
+                            <i class="ri-search-line" aria-hidden="true"></i>ACI Lille + 25 km
+                        </a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted d-inline-flex align-items-center gap-2">
+                            <i class="ri-search-line" aria-hidden="true"></i>Services logement Roubaix
+                        </a>
+                        <a href="/search" class="btn btn-sm bg-white border rounded-pill px-3 py-1 shadow-sm text-muted d-inline-flex align-items-center gap-2">
+                            <i class="ri-search-line" aria-hidden="true"></i>EPIDE Cambrai
+                        </a>
                     </div>
                 </div>
             </div>
@@ -187,184 +164,4 @@
     </div>
 </section>
 
-{# ── Rechercher une solution full-screen modal ── #}
-<div class="modal fade" id="search-solution-modal" tabindex="-1" aria-labelledby="search-solution-modal-label" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-body p-0">
-                <section class="s-title-02 bg-light">
-                    <div class="s-title-02__container container-fluid">
-                        <div class="s-title-02__row row">
-                            <div class="s-title-02__col col-12">
-                                <div class="d-flex justify-content-end mb-2">
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-                                </div>
-                                <div class="c-title text-center">
-                                    <div class="c-title__main">
-                                        <h1 id="search-solution-modal-label" class="mb-2">Rechercher une solution</h1>
-                                        <p class="mb-2 d-flex justify-content-center align-items-center gap-2 flex-wrap">
-                                            <button type="button"
-                                                    class="btn bg-white border rounded-pill ps-4 pe-2 py-2 d-inline-flex align-items-center gap-3 shadow-sm text-muted fw-normal"
-                                                    data-bs-toggle="modal" data-bs-target="#search-locate-modal"
-                                                    aria-label="Modifier l'adresse, le rayon et le projet pro">
-                                                <span id="search-address-display">59000 Lille <span class="text-muted">+ 20 km</span></span>
-                                                <span class="text-muted">·</span>
-                                                <span class="fst-italic">Projet pro non défini</span>
-                                                <span class="d-inline-flex align-items-center justify-content-center bg-marche text-white rounded-circle" style="width: 2rem; height: 2rem;">
-                                                    <i class="ri-search-line" aria-hidden="true"></i>
-                                                </span>
-                                            </button>
-                                            <button type="button"
-                                                    class="btn bg-white border rounded-pill py-2 px-4 shadow-sm d-inline-flex align-items-center gap-2 text-muted fw-normal"
-                                                    data-bs-toggle="modal" data-bs-target="#search-filter-modal"
-                                                    aria-label="Filtrer les recommandations">
-                                                <i class="ri-filter-3-line fw-medium" aria-hidden="true"></i>
-                                                <span>Filtres</span>
-                                            </button>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="s-section">
-                    <div class="s-section__container container-fluid">
-                        <div class="c-box mb-3 mb-md-4">
-                            <div class="text-center py-4">
-                                <i class="ri-search-2-line ri-2x fw-medium text-muted" aria-hidden="true"></i>
-                                <p class="mt-3 mb-0 text-muted">
-                                    Saisissez un métier ou filtrez par thématique pour afficher les solutions disponibles sur votre territoire.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
-    </div>
-</div>
-
-{# ── Search: Adresse / rayon / projet pro modal ── #}
-<div class="modal fade" id="search-locate-modal" tabindex="-1" aria-labelledby="search-locate-modal-label" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="search-locate-modal-label">Adresse, rayon et projet pro</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="search-locate-address" class="form-label fs-sm">Adresse</label>
-                    <input type="text" class="form-control" id="search-locate-address"
-                           value="59000 Lille" placeholder="Code postal + ville">
-                </div>
-                <div class="mb-2 d-flex justify-content-between align-items-baseline">
-                    <label for="search-locate-radius" class="form-label fs-sm mb-0">Rayon</label>
-                    <span class="fs-sm fw-bold"><span id="search-locate-radius-value">20</span> km</span>
-                </div>
-                <input type="range" class="form-range" id="search-locate-radius"
-                       min="1" max="50" step="1" value="20"
-                       oninput="document.getElementById('search-locate-radius-value').textContent = this.value;">
-                <div class="d-flex justify-content-between text-muted fs-xs mb-3">
-                    <span>1 km</span>
-                    <span>50 km</span>
-                </div>
-                <div class="mb-3">
-                    <label for="search-locate-projet" class="form-label fs-sm">Projet professionnel</label>
-                    <input type="text" class="form-control" id="search-locate-projet"
-                           list="search-rome-suggestions"
-                           placeholder="Métier, code ROME ou description en langage naturel">
-                    <datalist id="search-rome-suggestions">
-                        <option value="A1101 — Conduite d'engins agricoles et forestiers"></option>
-                        <option value="A1202 — Entretien des espaces verts"></option>
-                        <option value="F1601 — Gros œuvre et maçonnerie du bâtiment"></option>
-                        <option value="G1603 — Personnel polyvalent en cuisine"></option>
-                        <option value="K2204 — Nettoyage de locaux"></option>
-                        <option value="M1805 — Études et développement informatique"></option>
-                        <option value="N1103 — Magasinage et préparation de commandes"></option>
-                    </datalist>
-                    <div class="form-text fs-xs">
-                        Saisissez librement un métier, un code ROME (ex. M1805) ou décrivez en quelques mots ce que la personne veut faire.
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Appliquer</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-{# ── Search: Filtres modal ── #}
-<div class="modal fade" id="search-filter-modal" tabindex="-1" aria-labelledby="search-filter-modal-label" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="search-filter-modal-label">Filtrer les solutions</h3>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <form>
-                <div class="modal-body">
-                    <h4 class="h5 mb-3">Thématiques de contraintes personnelles</h4>
-                    <div class="row">
-                        {% for key, label in [('mobilite', 'Mobilité'), ('logement', 'Logement'), ('financieres', 'Difficultés financières'), ('sante', 'Santé'), ('administratif', 'Démarches administratives'), ('francais', 'Français et compétences de base'), ('famille', 'Famille et parentalité'), ('numerique', 'Numérique'), ('remobilisation', 'Remobilisation')] %}
-                        <div class="col-12 col-sm-6">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="search-cat-{{ key }}" name="categorie" value="{{ key }}">
-                                <label class="form-check-label" for="search-cat-{{ key }}">{{ label }}</label>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <hr class="my-4">
-                    <h4 class="h5 mb-3">Type d'acteur</h4>
-                    <div class="row">
-                        {% for key, label in [('ACI', "ACI — Atelier chantier d'insertion"), ('AI', 'AI — Association intermédiaire'), ('EA', 'EA — Entreprise adaptée'), ('EATT', 'EATT — Entreprise adaptée de travail temporaire'), ('EI', "EI — Entreprise d'insertion"), ('EITI', "EITI — Entreprise d'insertion par le travail indépendant"), ('ETTI', "ETTI — Entreprise de travail temporaire d'insertion"), ('GEIQ', "GEIQ — Groupement d'employeurs"), ('OPCS', 'OPCS — Organisation porteuse de la clause sociale'), ('PLIE', 'PLIE'), ('E2C', 'E2C — École de la deuxième chance'), ('EPIDE', 'EPIDE'), ('AUTEUIL', "Apprentis d'Auteuil")] %}
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="search-acteur-{{ key }}" name="acteur" value="{{ key }}" checked>
-                                <label class="form-check-label" for="search-acteur-{{ key }}">{{ label }}</label>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Appliquer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<script>
-// Swap between the fullscreen search modal and its nested locate/filter modals.
-// When a nested modal opens we hide the search modal; when the nested closes
-// we reopen the search modal (rather than returning to the dashboard).
-(function () {
-    var outer = document.getElementById('search-solution-modal');
-    if (!outer) return;
-    var pending = false;
-    ['search-locate-modal', 'search-filter-modal'].forEach(function (id) {
-        var m = document.getElementById(id);
-        if (!m) return;
-        m.addEventListener('show.bs.modal', function () {
-            if (outer.classList.contains('show')) {
-                pending = true;
-                bootstrap.Modal.getOrCreateInstance(outer).hide();
-            }
-        });
-        m.addEventListener('hidden.bs.modal', function () {
-            if (pending) {
-                pending = false;
-                bootstrap.Modal.getOrCreateInstance(outer).show();
-            }
-        });
-    });
-})();
-</script>
 {% endblock %}
