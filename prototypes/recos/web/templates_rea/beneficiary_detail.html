@@ -830,8 +830,8 @@ window.addEventListener('load', function() {
                 <h3 class="modal-title" id="filter-modal-label">Filtrer les recommandations</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
-            <form id="filter-form">
-                <div class="modal-body">
+            <div class="modal-body">
+                <form id="filter-form">
                     <h4 class="h5 mb-3">Thématiques de contraintes personnelles</h4>
                     {% set contrainte_categories = [
                         ('mobilite', 'Mobilité'),
@@ -910,12 +910,12 @@ window.addEventListener('load', function() {
                         </div>
                         {% endfor %}
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Appliquer</button>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Appliquer</button>
+            </div>
         </div>
     </div>
 </div>
