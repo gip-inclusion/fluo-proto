@@ -135,11 +135,15 @@
                                     {% endfor %}
                                 </td>
                                 <td>
-                                    France Travail
-                                    {% if b._modalite_months is not none and b._modalite_months > 5 %}
-                                    <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">Guidé · Depuis + 5 mois</span>
+                                    {% if b._structure %}
+                                        {{ b._structure.name }} ({{ b._structure.type_acronym }})
                                     {% else %}
-                                    <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">Guidé</span>
+                                        France Travail
+                                        {% if b._modalite_months is not none and b._modalite_months > 5 %}
+                                        <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">Guidé · Depuis + 5 mois</span>
+                                        {% else %}
+                                        <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">Guidé</span>
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                                 <td class="text-end w-50px">
