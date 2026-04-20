@@ -115,37 +115,51 @@
                 <h3 class="modal-title" id="search-filter-modal-label">Filtrer les solutions</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
-            <form>
-                <div class="modal-body">
-                    <h4 class="h5 mb-3">Thématiques de contraintes personnelles</h4>
-                    <div class="row">
-                        {% for key, label in [('mobilite', 'Mobilité'), ('logement', 'Logement'), ('financieres', 'Difficultés financières'), ('sante', 'Santé'), ('administratif', 'Démarches administratives'), ('francais', 'Français et compétences de base'), ('famille', 'Famille et parentalité'), ('numerique', 'Numérique'), ('remobilisation', 'Remobilisation')] %}
-                        <div class="col-12 col-sm-6">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="search-cat-{{ key }}" name="categorie" value="{{ key }}">
-                                <label class="form-check-label" for="search-cat-{{ key }}">{{ label }}</label>
-                            </div>
+            <div class="modal-body">
+                <h4 class="h5 mb-3">Thématiques de contraintes personnelles</h4>
+                <div class="row">
+                    {% for key, label in [('mobilite', 'Mobilité'), ('logement', 'Logement'), ('financieres', 'Difficultés financières'), ('sante', 'Santé'), ('administratif', 'Démarches administratives'), ('francais', 'Français et compétences de base'), ('famille', 'Famille et parentalité'), ('numerique', 'Numérique'), ('remobilisation', 'Remobilisation')] %}
+                    <div class="col-12 col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="search-cat-{{ key }}" name="categorie" value="{{ key }}">
+                            <label class="form-check-label" for="search-cat-{{ key }}">{{ label }}</label>
                         </div>
-                        {% endfor %}
                     </div>
-                    <hr class="my-4">
-                    <h4 class="h5 mb-3">Type d'acteur</h4>
-                    <div class="row">
-                        {% for key, label in [('ACI', "ACI — Atelier chantier d'insertion"), ('AI', 'AI — Association intermédiaire'), ('EA', 'EA — Entreprise adaptée'), ('EATT', 'EATT — Entreprise adaptée de travail temporaire'), ('EI', "EI — Entreprise d'insertion"), ('EITI', "EITI — Entreprise d'insertion par le travail indépendant"), ('ETTI', "ETTI — Entreprise de travail temporaire d'insertion"), ('GEIQ', "GEIQ — Groupement d'employeurs"), ('OPCS', 'OPCS — Organisation porteuse de la clause sociale'), ('PLIE', 'PLIE'), ('E2C', 'E2C — École de la deuxième chance'), ('EPIDE', 'EPIDE'), ('AUTEUIL', "Apprentis d'Auteuil")] %}
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="search-acteur-{{ key }}" name="acteur" value="{{ key }}" checked>
-                                <label class="form-check-label" for="search-acteur-{{ key }}">{{ label }}</label>
-                            </div>
+                    {% endfor %}
+                </div>
+
+                <hr class="my-4">
+
+                <h4 class="h5 mb-3">Type de public</h4>
+                <div class="row">
+                    {% for key, label in [('QPV', 'QPV — Quartier prioritaire de la politique de la ville'), ('RSA', 'RSA — Bénéficiaire du RSA'), ('AAH', 'AAH — Allocation aux adultes handicapés'), ('RQTH', 'RQTH — Reconnaissance de la qualité de travailleur handicapé'), ('DELD', "DELD — Demandeur d'emploi longue durée"), ('DETLD', "DETLD — Demandeur d'emploi très longue durée")] %}
+                    <div class="col-12 col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="search-type-{{ key }}" name="type_public" value="{{ key }}">
+                            <label class="form-check-label" for="search-type-{{ key }}">{{ label }}</label>
                         </div>
-                        {% endfor %}
                     </div>
+                    {% endfor %}
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Appliquer</button>
+
+                <hr class="my-4">
+
+                <h4 class="h5 mb-3">Type d'acteur</h4>
+                <div class="row">
+                    {% for key, label in [('ACI', "ACI — Atelier chantier d'insertion"), ('AI', 'AI — Association intermédiaire'), ('EA', 'EA — Entreprise adaptée'), ('EATT', 'EATT — Entreprise adaptée de travail temporaire'), ('EI', "EI — Entreprise d'insertion"), ('EITI', "EITI — Entreprise d'insertion par le travail indépendant"), ('ETTI', "ETTI — Entreprise de travail temporaire d'insertion"), ('GEIQ', "GEIQ — Groupement d'employeurs pour l'insertion et la qualification"), ('OPCS', 'OPCS — Organisation porteuse de la clause sociale'), ('PLIE', "PLIE — Plan local pour l'insertion et l'emploi"), ('E2C', 'E2C — École de la deuxième chance'), ('EPIDE', "EPIDE — Établissement pour l'insertion dans l'emploi"), ('AUTEUIL', "Apprentis d'Auteuil")] %}
+                    <div class="col-12 col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="search-acteur-{{ key }}" name="acteur" value="{{ key }}" checked>
+                            <label class="form-check-label" for="search-acteur-{{ key }}">{{ label }}</label>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Appliquer</button>
+            </div>
         </div>
     </div>
 </div>
