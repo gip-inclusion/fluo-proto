@@ -852,6 +852,32 @@ window.addEventListener('load', function() {
 
                     <hr class="my-4">
 
+                    <h4 class="h5 mb-3">Type de public</h4>
+                    {% set public_types = [
+                        ('QPV', 'QPV — Quartier prioritaire de la politique de la ville'),
+                        ('RSA', 'RSA — Bénéficiaire du RSA'),
+                        ('AAH', 'AAH — Allocation aux adultes handicapés'),
+                        ('RQTH', 'RQTH — Reconnaissance de la qualité de travailleur handicapé'),
+                        ('DELD', 'DELD — Demandeur d\'emploi longue durée'),
+                        ('DETLD', 'DETLD — Demandeur d\'emploi très longue durée'),
+                        ('Jeune', 'Jeune (16-25 ans)'),
+                        ('Senior', 'Senior (50 ans et +)'),
+                    ] %}
+                    <div class="row">
+                        {% for key, label in public_types %}
+                        <div class="col-12 col-sm-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filter-type-{{ key }}"
+                                       name="type_public" value="{{ key }}"
+                                       {% if key in b._types %}checked{% endif %}>
+                                <label class="form-check-label" for="filter-type-{{ key }}">{{ label }}</label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <hr class="my-4">
+
                     <h4 class="h5 mb-3">Type d'acteur</h4>
                     {% set actor_types = [
                         ('ACI', "ACI — Atelier chantier d'insertion"),
