@@ -1,0 +1,78 @@
+<div class="s-section__row row">
+    <div class="s-section__col col-12">
+        <h2 class="h3 mb-3">Informations administratives</h2>
+        <div class="c-box mb-3 mb-md-4">
+            {# Accompagnement #}
+            <div class="row mb-3">
+                <div class="col-12 col-sm">
+                    <h3 class="h4 mb-0">Accompagnement</h3>
+                </div>
+                <div class="col-12 col-sm-auto mt-2 mt-sm-0 d-flex align-items-center">
+                    <a href="/beneficiary/{{ b.id }}/recommendations" class="btn btn-ico btn-outline-primary">
+                        <i class="ri-pencil-line fw-medium" aria-hidden="true"></i>
+                        <span>Modifier</span>
+                    </a>
+                </div>
+            </div>
+            <ul class="list-data mb-0">
+                <li>
+                    {% if b.modalite %}
+                    <small>Modalité</small>
+                    <strong>{{ b.modalite }}</strong>
+                    {% elif structure %}
+                    <small>Structure référente</small>
+                    <strong>{{ structure.name }} ({{ structure.type_acronym }})</strong>
+                    {% else %}
+                    <small>Modalité / structure</small>
+                    <i class="text-disabled">Inconnue</i>
+                    {% endif %}
+                </li>
+                {% if referent %}
+                <li>
+                    <small>{% if structure %}Accompagnateur·rice{% else %}Référent·e France Travail{% endif %}</small>
+                    <strong>{{ referent.first_name }} {{ referent.last_name }}{% if referent._structure %} — {{ referent._structure.name }}{% endif %}</strong>
+                </li>
+                {% endif %}
+            </ul>
+
+            <hr class="my-4">
+
+            {# Informations générales #}
+            <h3 class="h4 mb-3">Informations générales</h3>
+            <ul class="list-data mb-0">
+                <li>
+                    <small>Nom</small>
+                    <strong>{{ b.person_last_name }}</strong>
+                </li>
+                <li>
+                    <small>Prénom</small>
+                    <strong>{{ b.person_first_name }}</strong>
+                </li>
+                <li>
+                    <small>Email</small>
+                    <strong>
+                        {% if b.person_email %}
+                        <a href="mailto:{{ b.person_email }}">{{ b.person_email }}</a>
+                        {% endif %}
+                    </strong>
+                </li>
+                <li>
+                    <small>Téléphone</small>
+                    <strong>
+                        {% if b.person_phone %}
+                        <a href="tel:{{ b.person_phone|replace(' ', '') }}">{{ b.person_phone }}</a>
+                        {% endif %}
+                    </strong>
+                </li>
+                <li>
+                    <small>Date de naissance</small>
+                    <strong>{{ b.person_birthdate or "" }}</strong>
+                </li>
+                <li>
+                    <small>Adresse</small>
+                    <strong>{{ b.person_address or "" }}</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

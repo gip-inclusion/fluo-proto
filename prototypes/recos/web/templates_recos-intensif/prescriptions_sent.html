@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Demandes envoyées{% endblock %}
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+                <div class="c-title">
+                    <div class="c-title__main">
+                        <h1>Demandes envoyées</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+            <div class="col-12">
+                <div class="d-flex flex-column flex-md-row align-items-md-center mb-3 mb-md-4">
+                    <div class="flex-md-grow-1">
+                        <p class="mb-0">{{ prescriptions|length }} résultat{{ "s" if prescriptions|length != 1 else "" }}</p>
+                    </div>
+                </div>
+
+                {% if prescriptions %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <caption class="visually-hidden">Liste des prescriptions envoyées</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Personne accompagnée</th>
+                                <th scope="col">Solution</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col" class="text-end w-50px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in prescriptions %}
+                            <tr class="align-middle">
+                                <td>
+                                    {% if p._beneficiary %}
+                                    <a class="btn-link" href="/beneficiary/{{ p._beneficiary.id }}">
+                                        {{ p._beneficiary.person_last_name }} {{ p._beneficiary.person_first_name }}
+                                    </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if p._solution %}
+                                    {{ p._solution.name }}
+                                    <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info">{{ p._solution.type_label }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ p.created_at|format_datetime }}</td>
+                                <td>
+                                    {% set status_info = prescription_status_labels.get(p.status, ("Inconnu", "bg-secondary")) %}
+                                    <span class="badge rounded-pill text-nowrap badge-sm {{ status_info[1] }}">{{ status_info[0] }}</span>
+                                </td>
+                                <td class="text-end w-50px">
+                                    <a class="btn btn-sm btn-link btn-ico-only"
+                                       href="/prescription/{{ p.id }}"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="Voir cette prescription">
+                                        <i class="ri-arrow-drop-right-line fs-lg"
+                                           aria-label="Voir la prescription"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="c-box mb-3 mb-md-4">
+                    <p class="text-muted mb-0">Aucune prescription envoyée.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,316 @@
+{# Diagnostic socio-professionnel — readable, color-coded, single column.
+   Sections: Parcours, Projet, Contraintes & besoins, Points forts, Autonomie & numérique. #}
+
+{% macro dot(color, text) %}
+<div class="d-flex align-items-center gap-2 mb-1">
+    <i class="ri-circle-fill text-{{ color }} flex-shrink-0" style="font-size: 0.6rem;" aria-hidden="true"></i>
+    <span class="fs-sm">{{ text }}</span>
+</div>
+{% endmacro %}
+
+{% macro agent_line(agent, date) %}
+{% if agent or date %}
+<p class="text-muted fs-xs mt-2 mb-0">
+    {% if date %}Exploré le {{ date[:10] }}{% endif %}
+    {% if agent %}{% if date %} par {% endif %}{{ agent.prenom or "" }} {{ agent.nom or "" }}{% if agent.structure %} — {{ agent.structure }}{% endif %}{% endif %}
+</p>
+{% endif %}
+{% endmacro %}
+
+<div class="s-section__row row">
+    <div class="s-section__col col-12">
+        {% if not diagnostic %}
+        <div class="c-box mb-3 mb-md-4">
+            <p class="text-muted mb-0">Aucun diagnostic disponible.</p>
+        </div>
+        {% else %}
+
+        {% set ex = diagnostic.extra if diagnostic.extra is defined else {} %}
+        {% set ms = ex.modaliteSuivi if ex.modaliteSuivi is defined else none %}
+        {% set iae = ex.insertionActiviteEconomique if ex.insertionActiviteEconomique is defined else none %}
+        {% set ofii = ex.ofii if ex.ofii is defined else none %}
+        {% set decl_orient = ex.declarationsOrientation if ex.declarationsOrientation is defined else none %}
+        {% set info_decl = ex.informationsDeclarees if ex.informationsDeclarees is defined else none %}
+
+        {# ── Parcours ── #}
+        {% set ns_parcours = namespace(has_content=false) %}
+        {% if ms or ofii or decl_orient or info_decl %}
+            {% set ns_parcours.has_content = true %}
+        {% endif %}
+
+        {# Projet professionnel #}
+        {% set diag = diagnostic.besoinsParDiagnostic[0].diagnostic if diagnostic.besoinsParDiagnostic else none %}
+
+        {# Contraintes et besoins #}
+        {% set tc = diagnostic.thematiqueContrainte %}
+        {% set ns_besoins = namespace(items=[]) %}
+        {% set ns_contraintes = namespace(items=[]) %}
+        {% for bp in diagnostic.besoinsParDiagnostic or [] %}
+            {% for th in bp.thematiquesBesoins or [] %}
+                {% for b_item in th.besoins or [] %}
+                    {% if b_item.valeur == "BESOIN" %}
+                        {% set ns_besoins.items = ns_besoins.items + [(th.libelle, b_item.libelle)] %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+        {% if tc %}
+            {% for c in tc.contraintes or [] %}
+                {% if c.valeur and c.valeur != "NON_ABORDEE" and c.valeur != "NON_ABORDE" %}
+                    {% set ns_contraintes.items = ns_contraintes.items + [c] %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% set ns_cb = namespace(has_content=false) %}
+        {% if ns_contraintes.items or ns_besoins.items %}
+            {% set ns_cb.has_content = true %}
+        {% elif tc and tc.declareSansContrainte and tc.declareSansContrainte.flag %}
+            {% set ns_cb.has_content = true %}
+        {% endif %}
+
+        {# Points forts #}
+        {% set ns_forces = namespace(items=[]) %}
+        {% for bp in diagnostic.besoinsParDiagnostic or [] %}
+            {% for th in bp.thematiquesBesoins or [] %}
+                {% for b_item in th.besoins or [] %}
+                    {% if b_item.valeur == "POINT_FORT" %}
+                        {% set ns_forces.items = ns_forces.items + [b_item.libelle] %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+
+        {# Autonomie et numérique #}
+        {% set pa = diagnostic.pouvoirAgir if diagnostic.pouvoirAgir is defined else none %}
+        {% set an = diagnostic.autonomieNumerique if diagnostic.autonomieNumerique is defined else none %}
+        {% set ns_auto = namespace(has_content=false) %}
+        {% if pa and (pa.confiance or pa.accompagnement) %}
+            {% set ns_auto.has_content = true %}
+        {% endif %}
+        {% if an %}
+            {% if an.contrainte and an.contrainte.valeur and an.contrainte.valeur not in ("NON_ABORDEE", "NON_ABORDE") %}
+                {% set ns_auto.has_content = true %}
+            {% endif %}
+            {% if an.besoin and an.besoin.valeur and an.besoin.valeur != "NON_EXPLORE" %}
+                {% set ns_auto.has_content = true %}
+            {% endif %}
+        {% endif %}
+
+        {% set ns_any = namespace(rendered=false) %}
+        <div class="c-box mb-3 mb-md-4">
+
+        {% if ns_parcours.has_content %}
+            <h3 class="h4">
+                <i class="ri-route-line fw-medium" aria-hidden="true"></i>
+                Parcours
+            </h3>
+
+            {% if ms and ms.modaliteEnCours %}
+            {{ dot("info", "Modalité " + ms.modaliteEnCours + " depuis le " + ms.dateEnregistrement[:10]) }}
+            {% endif %}
+
+            {# Disposition #}
+            {% if decl_orient and (decl_orient.elements or decl_orient.santeDeclare) %}
+            <h4 class="h6 mt-3">Disposition</h4>
+            {% for el in decl_orient.elements or [] %}
+            {{ dot("info", el) }}
+            {% endfor %}
+            {% if decl_orient.santeDeclare %}
+            {{ dot("warning", decl_orient.santeDeclare) }}
+            {% endif %}
+            {% if decl_orient.date %}
+            <p class="text-muted fs-xs mt-1 mb-0">Déclaration du {{ decl_orient.date[:10] }}</p>
+            {% endif %}
+            {% endif %}
+
+            {# Droits et démarches #}
+            {% set ns_droits = namespace(has_content=false) %}
+            {% if ofii or (info_decl) %}
+                {% set ns_droits.has_content = true %}
+            {% endif %}
+            {% if ns_droits.has_content %}
+            <h4 class="h6 mt-3">Droits et démarches</h4>
+            {% if ofii %}
+            {% if ofii.beneficiaireCIR %}
+            {{ dot("info", "Bénéficiaire du Contrat d'Intégration Républicaine") }}
+            {% endif %}
+            {% if ofii.beneficiaireProtectionInternationale %}
+            {{ dot("info", "Bénéficiaire de la protection internationale") }}
+            {% endif %}
+            {% if ofii.niveauFLE %}
+            {{ dot("warning", "Niveau FLE : " + ofii.niveauFLE) }}
+            {% endif %}
+            {% endif %}
+            {% if info_decl %}
+            {% if info_decl is iterable and info_decl is not string and info_decl is not mapping %}
+            {% for info in info_decl %}
+            {% if info.contenu %}
+            {{ dot("secondary", info.contenu) }}
+            {% endif %}
+            {% endfor %}
+            {% elif info_decl is mapping and info_decl.contenu %}
+            {{ dot("secondary", info_decl.contenu) }}
+            {% endif %}
+            {% endif %}
+            {% endif %}
+            {% set ns_any.rendered = true %}
+        {% endif %}
+
+        {% if diag %}
+            {% if ns_any.rendered %}<hr class="my-4">{% endif %}
+            <h3 class="h4">
+                <i class="ri-compass-3-line fw-medium" aria-hidden="true"></i>
+                Projet professionnel
+            </h3>
+            {% if diag.nomMetier %}
+            {{ dot("success", diag.nomMetier) }}
+            {% else %}
+            {{ dot("warning", "Pas de projet professionnel défini") }}
+            {% endif %}
+
+            {% set ore = ex.offreRaisonnableEmploi if ex.offreRaisonnableEmploi is defined else none %}
+            {% if ore %}
+            {% if ore.experience and ore.experience not in ("Non renseigné", "Non Renseigné") %}
+            {{ dot("secondary", ore.experience) }}
+            {% endif %}
+            {% if ore.typeContratSouhaite and ore.typeContratSouhaite not in ("Non renseigné", "Non Renseigné") %}
+            {{ dot("secondary", "Contrat souhaité : " + ore.typeContratSouhaite) }}
+            {% endif %}
+            {% if ore.tempsTravailSouhaite and ore.tempsTravailSouhaite not in ("Non renseigné", "Non Renseigné") %}
+            {{ dot("secondary", "Recherche un " + ore.tempsTravailSouhaite) }}
+            {% endif %}
+            {% if ore.trajetAllerAccepte and ore.trajetAllerAccepte not in ("Non renseigné", "Non Renseigné") %}
+            {{ dot("secondary", "Trajet aller accepté : " + ore.trajetAllerAccepte) }}
+            {% endif %}
+            {% if ore.lieuxDeTravail and ore.lieuxDeTravail not in ("Non renseigné", "Non Renseigné") %}
+            {{ dot("secondary", "Recherche sur " + ore.lieuxDeTravail) }}
+            {% endif %}
+            {% endif %}
+
+            {{ agent_line(diag.agent, diag.dateMiseAJour) }}
+            {% set ns_any.rendered = true %}
+        {% endif %}
+
+        {% if ns_cb.has_content %}
+            {% if ns_any.rendered %}<hr class="my-4">{% endif %}
+            <h3 class="h4">
+                <i class="ri-alert-line fw-medium" aria-hidden="true"></i>
+                Contraintes et besoins
+            </h3>
+
+            {% if ns_contraintes.items or ns_besoins.items %}
+            {% for c in ns_contraintes.items %}
+            <div class="mb-2">
+                <div class="d-flex align-items-center gap-2">
+                    {% if c.estPrioritaire %}
+                    <i class="ri-circle-fill text-danger flex-shrink-0" style="font-size: 0.6rem;" aria-hidden="true"></i>
+                    <span class="fs-sm">{{ c.libelle }} (prioritaire)</span>
+                    {% else %}
+                    <i class="ri-circle-fill text-warning flex-shrink-0" style="font-size: 0.6rem;" aria-hidden="true"></i>
+                    <span class="fs-sm">{{ c.libelle }}</span>
+                    {% endif %}
+                    {% if c.impact and c.impact not in ("NON_RENSEIGNE", "NON_ABORDEE", "NON_ABORDE") %}
+                    {% set impact_class = {"FORT": "bg-danger-lighter text-danger", "MOYEN": "bg-warning-lighter text-warning", "FAIBLE": "bg-info-lighter text-info"}.get(c.impact, "bg-secondary-lighter text-secondary") %}
+                    <span class="badge rounded-pill text-nowrap badge-sm {{ impact_class }}">Impact {{ c.impact|lower }}</span>
+                    {% endif %}
+                </div>
+                {% if c.situations or c.objectifs %}
+                <ul class="list-unstyled mb-0 ms-4 mt-1">
+                    {% for s in c.situations or [] %}
+                    {% if s.libelle %}
+                    <li class="text-muted fs-xs">· {{ s.libelle }}</li>
+                    {% endif %}
+                    {% endfor %}
+                    {% for o in c.objectifs or [] %}
+                    {% if o.libelle %}
+                    <li class="text-muted fs-xs">→ {{ o.libelle }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            {% if ns_contraintes.items and ns_besoins.items %}
+            <hr class="my-2">
+            {% endif %}
+
+            {% for theme, besoin in ns_besoins.items %}
+            {{ dot("info", besoin) }}
+            {% endfor %}
+
+            {% if tc %}
+            {% if tc.declareSansContrainte and tc.declareSansContrainte.flag %}
+            {{ dot("success", "Aucune contrainte personnelle déclarée") }}
+            {% endif %}
+            {{ agent_line(tc.agent, tc.dateExploration) }}
+            {% endif %}
+            {% else %}
+            {{ dot("success", "Aucune contrainte personnelle déclarée") }}
+            {{ dot("success", "Aucun besoin identifié") }}
+            {% endif %}
+            {% set ns_any.rendered = true %}
+        {% endif %}
+
+        {% if ns_forces.items %}
+            {% if ns_any.rendered %}<hr class="my-4">{% endif %}
+            <h3 class="h4">
+                <i class="ri-star-line fw-medium" aria-hidden="true"></i>
+                Points forts
+            </h3>
+            {% for force in ns_forces.items %}
+            {{ dot("success", force) }}
+            {% endfor %}
+            {% set ns_any.rendered = true %}
+        {% endif %}
+
+        {% if ns_auto.has_content %}
+            {% if ns_any.rendered %}<hr class="my-4">{% endif %}
+            <h3 class="h4">
+                <i class="ri-computer-line fw-medium" aria-hidden="true"></i>
+                Autonomie et numérique
+            </h3>
+
+            {% if pa and (pa.confiance or pa.accompagnement) %}
+            {% if pa.confiance == "OUI" and pa.accompagnement != "OUI" %}
+            {{ dot("success", "Autonome dans ses démarches") }}
+            {% elif pa.confiance == "OUI" and pa.accompagnement == "OUI" %}
+            {{ dot("warning", "Confiant·e, mais demande un accompagnement") }}
+            {% elif pa.confiance %}
+            {{ dot("warning", "Besoin d'accompagnement dans ses démarches") }}
+            {% endif %}
+            {% if pa.resultatAnalyse %}
+            <p class="fs-sm text-muted mt-1 mb-2 ms-3">{{ pa.resultatAnalyse }}</p>
+            {% endif %}
+            {{ agent_line(pa.agent, pa.dateExploration) }}
+            {% endif %}
+
+            {% if pa and (pa.confiance or pa.accompagnement) and an %}
+            <hr class="my-2">
+            {% endif %}
+
+            {% if an %}
+            {% if an.contrainte and an.contrainte.valeur and an.contrainte.valeur not in ("NON_ABORDEE", "NON_ABORDE") %}
+                {% if an.contrainte.valeur == "OUI" %}
+                {{ dot("warning", "Difficulté d'accès au numérique") }}
+                {% else %}
+                {{ dot("success", "À l'aise avec les outils numériques") }}
+                {% endif %}
+            {% endif %}
+            {% if an.besoin %}
+                {% if an.besoin.valeur == "BESOIN" %}
+                {{ dot("warning", "Besoin d'accompagnement numérique") }}
+                {% elif an.besoin.valeur == "POINT_FORT" %}
+                {{ dot("success", "Maîtrise des services numériques") }}
+                {% endif %}
+            {% endif %}
+            {{ agent_line(an.agent, an.dateExploration) }}
+            {% endif %}
+            {% set ns_any.rendered = true %}
+        {% endif %}
+
+        </div>
+
+        {% endif %}{# end if diagnostic #}
+    </div>
+</div>

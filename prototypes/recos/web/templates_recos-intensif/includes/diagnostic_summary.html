@@ -1,0 +1,149 @@
+{# Condensed diagnostic sidebar — glanceable, color-coded.
+   🟢 = strength / no issue    🟡 = identified issue    🔴 = priority #}
+
+{% if diagnostic %}
+<div class="c-box mb-3 mb-md-4 bg-success-lightest border-success">
+    <h3 class="h4">Synthèse diagnostic</h3>
+
+    {# ── Projet pro ── #}
+    {% set diag = diagnostic.besoinsParDiagnostic[0].diagnostic if diagnostic.besoinsParDiagnostic else none %}
+    {% if diag and diag.nomMetier %}
+    <h4 class="h6">Projet</h4>
+    <ul class="list-unstyled mb-0">
+        <li class="d-flex align-items-center gap-2 mb-1">
+            <i class="ri-circle-fill text-success" style="font-size: 0.6rem;" aria-hidden="true"></i>
+            <span class="fs-sm">{{ diag.nomMetier }}</span>
+        </li>
+    </ul>
+    {% endif %}
+
+    {# ── Besoins identifiés (BESOIN only, not POINT_FORT) ── #}
+    {% set ns_besoins = namespace(items=[]) %}
+    {% for bp in diagnostic.besoinsParDiagnostic or [] %}
+        {% for th in bp.thematiquesBesoins or [] %}
+            {% for b_item in th.besoins or [] %}
+                {% if b_item.valeur == "BESOIN" %}
+                    {% set ns_besoins.items = ns_besoins.items + [b_item.libelle] %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+    {% if ns_besoins.items %}
+    <hr class="my-3">
+    <h4 class="h6">Besoins</h4>
+    <ul class="list-unstyled mb-0">
+        {% for besoin in ns_besoins.items %}
+        <li class="d-flex align-items-center gap-2 mb-1">
+            <i class="ri-circle-fill text-warning" style="font-size: 0.6rem;" aria-hidden="true"></i>
+            <span class="fs-sm">{{ besoin }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {# ── Contraintes ── #}
+    {% set tc = diagnostic.thematiqueContrainte %}
+    {% if tc %}
+        {% set ns_contraintes = namespace(items=[]) %}
+        {% for c in tc.contraintes or [] %}
+            {% if c.valeur and c.valeur != "NON_ABORDEE" and c.valeur != "NON_ABORDE" %}
+                {% set ns_contraintes.items = ns_contraintes.items + [c] %}
+            {% endif %}
+        {% endfor %}
+        {% if ns_contraintes.items %}
+        <hr class="my-3">
+        <h4 class="h6">Contraintes</h4>
+        <ul class="list-unstyled mb-0">
+            {% for c in ns_contraintes.items %}
+            <li class="mb-2">
+                <div class="d-flex align-items-center gap-2">
+                    {% if c.estPrioritaire %}
+                    <i class="ri-circle-fill text-danger flex-shrink-0" style="font-size: 0.6rem;" aria-hidden="true"></i>
+                    {% else %}
+                    <i class="ri-circle-fill text-warning flex-shrink-0" style="font-size: 0.6rem;" aria-hidden="true"></i>
+                    {% endif %}
+                    <span class="fs-sm">{{ c.libelle }}</span>
+                    {% if c.impact and c.impact not in ("NON_RENSEIGNE", "NON_ABORDEE", "NON_ABORDE") %}
+                    {% set impact_class = {"FORT": "bg-danger-lighter text-danger", "MOYEN": "bg-warning-lighter text-warning", "FAIBLE": "bg-info-lighter text-info"}.get(c.impact, "bg-secondary-lighter text-secondary") %}
+                    <span class="badge rounded-pill text-nowrap badge-sm {{ impact_class }}">Impact {{ c.impact|lower }}</span>
+                    {% endif %}
+                </div>
+                {% if c.situations or c.objectifs %}
+                <ul class="list-unstyled mb-0 ms-4 mt-1">
+                    {% for s in c.situations or [] %}
+                    {% if s.libelle %}
+                    <li class="text-muted fs-xs">· {{ s.libelle }}</li>
+                    {% endif %}
+                    {% endfor %}
+                    {% for o in c.objectifs or [] %}
+                    {% if o.libelle %}
+                    <li class="text-muted fs-xs">→ {{ o.libelle }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% elif tc.declareSansContrainte and tc.declareSansContrainte.flag %}
+        <hr class="my-3">
+        <h4 class="h6">Contraintes</h4>
+        <ul class="list-unstyled mb-0">
+            <li class="d-flex align-items-center gap-2 mb-1">
+                <i class="ri-circle-fill text-success" style="font-size: 0.6rem;" aria-hidden="true"></i>
+                <span class="fs-sm">Aucune contrainte déclarée</span>
+            </li>
+        </ul>
+        {% endif %}
+    {% endif %}
+
+    {# ── Autonomie (condensed into one line) ── #}
+    {% set pa = diagnostic.pouvoirAgir if diagnostic.pouvoirAgir else none %}
+    {% if pa and (pa.confiance or pa.accompagnement) %}
+    <hr class="my-3">
+    <h4 class="h6">Autonomie</h4>
+    <ul class="list-unstyled mb-0">
+        <li class="d-flex align-items-center gap-2 mb-1">
+            {% if pa.confiance == "OUI" and pa.accompagnement != "OUI" %}
+            <i class="ri-circle-fill text-success" style="font-size: 0.6rem;" aria-hidden="true"></i>
+            <span class="fs-sm">Autonome dans ses démarches</span>
+            {% elif pa.confiance == "OUI" and pa.accompagnement == "OUI" %}
+            <i class="ri-circle-fill text-warning" style="font-size: 0.6rem;" aria-hidden="true"></i>
+            <span class="fs-sm">Confiant·e, mais demande un accompagnement</span>
+            {% else %}
+            <i class="ri-circle-fill text-warning" style="font-size: 0.6rem;" aria-hidden="true"></i>
+            <span class="fs-sm">Besoin d'accompagnement dans ses démarches</span>
+            {% endif %}
+        </li>
+    </ul>
+    {% endif %}
+
+    {# ── Numérique (condensed into one line) ── #}
+    {% set an = diagnostic.autonomieNumerique if diagnostic.autonomieNumerique else none %}
+    {% if an %}
+        {% set num_ok = true %}
+        {% if an.contrainte and an.contrainte.valeur == "OUI" %}{% set num_ok = false %}{% endif %}
+        {% if an.besoin and an.besoin.valeur == "BESOIN" %}{% set num_ok = false %}{% endif %}
+    <hr class="my-3">
+    <h4 class="h6">Numérique</h4>
+    <ul class="list-unstyled mb-0">
+        <li class="d-flex align-items-center gap-2 mb-1">
+            {% if num_ok %}
+            <i class="ri-circle-fill text-success" style="font-size: 0.6rem;" aria-hidden="true"></i>
+            <span class="fs-sm">À l'aise avec le numérique</span>
+            {% else %}
+            <i class="ri-circle-fill text-warning" style="font-size: 0.6rem;" aria-hidden="true"></i>
+            <span class="fs-sm">Difficultés numériques identifiées</span>
+            {% endif %}
+        </li>
+    </ul>
+    {% endif %}
+
+    <hr class="my-3">
+    <button type="button" class="btn btn-link btn-ico fs-sm p-0"
+            data-bs-toggle="modal" data-bs-target="#diagnostic-modal">
+        <i class="ri-eye-line fw-medium" aria-hidden="true"></i>
+        <span>Diagnostic complet</span>
+    </button>
+</div>
+{% endif %}
