@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Flux entrant{% endblock %}
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+                <div class="c-title">
+                    <div class="c-title__main">
+                        <h1>Flux entrant</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+            <div class="col-12">
+                <div class="d-flex flex-column flex-md-row align-items-md-center mb-3 mb-md-4">
+                    <div class="flex-md-grow-1">
+                        <p class="mb-0">{{ result_count }} résultat{{ "s" if result_count != 1 else "" }}</p>
+                    </div>
+                </div>
+
+                <form method="get" action="/flux-entrant" class="d-flex flex-wrap align-items-center gap-3 mb-3 mb-md-4"
+                      onchange="this.submit()">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                            Type{% if selected_types %} ({{ selected_types|length }}){% endif %}
+                        </button>
+                        <ul class="dropdown-menu p-2" style="min-width: 220px;">
+                            {% for t in beneficiary_types %}
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="type" value="{{ t }}"
+                                           id="type-{{ t }}"
+                                           {% if t in selected_types %}checked{% endif %}>
+                                    <label class="form-check-label" for="type-{{ t }}">{{ t }}</label>
+                                </div>
+                            </li>
+                            {% endfor %}
+                            {% if selected_types %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-primary" href="/flux-entrant">Réinitialiser</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </form>
+
+                {% set provenance_map = {
+                    "BENZIANE": "Conseil Départemental du Nord",
+                    "CAUSSADE": "Inscription en ligne",
+                    "DELMAS": "Inscription par téléphone",
+                    "LARRIEU": "Conseil Départemental du Nord",
+                    "MARTIN": "Inscription en ligne",
+                } %}
+                {% set hide_detld = ["CAUSSADE", "DELMAS", "LARRIEU"] %}
+
+                {% if beneficiaries %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <caption class="visually-hidden">Flux entrant</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="w-40px"></th>
+                                <th scope="col">Informations générales</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Provenance</th>
+                                <th scope="col" class="text-end w-50px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in beneficiaries %}
+                            <tr class="align-middle">
+                                <td></td>
+                                <td>
+                                    <a class="btn-link" href="/beneficiary/{{ b.id }}/profil">
+                                        {{ b.person_last_name }} {{ b.person_first_name }}
+                                    </a>
+                                    <div class="small text-muted">
+                                        {% if b._age is not none %}{{ b._age }} ans{% endif %}
+                                        {% if b._age is not none and b.person_address %} · {% endif %}
+                                        {% if b.person_address %}{{ b.person_address }}{% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% for t in b._types %}
+                                    {% if t != "DETLD" or b.person_last_name not in hide_detld %}
+                                    {% set color = beneficiary_type_colors.get(t, 'bg-secondary') %}
+                                    {% set light_color = color ~ '-lighter' %}
+                                    {% set text_color = color.replace('bg-', 'text-') %}
+                                    <span class="badge rounded-pill text-nowrap badge-sm {{ light_color }} {{ text_color }}">{{ t }}</span>
+                                    {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {{ provenance_map.get(b.person_last_name, "—") }}
+                                </td>
+                                <td class="text-end w-50px">
+                                    <a class="btn btn-sm btn-link btn-ico-only"
+                                       href="/beneficiary/{{ b.id }}/profil"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-title="Voir ce dossier">
+                                        <i class="ri-arrow-drop-right-line fs-lg"
+                                           aria-label="Voir {{ b.person_last_name }}"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="c-box mb-3 mb-md-4">
+                    <p class="text-muted mb-0">Aucune demande entrante.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

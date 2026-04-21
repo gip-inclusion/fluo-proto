@@ -44,6 +44,28 @@ async def search(request: Request):
     )
 
 
+@router.get("/flux-entrant", response_class=HTMLResponse)
+async def flux_entrant(request: Request):
+    selected_types = [t for t in request.query_params.getlist("type") if t in BENEFICIARY_TYPES]
+    with Session(engine) as session:
+        beneficiaries = session.exec(select(Beneficiary).order_by(Beneficiary.person_last_name)).all()
+        for b in beneficiaries:
+            b._types = compute_beneficiary_types(b)
+            b._age = compute_age(b.person_birthdate)
+        if selected_types:
+            beneficiaries = [b for b in beneficiaries if any(t in b._types for t in selected_types)]
+    return _templates(request).TemplateResponse(
+        "flux_entrant.html",
+        {
+            "request": request,
+            "beneficiaries": beneficiaries,
+            "result_count": len(beneficiaries),
+            "beneficiary_types": BENEFICIARY_TYPES,
+            "selected_types": selected_types,
+        },
+    )
+
+
 @router.get("/beneficiaries", response_class=HTMLResponse)
 async def list_beneficiaries(request: Request):
     selected_types = [t for t in request.query_params.getlist("type") if t in BENEFICIARY_TYPES]
