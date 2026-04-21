@@ -51,6 +51,14 @@
                             {% endif %}
                         </ul>
                     </div>
+                    <div class="ms-auto">
+                        <button type="button" id="orient-btn" class="btn btn-primary btn-ico" disabled
+                                data-bs-toggle="modal" data-bs-target="#orient-modal">
+                            <i class="ri-send-plane-line fw-medium" aria-hidden="true"></i>
+                            <span>Orienter vers</span>
+                            <span id="orient-count"></span>
+                        </button>
+                    </div>
                 </form>
 
                 {% set provenance_map = {
@@ -68,7 +76,9 @@
                         <caption class="visually-hidden">Flux entrant</caption>
                         <thead>
                             <tr>
-                                <th scope="col" class="w-40px"></th>
+                                <th scope="col" class="w-40px">
+                                    <input type="checkbox" class="form-check-input" id="select-all" aria-label="Tout sélectionner">
+                                </th>
                                 <th scope="col">Informations générales</th>
                                 <th scope="col">Type</th>
                                 <th scope="col">Provenance</th>
@@ -78,7 +88,12 @@
                         <tbody>
                             {% for b in beneficiaries %}
                             <tr class="align-middle">
-                                <td></td>
+                                <td>
+                                    <input type="checkbox" class="form-check-input row-check"
+                                           value="{{ b.id }}"
+                                           data-name="{{ b.person_last_name }} {{ b.person_first_name }}"
+                                           aria-label="Sélectionner {{ b.person_last_name }}">
+                                </td>
                                 <td>
                                     <a class="btn-link" href="/beneficiary/{{ b.id }}/profil">
                                         {{ b.person_last_name }} {{ b.person_first_name }}
@@ -125,4 +140,98 @@
         </div>
     </div>
 </section>
+
+{# ── Orienter vers modal ── #}
+{% set ft_counselors = [
+    ("Yassine HAMIDI", "Renforcé", 45),
+    ("Valérie ESTEVE", "Guidé", 648),
+    ("Sandrine PEYROT", "Global", 52),
+    ("Marc DUPONT", "Essentiel", 812),
+    ("Sophie MARTIN", "Intensif", 38),
+] %}
+{% set partners = ["PLIE de Lille", "Conseil Départemental du Nord", "Mission Locale de Lille"] %}
+<div class="modal fade" id="orient-modal" tabindex="-1" aria-labelledby="orient-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="orient-modal-label">Orienter vers</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted" id="orient-summary"></p>
+                <h4 class="h6 mt-2">France Travail</h4>
+                <div class="list-group mb-4">
+                    {% for name, modalite, portfolio in ft_counselors %}
+                    {% set dest_id = 'dest-ft-' ~ loop.index %}
+                    <label class="list-group-item d-flex align-items-center gap-2" for="{{ dest_id }}">
+                        <input type="radio" class="form-check-input flex-shrink-0" name="orient-destination"
+                               id="{{ dest_id }}" value="FT · {{ name }} ({{ modalite }})">
+                        <span>{{ name }}</span>
+                        <span class="text-muted fs-sm ms-2">{{ portfolio }} personnes suivies</span>
+                        <span class="badge rounded-pill text-nowrap badge-sm bg-info-lighter text-info ms-auto">{{ modalite }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <h4 class="h6">Partenaires</h4>
+                <div class="list-group">
+                    {% for p in partners %}
+                    {% set dest_id = 'dest-partner-' ~ loop.index %}
+                    <label class="list-group-item d-flex align-items-center gap-2" for="{{ dest_id }}">
+                        <input type="radio" class="form-check-input flex-shrink-0" name="orient-destination"
+                               id="{{ dest_id }}" value="{{ p }}">
+                        <span>{{ p }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="orient-confirm">Confirmer l'orientation</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const rowChecks = document.querySelectorAll('.row-check');
+    const selectAll = document.getElementById('select-all');
+    const orientBtn = document.getElementById('orient-btn');
+    const orientCount = document.getElementById('orient-count');
+    const orientSummary = document.getElementById('orient-summary');
+    const orientConfirm = document.getElementById('orient-confirm');
+
+    function updateState() {
+        const checked = Array.from(rowChecks).filter(c => c.checked);
+        orientBtn.disabled = checked.length === 0;
+        orientCount.textContent = checked.length > 0 ? ` (${checked.length})` : '';
+        const names = checked.map(c => c.dataset.name);
+        orientSummary.textContent = names.length
+            ? `${names.length} bénéficiaire${names.length > 1 ? 's' : ''} : ${names.join(', ')}`
+            : '';
+        if (selectAll) {
+            selectAll.checked = checked.length > 0 && checked.length === rowChecks.length;
+            selectAll.indeterminate = checked.length > 0 && checked.length < rowChecks.length;
+        }
+    }
+
+    rowChecks.forEach(c => c.addEventListener('change', updateState));
+    if (selectAll) {
+        selectAll.addEventListener('change', (e) => {
+            rowChecks.forEach(c => c.checked = e.target.checked);
+            updateState();
+        });
+    }
+
+    orientConfirm.addEventListener('click', () => {
+        const dest = document.querySelector('input[name="orient-destination"]:checked');
+        if (!dest) { alert('Sélectionnez une destination.'); return; }
+        const n = Array.from(rowChecks).filter(c => c.checked).length;
+        alert(`${n} bénéficiaire${n > 1 ? 's' : ''} orienté${n > 1 ? 's' : ''} vers ${dest.value}.`);
+        bootstrap.Modal.getInstance(document.getElementById('orient-modal')).hide();
+    });
+
+    updateState();
+})();
+</script>
 {% endblock %}
