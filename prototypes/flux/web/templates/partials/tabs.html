@@ -1,0 +1,59 @@
+{# Tabs strip + per-tab pane: description + outgoing-edges list. #}
+{% if screen.tabs %}
+<div class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+            <div class="s-section__col col-12">
+                {% set first_tab_id = screen.tabs.keys() | list | first %}
+                <ul class="nav nav-tabs" role="tablist">
+                    {% for tid, tab in screen.tabs.items() %}
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link{% if tid == first_tab_id %} active{% endif %}"
+                           id="tab-{{ tid }}"
+                           data-bs-toggle="tab"
+                           href="#pane-{{ tid }}"
+                           role="tab"
+                           aria-controls="pane-{{ tid }}"
+                           aria-selected="{{ 'true' if tid == first_tab_id else 'false' }}">
+                            {{ tab.label }}
+                            {% if tab.badge %}
+                                <span class="badge badge-sm rounded-pill bg-primary ms-1">{{ tab.badge }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="tab-content pt-3">
+                    {% for tid, tab in screen.tabs.items() %}
+                    <div class="tab-pane fade{% if tid == first_tab_id %} show active{% endif %}"
+                         id="pane-{{ tid }}" role="tabpanel" aria-labelledby="tab-{{ tid }}">
+                        <p class="text-muted mb-2">{{ tab.description }}</p>
+                        {% if tab.to %}
+                        <p class="mb-0"><strong>Mène à :</strong>
+                        {% for target in tab.to %}
+                            {% set broken = target not in flow_screens %}
+                            <a href="/{{ flow.id }}/{{ target }}"
+                               class="ms-1"
+                               {% if broken %}data-flux-broken="true"{% endif %}>{{ target }}</a>{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  // Deep-link tabs via #pane-<id>.
+  (function () {
+    var hash = window.location.hash;
+    if (!hash) return;
+    var trigger = document.querySelector('a[href="' + hash.replace("pane-", "pane-") + '"]');
+    if (trigger && window.bootstrap) new bootstrap.Tab(trigger).show();
+  })();
+</script>
+{% endif %}

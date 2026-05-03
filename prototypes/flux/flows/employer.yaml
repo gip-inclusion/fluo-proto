@@ -1,0 +1,111 @@
+# Worked example from the design doc — every link, button, tab, modal
+# and row click should resolve to a real screen.
+
+flow:
+  id: employer_hire
+  actor: employer
+  entry: dashboard
+  menu:
+    - { id: dashboard,    label: Tableau de bord, icon: ri-dashboard-line }
+    - { id: candidatures, label: Candidatures,    icon: ri-file-list-3-line }
+    - { id: employees,    label: Salariés,        icon: ri-team-line }
+
+screens:
+  dashboard:
+    kind: dashboard
+    nav_item: dashboard
+    title: Tableau de bord
+    blocks:
+      - search:
+          placeholder: "Rechercher un candidat, une entreprise…"
+          to: search_results
+      - kpi_row:
+          tiles:
+            - { label: "Candidatures à traiter", value: 12, to: candidatures_list }
+            - { label: "Embauches en cours",     value: 3,  to: hires_in_progress }
+            - { label: "Salariés actifs",        value: 47, to: employees }
+      - card:
+          title: Dernières candidatures
+          kind: list
+          rows: 5
+          to: candidatures_list
+
+  candidatures_list:
+    kind: page
+    nav_item: candidatures
+    title: Candidatures reçues
+    body:
+      - filter_bar: { filters: [status, date_range] }
+      - table: { count: 12, rows_to: candidature_detail }
+
+  candidature_detail:
+    kind: page
+    nav_item: candidatures
+    title: "Candidature — Jean Dupont"
+    prevstep_to: candidatures_list
+    actions:
+      - { label: Accepter, to: candidature_accepted }
+      - { label: Refuser,  opens: refuse_modal }
+    tabs:
+      info:
+        label: Informations
+        description: Coordonnées, éligibilité, diagnostic socio-pro.
+        to: [eligibility_edit]
+      messages:
+        label: Messages
+        description: Fil de discussion avec le prescripteur.
+        badge: "3"
+      history:
+        label: Historique
+        description: Événements horodatés sur la candidature.
+
+  refuse_modal:
+    kind: modal
+    title: Refuser cette candidature
+    body:
+      - box: { title: Motif du refus, fields: 2, kind: form }
+    actions:
+      - { label: Confirmer le refus, to: candidatures_list }
+      - { label: Annuler }
+
+  candidature_accepted:
+    kind: page
+    title: Candidature acceptée
+    body:
+      - box: { title: Prochaines étapes, fields: 3 }
+
+  eligibility_edit:
+    kind: page
+    title: "Modifier l'éligibilité"
+    prevstep_to: candidature_detail
+    body:
+      - box: { title: Critères, fields: 5, kind: form }
+    actions:
+      - { label: Enregistrer, to: candidature_detail }
+
+  hires_in_progress:
+    kind: page
+    nav_item: candidatures
+    title: Embauches en cours
+    body:
+      - table: { count: 3, rows_to: candidature_detail }
+
+  employees:
+    kind: page
+    nav_item: employees
+    title: Salariés actifs
+    body:
+      - table: { count: 47, rows_to: employee_detail }
+
+  employee_detail:
+    kind: page
+    nav_item: employees
+    title: "Salarié — Marie Martin"
+    prevstep_to: employees
+
+  search_results:
+    kind: page
+    title: Résultats de recherche
+    prevstep_to: dashboard
+    body:
+      - table: { count: 8 }

@@ -1,0 +1,17 @@
+{% if diagnostics %}
+{% set errors = diagnostics | selectattr("level", "equalto", "error") | list %}
+{% if errors %}
+<div class="global-messages-container">
+    <div class="alert alert-danger fade show d-flex align-items-center justify-content-between" role="status">
+        <div>
+            <strong>Flux — {{ errors | length }} erreur{{ "s" if errors | length > 1 else "" }} de modèle.</strong>
+            <span class="ms-2 text-white-50">Le rendu continue malgré tout.</span>
+        </div>
+        <a href="/_diagnostics" class="btn btn-sm btn-outline-white">
+            <i class="ri-error-warning-line" aria-hidden="true"></i>
+            <span>Voir les diagnostics</span>
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endif %}

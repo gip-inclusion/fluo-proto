@@ -1,0 +1,20 @@
+{% set href = "/" + flow.id + "/" + block.to if block.to else None %}
+{% set broken = block.to and block.to not in flow_screens %}
+<div class="c-box mb-3">
+    <h3 class="h4 mb-3">{{ block.title }}</h3>
+    <ul class="list-note list-unstyled mb-0">
+        {% for i in range(1, block.rows + 1) %}
+        <li class="mb-3">
+            <p class="mb-1"><strong>Événement {{ i }}</strong></p>
+            <p class="text-muted small mb-0">Il y a {{ i }} heure{{ "s" if i > 1 else "" }} — note de service.</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if href %}
+    <div class="text-end mt-3">
+        <a href="{{ href }}" {% if broken %}data-flux-broken="true"{% endif %}>
+            Voir tout <i class="ri-arrow-right-line" aria-hidden="true"></i>
+        </a>
+    </div>
+    {% endif %}
+</div>

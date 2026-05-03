@@ -1,0 +1,49 @@
+{# Flux base layout. Mirrors les-emplois itou/templates/layout/base.html
+   structurally but driven by the YAML model on app.state. #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{{ screen.title if screen else "Flux" }}{% endblock %} · Flux</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/static/vendor/theme-inclusion/images/favicon.ico" type="image/ico">
+    <link rel="stylesheet" href="/static/vendor/theme-inclusion/stylesheets/app.css">
+    <link rel="stylesheet" href="/static/css/itou.css">
+    <link rel="stylesheet" href="/static/css/flux.css">
+</head>
+<body class="l-authenticated">
+    <a href="#main" class="visually-hidden-focusable">Aller au contenu principal</a>
+
+    <header role="banner" id="header">
+        {% if flow %}
+            {% include "partials/menu_topbar.html" %}
+            {% include "partials/menu_offcanvas.html" %}
+        {% else %}
+            {% include "partials/menu_topbar_naked.html" %}
+        {% endif %}
+    </header>
+
+    {% include "partials/diagnostics_banner.html" %}
+
+    <main id="main" role="main" class="s-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block modals %}{% endblock %}
+
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/vendor/bootstrap/popper.min.js"></script>
+    <script src="/static/vendor/bootstrap/bootstrap.min.js"></script>
+    {% block script %}{% endblock %}
+
+    {# Hot-reload: SSE channel pings on YAML edits, browser reloads. #}
+    <script>
+      (function () {
+        try {
+          var es = new EventSource("/_reload");
+          es.onmessage = function (e) { if (e.data === "reload") location.reload(); };
+        } catch (e) { /* ignore */ }
+      })();
+    </script>
+</body>
+</html>

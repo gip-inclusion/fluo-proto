@@ -1,0 +1,39 @@
+{# Bootstrap 5 modal partial. The id matches the screen id so that an action's
+   `opens: refuse_modal` lines up with `data-bs-target="#refuse_modal"`. #}
+<div class="modal fade" id="{{ mid }}" tabindex="-1" aria-labelledby="{{ mid }}-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="{{ mid }}-label">{{ modal.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                {% for block in modal.body %}
+                    {% include "blocks/" + (block.__class__.__name__ | lower) + ".html" ignore missing %}
+                {% endfor %}
+            </div>
+            {% if modal.actions %}
+            <div class="modal-footer">
+                {% for action in modal.actions %}
+                    {% if action.to %}
+                        {% set broken = action.to not in flow_screens %}
+                        <a href="/{{ flow.id }}/{{ action.to }}"
+                           class="btn btn-primary"
+                           {% if broken %}data-flux-broken="true"{% endif %}>
+                            {{ action.label }}
+                        </a>
+                    {% elif action.opens %}
+                        <button type="button" class="btn btn-outline-primary"
+                                data-bs-toggle="modal" data-bs-target="#{{ action.opens }}">
+                            {{ action.label }}
+                        </button>
+                    {% else %}
+                        <button type="button" class="btn btn-outline-primary"
+                                data-bs-dismiss="modal">{{ action.label }}</button>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

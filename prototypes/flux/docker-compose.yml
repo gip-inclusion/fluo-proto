@@ -1,0 +1,4 @@
+# Flux has no database. Empty services keep `make dev flux` happy
+# (the Makefile's `docker compose up -d` is a no-op here) without
+# spinning up an unused PostgreSQL container.
+services: {}

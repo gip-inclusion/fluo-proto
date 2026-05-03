@@ -1,0 +1,30 @@
+{# Placeholder table; rows anchor to block.rows_to if set. #}
+{% set href = "/" + flow.id + "/" + block.rows_to if block.rows_to else None %}
+{% set broken = block.rows_to and block.rows_to not in flow_screens %}
+<div class="table-responsive c-box p-0">
+    <table class="table table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Référence</th>
+                <th>Libellé</th>
+                <th>Date</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in range(1, block.count + 1) %}
+            <tr {% if href %}onclick="window.location='{{ href }}'" style="cursor:pointer"{% endif %}
+                {% if broken %}data-flux-broken="true"{% endif %}>
+                <td><strong>#{{ "%04d" | format(i) }}</strong></td>
+                <td>Élément {{ i }}</td>
+                <td>0{{ (i % 9) + 1 }}/0{{ (i % 11) + 1 }}/2024</td>
+                <td>
+                    <span class="badge badge-sm rounded-pill text-nowrap bg-info-lighter text-info">
+                        À traiter
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

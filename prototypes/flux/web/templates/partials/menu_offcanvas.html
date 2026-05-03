@@ -1,0 +1,50 @@
+{# Sidebar nav driven by Flow.menu. Active item is highlighted by screen.nav_item. #}
+<div class="offcanvas" id="offcanvasNav" aria-label="Barre de navigation principale">
+    <div class="offcanvas-header offcanvas-header--organization">
+        <div class="dropdown dropdown-organization flex-grow-1 py-4">
+            <span class="btn btn-outline-primary btn-ico btn-block bg-white">
+                <i class="ri-building-line fw-medium" aria-hidden="true"></i>
+                <span>{{ actor.org if actor and actor.org else (actor.label if actor else flow.actor) }}</span>
+            </span>
+        </div>
+        <div class="border-start border-nuance-08 d-lg-none">
+            <button type="button" class="btn-link ps-4 pt-5 pe-2 me-n2"
+                    data-bs-dismiss="offcanvas" aria-label="Fermer">
+                <i class="ri-close-line" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+        <nav class="flex-grow-1" role="navigation" aria-label="Navigation principale">
+            <ul class="nav nav-tabs flex-column mb-3">
+                {% for item in flow.menu %}
+                {# A menu entry is "active" when the current screen declares nav_item == item.id.
+                   We can't link directly to a screen because the menu only knows its own ids,
+                   so we resolve to the first screen in the flow that declares this nav_item. #}
+                {% set href = "/" + flow.id + "/" + (resolve_menu_href(flow, item.id) or flow.entry) %}
+                <li class="nav-item">
+                    <a href="{{ href }}"
+                       class="nav-link{% if screen and screen.nav_item == item.id %} active{% endif %}">
+                        <i class="{{ item.icon }} fw-medium" aria-hidden="true"></i>
+                        <span>{{ item.label }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            <ul class="nav nav-tabs flex-column">
+                <li class="nav-item">
+                    <a href="/_graph/{{ flow.id }}" class="nav-link">
+                        <i class="ri-node-tree fw-medium" aria-hidden="true"></i>
+                        <span>Vue graphe</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="d-none d-lg-block mt-auto p-3 text-center">
+            <a href="/{{ flow.id }}/{{ flow.entry }}">
+                <img src="/static/vendor/theme-inclusion/images/logo-plateforme-inclusion.svg"
+                     alt="Flux" height="60">
+            </a>
+        </div>
+    </div>
+</div>

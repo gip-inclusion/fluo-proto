@@ -1,0 +1,15 @@
+{# Search input. Posts nowhere; the right-side button + Enter both navigate to block.to. #}
+{% set href = "/" + flow.id + "/" + block.to if block.to else "#" %}
+{% set broken = block.to and block.to not in flow_screens %}
+<form class="mb-3" onsubmit="event.preventDefault(); window.location='{{ href }}';">
+    <div class="input-group">
+        <input type="search" class="form-control"
+               placeholder="{{ block.placeholder }}"
+               aria-label="Rechercher">
+        <a class="btn btn-primary" href="{{ href }}"
+           {% if broken %}data-flux-broken="true"{% endif %}>
+            <i class="ri-search-line" aria-hidden="true"></i>
+            <span>Rechercher</span>
+        </a>
+    </div>
+</form>

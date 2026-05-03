@@ -1,0 +1,36 @@
+{# Generic content box. `kind: form` swaps in disabled inputs;
+   `edit_to` puts a pencil icon in the top-right. #}
+{% set has_edit = block.edit_to %}
+{% set broken = has_edit and block.edit_to not in flow_screens %}
+<div class="c-box mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h4 mb-0">{{ block.title }}</h3>
+        {% if has_edit %}
+        <a href="/{{ flow.id }}/{{ block.edit_to }}"
+           class="btn btn-link btn-ico-only"
+           aria-label="Modifier"
+           {% if broken %}data-flux-broken="true"{% endif %}>
+            <i class="ri-pencil-line" aria-hidden="true"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% if block.kind == "form" %}
+        <form>
+            {% for i in range(1, block.fields + 1) %}
+            <div class="mb-3">
+                <label class="form-label" for="field-{{ i }}">Champ {{ i }}</label>
+                <input type="text" id="field-{{ i }}" class="form-control" disabled placeholder="Saisie utilisateur">
+            </div>
+            {% endfor %}
+        </form>
+    {% else %}
+        <ul class="list-data list-unstyled mb-0">
+            {% for i in range(1, block.fields + 1) %}
+            <li>
+                <small>Champ {{ i }}</small>
+                <strong>Valeur {{ i }}</strong>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

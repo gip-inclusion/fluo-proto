@@ -1,0 +1,42 @@
+{# Mobile + dropdown header. The desktop sidebar is the offcanvas below. #}
+<section class="s-header-authenticated d-lg-none">
+    <div class="s-header-authenticated__container container">
+        <div class="s-header-authenticated__row row">
+            <div class="s-header-authenticated__col s-header-authenticated__col--logo-service col-auto d-flex align-items-center pe-0">
+                <a href="/{{ flow.id }}/{{ flow.entry }}">
+                    <img src="/static/vendor/theme-inclusion/images/logo-plateforme-inclusion.svg"
+                         alt="Flux" height="60">
+                </a>
+            </div>
+            <div class="s-header-authenticated__col s-header-authenticated__col--nav col d-flex align-items-center justify-content-end pe-0">
+                <nav role="navigation" id="nav-primary" aria-label="Navigation principale">
+                    <ul>
+                        <li class="dropdown d-none d-sm-inline-block">
+                            <button type="button" class="btn btn-outline-primary btn-ico bg-white dropdown-toggle"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="ri-account-circle-line" aria-hidden="true"></i>
+                                <span class="ms-2">{{ actor.label if actor else flow.actor }}</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <span class="dropdown-item-text fw-bold">{{ actor.label if actor else flow.actor }}</span>
+                                {% if actor and actor.org %}
+                                <span class="dropdown-item-text text-muted">{{ actor.org }}</span>
+                                {% endif %}
+                                <hr class="dropdown-divider">
+                                <a class="dropdown-item" href="/_graph">Vue graphe</a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="s-header-authenticated__col s-header-authenticated__col--burger col-auto d-flex align-items-center ps-0">
+                <button type="button" class="btn btn-link btn-ico pe-0"
+                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav"
+                        aria-controls="offcanvasNav" aria-label="Ouvrir le menu">
+                    <i class="ri-menu-line" aria-hidden="true"></i>
+                    <span>Menu</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

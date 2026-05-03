@@ -1,0 +1,2 @@
+{# Card dispatcher — picks the right sub-template based on block.kind. #}
+{% include "blocks/card_" + block.kind + ".html" ignore missing %}

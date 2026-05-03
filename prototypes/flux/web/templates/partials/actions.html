@@ -1,0 +1,26 @@
+{# Action button row. `actions` is iterable of dsl.models.Action. #}
+{% if actions %}
+<div class="c-title__cta d-flex flex-wrap gap-2">
+    {% for action in actions %}
+        {% if action.to %}
+            {% set broken = action.to not in flow_screens %}
+            <a href="/{{ flow.id }}/{{ action.to }}"
+               class="btn btn-primary"
+               {% if broken %}data-flux-broken="true"{% endif %}>
+                {{ action.label }}
+            </a>
+        {% elif action.opens %}
+            {% set broken = action.opens not in flow_screens %}
+            <button type="button"
+                    class="btn btn-outline-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#{{ action.opens }}"
+                    {% if broken %}data-flux-broken="true"{% endif %}>
+                {{ action.label }}
+            </button>
+        {% else %}
+            <button type="button" class="btn btn-outline-primary">{{ action.label }}</button>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}

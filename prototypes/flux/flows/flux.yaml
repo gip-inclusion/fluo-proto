@@ -1,0 +1,13 @@
+# Top-level Flux config: actors and the list of per-flow YAML files.
+# This file is the single entrypoint for the loader.
+
+actors:
+  employer:
+    label: Employeur
+    org: "Une nouvelle chance (ETTI)"
+  prescripteur:
+    label: Prescripteur habilité
+    org: "France Travail Lille"
+
+flows:
+  - employer.yaml

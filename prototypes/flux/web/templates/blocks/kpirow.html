@@ -1,0 +1,19 @@
+{# KPI tiles — flex row, each anchored to its `to` if set. #}
+<div class="row g-3 mb-3">
+    {% for tile in block.tiles %}
+    {% set href = "/" + flow.id + "/" + tile.to if tile.to else None %}
+    {% set broken = tile.to and tile.to not in flow_screens %}
+    <div class="col-12 col-md-4">
+        {% if href %}
+        <a href="{{ href }}"
+           class="c-box d-block text-decoration-none h-100"
+           {% if broken %}data-flux-broken="true"{% endif %}>
+        {% else %}
+        <div class="c-box h-100">
+        {% endif %}
+            <p class="text-muted text-uppercase small mb-1">{{ tile.label }}</p>
+            <p class="display-6 fw-bold mb-0">{{ tile.value }}</p>
+        {% if href %}</a>{% else %}</div>{% endif %}
+    </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,17 @@
+{% if screen.prevstep_to %}
+{% set broken = screen.prevstep_to not in flow_screens %}
+<div class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+            <div class="s-section__col col-12">
+                <a href="/{{ flow.id }}/{{ screen.prevstep_to }}"
+                   class="c-prevstep"
+                   {% if broken %}data-flux-broken="true"{% endif %}>
+                    <i class="ri-arrow-drop-left-line ri-xl" aria-hidden="true"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

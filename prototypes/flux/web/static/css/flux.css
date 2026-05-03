@@ -1,0 +1,35 @@
+/* Flux-only overrides on top of theme-inclusion + itou.css. Keep minimal. */
+
+/* Dashboard grid: two columns at md+, single column below.
+   We don't reach for a Bootstrap layout class because itou.css already
+   constrains .s-section to a 12-col container. */
+.flux-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .flux-dashboard-grid > .c-box,
+    .flux-dashboard-grid > a.c-box {
+        margin-bottom: 0;
+    }
+}
+
+/* Inert / dangling edges: visible warning when a `to:` doesn't resolve. */
+[data-flux-broken="true"] {
+    outline: 2px dashed var(--bs-danger, #dc3545);
+    outline-offset: 2px;
+    cursor: not-allowed;
+}
+
+/* Mermaid pane: keep diagrams scrollable on narrow screens. */
+pre.mermaid {
+    background: transparent;
+    overflow-x: auto;
+    margin: 0;
+}
+
+/* Diagnostics banner button — itou's btn-outline-white assumes a colored
+   background, which alert-danger provides. No tweak needed; this is just
+   here to claim the space. */
