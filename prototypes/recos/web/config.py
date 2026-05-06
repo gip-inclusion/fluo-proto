@@ -71,7 +71,7 @@ NAV_ITEMS = [
     {
         "href": "/beneficiaries",
         "icon": "ri-lightbulb-line",
-        "label": "Solutions recommandées",
+        "label": "Actions recommandées",
         "active_prefix": "/beneficiar",
     },
 ]
