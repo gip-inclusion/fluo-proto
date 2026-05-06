@@ -55,6 +55,7 @@
                             <span class="badge rounded-pill text-nowrap badge-base {{ color }}-lighter {{ text_color }}">{{ t }}</span>
                             {% endfor %}
                         </h1>
+                        <p class="text-muted fs-sm mt-1 mb-0">ID national : {{ "%011d" | format((b.id * 73928571 + 12345678901) % 100000000000) }}</p>
                     </div>
                 </div>
                 <ul class="nav nav-tabs mt-3 mb-0">
