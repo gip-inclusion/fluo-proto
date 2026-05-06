@@ -72,10 +72,10 @@
 
         <h2 class="h3 mt-4 mb-3">Historique des actions</h2>
         {% set mobilized_solutions = [
-            ("Modalité Renforcé — France Travail Lille Centre", "2025-09-12", none, "En cours"),
-            ("Atelier Mobilité — Wimoov Lille", "2025-11-04", "2026-01-22", "Terminée"),
-            ("PLIE Lille Avenirs", "2026-01-18", none, "En cours"),
             ("ACI Jardins de Cocagne Lille", "2026-02-27", none, "En attente"),
+            ("PLIE Lille Avenirs", "2026-01-18", none, "En cours"),
+            ("Atelier Mobilité — Wimoov Lille", "2025-11-04", "2026-01-22", "Terminée"),
+            ("Modalité Renforcé — France Travail Lille Centre", "2025-09-12", none, "En cours"),
         ] %}
         {% macro fr_date(d) %}{{ d[8:10] }}/{{ d[5:7] }}/{{ d[:4] }}{% endmacro %}
         <div class="c-box mb-3 mb-md-4 p-0">
