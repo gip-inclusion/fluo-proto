@@ -55,7 +55,8 @@
                             <span class="badge rounded-pill text-nowrap badge-base {{ color }}-lighter {{ text_color }}">{{ t }}</span>
                             {% endfor %}
                         </h1>
-                        <p class="text-muted fs-sm mt-1 mb-0">ID national : {{ "%011d" | format((b.id * 73928571 + 12345678901) % 100000000000) }}</p>
+                        {% set id_national = "%011d" | format((b.id * 73928571 + 12345678901) % 100000000000) %}
+                        <p class="text-muted fs-sm mt-1 mb-0">ID national : {{ id_national }} <button type="button" class="btn btn-link btn-sm p-0 ms-1 align-baseline text-decoration-none" data-clipboard="{{ id_national }}" title="Copier l'ID national" onclick="navigator.clipboard.writeText(this.dataset.clipboard);const i=this.querySelector('i');const o=i.className;i.className='ri-check-line text-success fw-medium';setTimeout(()=>i.className=o,1500);"><i class="ri-file-copy-line fw-medium" aria-hidden="true"></i></button></p>
                     </div>
                 </div>
                 <ul class="nav nav-tabs mt-3 mb-0">
