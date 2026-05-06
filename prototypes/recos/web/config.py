@@ -38,23 +38,41 @@ BENEFICIARY_TYPE_COLORS = {
 
 NAV_ITEMS = [
     {"href": "/dashboard", "icon": "ri-home-line", "label": "Accueil", "active_prefix": "/dashboard"},
+    {"href": "#", "icon": "ri-draft-line", "label": "Candidatures", "active_prefix": "/candidatures"},
+    {
+        "icon": "ri-user-line",
+        "label": "Candidats",
+        "slug": "candidats",
+        "subitems": [
+            {"href": "#", "label": "Mes candidats", "active_prefix": "/mes-candidats"},
+            {"href": "#", "label": "Tous les candidats de la structure", "active_prefix": "/candidats-structure"},
+            {"href": "#", "label": "Gérer les prolongations de PASS IAE", "active_prefix": "/prolongations"},
+        ],
+    },
+    {
+        "icon": "ri-team-line",
+        "label": "Organisation",
+        "slug": "organisation",
+        "subitems": [
+            {"href": "#", "label": "Présentation", "active_prefix": "/presentation"},
+            {"href": "#", "label": "Collaborateurs", "active_prefix": "/collaborateurs"},
+        ],
+    },
+    {
+        "icon": "ri-search-line",
+        "label": "Rechercher",
+        "slug": "rechercher",
+        "subitems": [
+            {"href": "#", "label": "Un emploi inclusif", "active_prefix": "/search/employers"},
+            {"href": "#", "label": "Un prescripteur habilité", "active_prefix": "/search/prescribers"},
+            {"href": "#", "label": "Un service d'insertion", "active_prefix": "/search/services"},
+        ],
+    },
     {
         "href": "/beneficiaries",
-        "icon": "ri-group-line",
-        "label": "Personnes accompagnées",
+        "icon": "ri-lightbulb-line",
+        "label": "Solutions recommandées",
         "active_prefix": "/beneficiar",
-    },
-    {
-        "href": "/prescriptions-sent",
-        "icon": "ri-compass-line",
-        "label": "Demandes envoyées",
-        "active_prefix": "/prescriptions-sent",
-    },
-    {
-        "href": "/prescriptions-received",
-        "icon": "ri-mail-send-line",
-        "label": "Demandes reçues",
-        "active_prefix": "/prescriptions-received",
     },
 ]
 

@@ -63,12 +63,37 @@
                 <nav class="flex-grow-1" role="navigation" aria-label="Navigation principale">
                     <ul class="nav nav-tabs flex-column mb-3">
                         {% for item in nav_items %}
+                        {% if item.subitems %}
+                        {% set ns = namespace(active=false) %}
+                        {% for sub in item.subitems %}{% if sub.active_prefix and request.url.path.startswith(sub.active_prefix) %}{% set ns.active = true %}{% endif %}{% endfor %}
                         <li class="nav-item">
-                            <a href="{{ item.href }}" class="nav-link{% if request.url.path.startswith(item.active_prefix) %} active{% endif %}">
+                            <button class="nav-link has-collapse-caret w-100 text-start{% if ns.active %} active{% endif %}"
+                                    type="button"
+                                    data-bs-target="#collapse-nav-{{ item.slug }}"
+                                    data-bs-toggle="collapse"
+                                    aria-expanded="{{ 'true' if ns.active else 'false' }}"
+                                    aria-controls="collapse-nav-{{ item.slug }}">
+                                <i class="{{ item.icon }} fw-medium" aria-hidden="true"></i>
+                                <span>{{ item.label }}</span>
+                            </button>
+                            <div class="collapse{% if ns.active %} show{% endif %}" id="collapse-nav-{{ item.slug }}">
+                                <ul>
+                                    {% for sub in item.subitems %}
+                                    <li>
+                                        <a href="{{ sub.href }}"{% if sub.active_prefix and request.url.path.startswith(sub.active_prefix) %} class="active"{% endif %}>{{ sub.label }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a href="{{ item.href }}" class="nav-link{% if item.active_prefix and request.url.path.startswith(item.active_prefix) %} active{% endif %}">
                                 <i class="{{ item.icon }} fw-medium" aria-hidden="true"></i>
                                 <span>{{ item.label }}</span>
                             </a>
                         </li>
+                        {% endif %}
                         {% endfor %}
                     </ul>
                 </nav>
