@@ -28,19 +28,6 @@
     .sticky-header.scrolled .c-prevstep {
         display: none !important;
     }
-    .segmented-control .btn {
-        font-weight: normal !important;
-    }
-    .segmented-control .btn:not(.active) {
-        background-color: #e9ecef !important;
-        border-color: #d9dae1 !important;
-        color: #343a40 !important;
-    }
-    .segmented-control .btn:not(.active):hover,
-    .segmented-control .btn:not(.active):focus {
-        background-color: #dee2e6 !important;
-        color: #212529 !important;
-    }
 </style>
 {% endblock %}
 {% block content %}
@@ -159,22 +146,10 @@
                     <span>Filtres</span>
                 </button>
             </div>
-            <div class="btn-group segmented-control" role="tablist" aria-label="Vue des recommandations">
-                <button type="button" class="btn btn-outline-primary active" id="solutions-tab"
-                        data-bs-toggle="tab" data-bs-target="#solutions"
-                        role="tab" aria-controls="solutions" aria-selected="true">
-                    Solutions
-                </button>
-                <button type="button" class="btn btn-outline-primary" id="projet-tab"
-                        data-bs-toggle="tab" data-bs-target="#projet"
-                        role="tab" aria-controls="projet" aria-selected="false">
-                    Emplois et formations
-                </button>
-            </div>
         </div>
         <div class="tab-content">
             {# ── Solutions recommandées ── #}
-            <div class="tab-pane fade show active" id="solutions" role="tabpanel" aria-labelledby="solutions-tab">
+            <div class="tab-pane fade show active" id="solutions">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12 col-lg-5 col-xxxl-4 order-1 order-lg-2">
                         <div style="position: sticky; top: 12rem;">
@@ -551,7 +526,7 @@
             </div>
 
             {# ── Tab 4: Emplois & formations recommandés ── #}
-            <div class="tab-pane fade" id="projet" role="tabpanel" aria-labelledby="projet-tab">
+            <div class="tab-pane fade" id="projet">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12">
                         {% if projet_pro and projet_pro.nom_metier %}
@@ -781,37 +756,29 @@ document.addEventListener('click', function(e) {
     document.getElementById('prescribeModalSolutionName').textContent = btn.dataset.solutionName + ' (' + btn.dataset.solutionType + ')';
 });
 
-// Restore active tab from URL hash (load + hashchange)
+// Activate the right tab pane based on URL hash (load + hashchange)
 function _activateTabFromHash() {
     var hash = window.location.hash;
-    if (!hash) return;
-    var tab = document.querySelector('.s-tabs-01__nav .nav-link[href="' + hash + '"]')
-           || document.querySelector('.segmented-control [data-bs-target="' + hash + '"]');
-    if (tab) new bootstrap.Tab(tab).show();
+    var navTab = hash ? document.querySelector('.s-tabs-01__nav .nav-link[href="' + hash + '"]') : null;
+    if (navTab) { new bootstrap.Tab(navTab).show(); return; }
+    var sol = document.getElementById('solutions');
+    var proj = document.getElementById('projet');
+    if (!sol || !proj) return;
+    if (hash === '#projet') {
+        sol.classList.remove('show', 'active');
+        proj.classList.add('show', 'active');
+    } else {
+        proj.classList.remove('show', 'active');
+        sol.classList.add('show', 'active');
+    }
 }
 window.addEventListener('load', function() {
     _activateTabFromHash();
-    // Update hash when switching tabs
     document.querySelectorAll('.s-tabs-01__nav [data-bs-toggle="tab"]').forEach(function(el) {
         el.addEventListener('shown.bs.tab', function(e) {
             var href = e.target.getAttribute('href');
             if (href && href.startsWith('#')) {
                 history.replaceState(null, null, href);
-            }
-        });
-    });
-    // Swap count label + update URL hash when switching segmented-control tabs
-    var countLabel = document.getElementById('tab-count-label');
-    document.querySelectorAll('.segmented-control [data-bs-toggle="tab"]').forEach(function(el) {
-        el.addEventListener('shown.bs.tab', function(e) {
-            var target = e.target.getAttribute('data-bs-target');
-            if (countLabel) {
-                countLabel.textContent = (target === '#projet')
-                    ? countLabel.dataset.projetLabel
-                    : countLabel.dataset.solutionsLabel;
-            }
-            if (target && target.startsWith('#')) {
-                history.replaceState(null, null, target);
             }
         });
     });
