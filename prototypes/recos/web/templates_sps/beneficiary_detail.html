@@ -112,7 +112,7 @@
                         <a class="nav-link active" href="/beneficiary/{{ b.id }}">Actions recommandées</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Emplois et formations</a>
+                        <a class="nav-link" href="/beneficiary/{{ b.id }}#projet">Emplois et formations</a>
                     </li>
                 </ul>
             </div>
@@ -781,16 +781,16 @@ document.addEventListener('click', function(e) {
     document.getElementById('prescribeModalSolutionName').textContent = btn.dataset.solutionName + ' (' + btn.dataset.solutionType + ')';
 });
 
-// Restore active tab from URL hash on page load
-window.addEventListener('load', function() {
+// Restore active tab from URL hash (load + hashchange)
+function _activateTabFromHash() {
     var hash = window.location.hash;
-    if (hash) {
-        var tab = document.querySelector('.s-tabs-01__nav .nav-link[href="' + hash + '"]');
-        if (tab) {
-            var bsTab = new bootstrap.Tab(tab);
-            bsTab.show();
-        }
-    }
+    if (!hash) return;
+    var tab = document.querySelector('.s-tabs-01__nav .nav-link[href="' + hash + '"]')
+           || document.querySelector('.segmented-control [data-bs-target="' + hash + '"]');
+    if (tab) new bootstrap.Tab(tab).show();
+}
+window.addEventListener('load', function() {
+    _activateTabFromHash();
     // Update hash when switching tabs
     document.querySelectorAll('.s-tabs-01__nav [data-bs-toggle="tab"]').forEach(function(el) {
         el.addEventListener('shown.bs.tab', function(e) {
@@ -800,21 +800,23 @@ window.addEventListener('load', function() {
             }
         });
     });
-    // Swap count label when switching between Solutions and Emplois et formations
+    // Swap count label + update URL hash when switching segmented-control tabs
     var countLabel = document.getElementById('tab-count-label');
-    if (countLabel) {
-        document.querySelectorAll('.segmented-control [data-bs-toggle="tab"]').forEach(function(el) {
-            el.addEventListener('shown.bs.tab', function(e) {
-                var target = e.target.getAttribute('data-bs-target');
-                if (target === '#projet') {
-                    countLabel.textContent = countLabel.dataset.projetLabel;
-                } else {
-                    countLabel.textContent = countLabel.dataset.solutionsLabel;
-                }
-            });
+    document.querySelectorAll('.segmented-control [data-bs-toggle="tab"]').forEach(function(el) {
+        el.addEventListener('shown.bs.tab', function(e) {
+            var target = e.target.getAttribute('data-bs-target');
+            if (countLabel) {
+                countLabel.textContent = (target === '#projet')
+                    ? countLabel.dataset.projetLabel
+                    : countLabel.dataset.solutionsLabel;
+            }
+            if (target && target.startsWith('#')) {
+                history.replaceState(null, null, target);
+            }
         });
-    }
+    });
 });
+window.addEventListener('hashchange', _activateTabFromHash);
 </script>
 
 {# ── Filtres modal ── #}
