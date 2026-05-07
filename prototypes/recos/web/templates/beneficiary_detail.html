@@ -770,14 +770,20 @@ function _activateTabFromHash() {
     if (navTab) { new bootstrap.Tab(navTab).show(); return; }
     var sol = document.getElementById('solutions');
     var proj = document.getElementById('projet');
-    if (!sol || !proj) return;
-    if (hash === '#projet') {
-        sol.classList.remove('show', 'active');
-        proj.classList.add('show', 'active');
-    } else {
-        proj.classList.remove('show', 'active');
-        sol.classList.add('show', 'active');
+    if (sol && proj) {
+        if (hash === '#projet') {
+            sol.classList.remove('show', 'active');
+            proj.classList.add('show', 'active');
+        } else {
+            proj.classList.remove('show', 'active');
+            sol.classList.add('show', 'active');
+        }
     }
+    // Toggle active class on header tabs based on current URL
+    var current = window.location.pathname + window.location.hash;
+    document.querySelectorAll('section.s-title-02 ul.nav-tabs .nav-link').forEach(function(link) {
+        link.classList.toggle('active', link.getAttribute('href') === current);
+    });
 }
 window.addEventListener('load', function() {
     _activateTabFromHash();
