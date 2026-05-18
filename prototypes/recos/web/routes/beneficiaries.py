@@ -5,7 +5,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlmodel import Session, select
 
-from ..config import BENEFICIARY_TYPES
+from ..config import BENEFICIARY_TYPE_SECTIONS, BENEFICIARY_TYPES
 from ..database import engine
 from ..matching import (
     COMMUNE_COORDS,
@@ -61,6 +61,7 @@ async def flux_entrant(request: Request):
             "beneficiaries": beneficiaries,
             "result_count": len(beneficiaries),
             "beneficiary_types": BENEFICIARY_TYPES,
+            "beneficiary_type_sections": BENEFICIARY_TYPE_SECTIONS,
             "selected_types": selected_types,
         },
     )
@@ -102,6 +103,7 @@ async def list_beneficiaries(request: Request):
             "beneficiaries": beneficiaries,
             "result_count": len(beneficiaries),
             "beneficiary_types": BENEFICIARY_TYPES,
+            "beneficiary_type_sections": BENEFICIARY_TYPE_SECTIONS,
             "selected_types": selected_types,
             "ft_only": ft_only,
             "ft_modalites": ft_modalites,

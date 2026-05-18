@@ -26,6 +26,14 @@ ELIGIBILITY_COLORS = {
 
 BENEFICIARY_TYPES = ["QPV", "RSA", "AAH", "OETH", "ZRR", "DELD", "DETLD", "Jeune", "Senior"]
 
+BENEFICIARY_TYPE_SECTIONS = [
+    ("Minimas sociaux", ["RSA"]),
+    ("Âge", ["Jeune", "Senior"]),
+    ("Adresse", ["QPV", "ZRR"]),
+    ("Handicap", ["AAH", "OETH"]),
+    ("Durée d'inscription", ["DELD", "DETLD"]),
+]
+
 BENEFICIARY_TYPE_COLORS = {
     "QPV": "bg-info",
     "RSA": "bg-warning",
