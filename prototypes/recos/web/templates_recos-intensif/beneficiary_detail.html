@@ -836,15 +836,15 @@ window.addEventListener('hashchange', _activateTabFromHash);
 
 {# ── Filtres modal ── #}
 <div class="modal fade" id="filter-modal" tabindex="-1" aria-labelledby="filter-modal-label" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="filter-modal-label">Filtrer les recommandations</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body py-3">
                 <form id="filter-form">
-                    <h4 class="h5 mb-3">Thématiques de contraintes personnelles</h4>
+                    <h4 class="h6 mb-2">Thématiques de contraintes personnelles</h4>
                     {% set contrainte_categories = [
                         ('mobilite', 'Mobilité'),
                         ('logement', 'Logement'),
@@ -858,7 +858,7 @@ window.addEventListener('hashchange', _activateTabFromHash);
                     ] %}
                     <div class="row">
                         {% for key, label in contrainte_categories %}
-                        <div class="col-12 col-sm-6">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="filter-cat-{{ key }}"
                                        name="categorie" value="{{ key }}"
@@ -869,9 +869,9 @@ window.addEventListener('hashchange', _activateTabFromHash);
                         {% endfor %}
                     </div>
 
-                    <hr class="my-4">
+                    <hr class="my-3">
 
-                    <h4 class="h5 mb-3">Type de public</h4>
+                    <h4 class="h6 mb-2">Type de public</h4>
                     {% set public_types = [
                         ('QPV', 'QPV — Quartier prioritaire de la politique de la ville'),
                         ('ZRR', 'ZRR — Zone de revitalisation rurale'),
@@ -884,7 +884,7 @@ window.addEventListener('hashchange', _activateTabFromHash);
                     ] %}
                     <div class="row">
                         {% for key, label in public_types %}
-                        <div class="col-12 col-sm-6">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="filter-type-{{ key }}"
                                        name="type_public" value="{{ key }}"
@@ -895,9 +895,9 @@ window.addEventListener('hashchange', _activateTabFromHash);
                         {% endfor %}
                     </div>
 
-                    <hr class="my-4">
+                    <hr class="my-3">
 
-                    <h4 class="h5 mb-3">Type d'acteur</h4>
+                    <h4 class="h6 mb-2">Type d'acteur</h4>
                     {% set actor_types = [
                         ('ACI', "ACI — Atelier chantier d'insertion"),
                         ('AI', 'AI — Association intermédiaire'),
@@ -915,7 +915,7 @@ window.addEventListener('hashchange', _activateTabFromHash);
                     ] %}
                     <div class="row">
                         {% for key, label in actor_types %}
-                        <div class="col-12 col-sm-6">
+                        <div class="col-12 col-sm-6 col-md-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="filter-acteur-{{ key }}"
                                        name="acteur" value="{{ key }}" checked>
