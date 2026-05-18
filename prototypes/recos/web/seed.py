@@ -26,6 +26,7 @@ PROFESSIONALS = [
 PROFILES = [
     {
         "file": "brsa.json",
+        "person_title": "M.",
         "person_phone": "06 12 34 56 78",
         "person_email": "k.larrieu@example.fr",
         "person_birthdate": "1992-03-15",
@@ -37,6 +38,7 @@ PROFILES = [
     },
     {
         "file": "detld-glo.json",
+        "person_title": "M.",
         "person_phone": "06 98 76 54 32",
         "person_email": "s.delmas@example.fr",
         "person_birthdate": "1975-11-22",
@@ -48,6 +50,7 @@ PROFILES = [
     },
     {
         "file": "fle-qpv-brsa.json",
+        "person_title": "M.",
         "person_phone": "07 45 23 67 89",
         "person_email": "m.benziane@example.fr",
         "person_birthdate": "1988-06-04",
@@ -59,6 +62,7 @@ PROFILES = [
     },
     {
         "file": "qpv.json",
+        "person_title": "M.",
         "person_phone": "06 33 44 55 66",
         "person_email": "d.caussade@example.fr",
         "person_birthdate": "2002-01-30",
@@ -70,6 +74,7 @@ PROFILES = [
     },
     {
         "file": "jeune-sans-diagnostic.json",
+        "person_title": "Mme",
         "person_phone": "06 44 55 66 77",
         "person_email": "l.martin@example.fr",
         "person_birthdate": "2005-09-12",
@@ -553,6 +558,7 @@ def seed() -> None:
             referent_id = pro_map.get(profile["referent_key"])
 
             b = Beneficiary(
+                person_title=profile.get("person_title"),
                 person_first_name=identite.get("prenom", "Prénom"),
                 person_last_name=identite.get("nom", "NOM"),
                 person_phone=profile["person_phone"],

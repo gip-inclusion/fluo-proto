@@ -118,7 +118,7 @@
                                 <td></td>
                                 <td>
                                     <a class="btn-link" href="/beneficiary/{{ b.id }}/profil">
-                                        {{ b.person_last_name }} {{ b.person_first_name }}
+                                        {% if b.person_title %}{{ b.person_title }} {% endif %}{{ b.person_last_name }} {{ b.person_first_name }}
                                     </a>
                                     <div class="small text-muted">
                                         {% if b._age is not none %}{{ b._age }} ans{% endif %}

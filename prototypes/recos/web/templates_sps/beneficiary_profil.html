@@ -41,7 +41,7 @@
                 <div class="c-title text-center">
                     <div class="c-title__main">
                         <h1 class="mt-3 mb-2 d-inline-flex align-items-center gap-2 flex-wrap justify-content-center">
-                            <span>{{ b.person_last_name }} {{ b.person_first_name }}</span>
+                            <span>{% if b.person_title %}{{ b.person_title }} {% endif %}{{ b.person_last_name }} {{ b.person_first_name }}</span>
                             {% for t in b._types %}
                             {% set color = beneficiary_type_colors.get(t, 'bg-secondary') %}
                             {% set text_color = color.replace('bg-', 'text-') %}

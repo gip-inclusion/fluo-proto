@@ -74,6 +74,7 @@ class Professional(SQLModel, table=True):
 
 class Beneficiary(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    person_title: str | None = None
     person_first_name: str
     person_last_name: str
     person_phone: str | None = None
