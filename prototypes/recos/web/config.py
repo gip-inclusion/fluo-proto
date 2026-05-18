@@ -24,12 +24,14 @@ ELIGIBILITY_COLORS = {
     "Éligible E2C": "bg-info",
 }
 
-BENEFICIARY_TYPES = ["QPV", "RSA", "AAH", "DELD", "DETLD", "Jeune", "Senior"]
+BENEFICIARY_TYPES = ["QPV", "RSA", "AAH", "OETH", "ZRR", "DELD", "DETLD", "Jeune", "Senior"]
 
 BENEFICIARY_TYPE_COLORS = {
     "QPV": "bg-info",
     "RSA": "bg-warning",
     "AAH": "bg-important",
+    "OETH": "bg-communaute",
+    "ZRR": "bg-emploi",
     "DELD": "bg-pilotage",
     "DETLD": "bg-danger",
     "Jeune": "bg-success",
