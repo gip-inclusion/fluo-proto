@@ -816,6 +816,7 @@ function _activateTabFromHash() {
         link.classList.toggle('active', link.getAttribute('href') === current);
     });
 }
+_activateTabFromHash();
 window.addEventListener('load', function() {
     _activateTabFromHash();
     document.querySelectorAll('.s-tabs-01__nav [data-bs-toggle="tab"]').forEach(function(el) {
