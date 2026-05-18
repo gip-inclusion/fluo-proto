@@ -120,75 +120,52 @@
         {% set emplois_count = (projet_pro.offres|length + projet_pro.formations|length + projet_pro.immersions|length) if projet_pro else 0 %}
         {% set has_socio_pro_diag = diagnostic and (diagnostic.besoinsParDiagnostic or diagnostic.thematiqueContrainte or diagnostic.pouvoirAgir or diagnostic.autonomieNumerique) %}
         {% set match_context = "diagnostic socio-professionnel" if has_socio_pro_diag else "profil" %}
-        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4 mt-3">
-            <div id="filters-actions" class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
-                {% if b._age is not none or b.person_address %}
-                <div class="d-flex flex-grow-1">
-                    <button type="button" id="locate-address-pill"
-                            class="btn bg-white border border-primary border-end-0 rounded-end-0 d-inline-flex align-items-center gap-3 px-3 py-2 shadow-sm text-start text-muted fw-normal flex-grow-1"
-                            data-bs-toggle="modal" data-bs-target="#locate-modal"
-                            aria-label="Modifier l'âge, l'adresse et le rayon">
-                        <span class="flex-grow-1 d-inline-flex align-items-center gap-3">
-                        {% if b._age is not none %}<span id="locate-age-display">{{ b._age }} ans</span>{% endif %}
-                        {% if b._age is not none and b.person_address %}<span class="text-muted">·</span>{% endif %}
-                        {% if b.person_address %}
-                        <span id="locate-address-display">{{ b.person_address }} <span id="locate-radius-display" class="text-muted">+ 20 km</span></span>
-                        {% endif %}
-                        </span>
-                    </button>
-                    <button type="button"
-                            class="btn btn-primary py-2 px-4 rounded-start-0 d-inline-flex align-items-center gap-2"
-                            data-bs-toggle="modal" data-bs-target="#locate-modal"
-                            aria-label="Affiner la recherche (âge, adresse, rayon)">
-                        <i class="ri-search-eye-line fw-medium" aria-hidden="true"></i>
-                        <span>Affiner la recherche</span>
-                    </button>
-                </div>
-                {% else %}
-                <button type="button"
-                        class="btn btn-primary py-2 px-4 d-inline-flex align-items-center gap-2"
-                        data-bs-toggle="modal" data-bs-target="#locate-modal"
-                        aria-label="Affiner la recherche (âge, adresse, rayon)">
-                    <i class="ri-search-eye-line fw-medium" aria-hidden="true"></i>
-                    <span>Affiner la recherche</span>
-                </button>
-                {% endif %}
-                <button type="button"
-                        class="btn btn-outline-primary py-2 px-4 d-inline-flex align-items-center gap-2"
-                        data-bs-toggle="modal" data-bs-target="#filter-modal"
-                        aria-label="Filtrer par critères">
-                    <i class="ri-equalizer-line fw-medium" aria-hidden="true"></i>
-                    <span>Critères</span>
-                </button>
-            </div>
-            <div id="filters-projet" class="d-flex align-items-center gap-2 flex-wrap flex-grow-1" style="display: none;">
-                <div class="d-flex flex-grow-1">
-                    <button type="button" id="projet-pill"
-                            class="btn bg-white border border-primary border-end-0 rounded-end-0 d-inline-flex align-items-center gap-3 px-3 py-2 shadow-sm text-start text-muted fw-normal flex-grow-1"
-                            data-bs-toggle="modal" data-bs-target="#projet-modal"
-                            aria-label="Modifier le projet professionnel">
-                        <span class="flex-grow-1">
-                        {% if projet_pro and projet_pro.nom_metier %}
-                        <span id="projet-display">{% if projet_pro.rome_code %}{{ projet_pro.rome_code }} — {% endif %}{{ projet_pro.nom_metier }}</span>
-                        {% else %}
-                        <span class="fst-italic">Projet pro non défini</span>
-                        {% endif %}
-                        </span>
-                    </button>
-                    <button type="button"
-                            class="btn btn-primary py-2 px-4 rounded-start-0 d-inline-flex align-items-center gap-2"
-                            data-bs-toggle="modal" data-bs-target="#projet-modal"
-                            aria-label="Affiner la recherche (projet professionnel)">
-                        <i class="ri-search-eye-line fw-medium" aria-hidden="true"></i>
-                        <span>Affiner la recherche</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <hr class="my-4">
         <div class="tab-content">
             {# ── Solutions recommandées ── #}
             <div class="tab-pane fade show active" id="solutions">
+                <div class="d-flex flex-wrap gap-3 mb-4 mt-3">
+                    <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
+                        {% if b._age is not none or b.person_address %}
+                        <div class="d-flex flex-grow-1">
+                            <button type="button" id="locate-address-pill"
+                                    class="btn bg-white border border-primary border-end-0 rounded-end-0 d-inline-flex align-items-center gap-3 px-3 py-2 shadow-sm text-start text-muted fw-normal flex-grow-1"
+                                    data-bs-toggle="modal" data-bs-target="#locate-modal"
+                                    aria-label="Modifier l'âge, l'adresse et le rayon">
+                                <span class="flex-grow-1 d-inline-flex align-items-center gap-3">
+                                {% if b._age is not none %}<span id="locate-age-display">{{ b._age }} ans</span>{% endif %}
+                                {% if b._age is not none and b.person_address %}<span class="text-muted">·</span>{% endif %}
+                                {% if b.person_address %}
+                                <span id="locate-address-display">{{ b.person_address }} <span id="locate-radius-display" class="text-muted">+ 20 km</span></span>
+                                {% endif %}
+                                </span>
+                            </button>
+                            <button type="button"
+                                    class="btn btn-primary py-2 px-4 rounded-start-0 d-inline-flex align-items-center gap-2"
+                                    data-bs-toggle="modal" data-bs-target="#locate-modal"
+                                    aria-label="Affiner la recherche (âge, adresse, rayon)">
+                                <i class="ri-search-eye-line fw-medium" aria-hidden="true"></i>
+                                <span>Affiner la recherche</span>
+                            </button>
+                        </div>
+                        {% else %}
+                        <button type="button"
+                                class="btn btn-primary py-2 px-4 d-inline-flex align-items-center gap-2"
+                                data-bs-toggle="modal" data-bs-target="#locate-modal"
+                                aria-label="Affiner la recherche (âge, adresse, rayon)">
+                            <i class="ri-search-eye-line fw-medium" aria-hidden="true"></i>
+                            <span>Affiner la recherche</span>
+                        </button>
+                        {% endif %}
+                        <button type="button"
+                                class="btn btn-outline-primary py-2 px-4 d-inline-flex align-items-center gap-2"
+                                data-bs-toggle="modal" data-bs-target="#filter-modal"
+                                aria-label="Filtrer par critères">
+                            <i class="ri-equalizer-line fw-medium" aria-hidden="true"></i>
+                            <span>Critères</span>
+                        </button>
+                    </div>
+                </div>
+                <hr class="my-4">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12 col-lg-5 col-xxxl-4 order-1 order-lg-2">
                         <div style="position: sticky; top: 12rem;">
@@ -566,6 +543,32 @@
 
             {# ── Tab 4: Emplois & formations recommandés ── #}
             <div class="tab-pane fade" id="projet">
+                <div class="d-flex flex-wrap gap-3 mb-4 mt-3">
+                    <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
+                        <div class="d-flex flex-grow-1">
+                            <button type="button" id="projet-pill"
+                                    class="btn bg-white border border-primary border-end-0 rounded-end-0 d-inline-flex align-items-center gap-3 px-3 py-2 shadow-sm text-start text-muted fw-normal flex-grow-1"
+                                    data-bs-toggle="modal" data-bs-target="#projet-modal"
+                                    aria-label="Modifier le projet professionnel">
+                                <span class="flex-grow-1">
+                                {% if projet_pro and projet_pro.nom_metier %}
+                                <span id="projet-display">{% if projet_pro.rome_code %}{{ projet_pro.rome_code }} — {% endif %}{{ projet_pro.nom_metier }}</span>
+                                {% else %}
+                                <span class="fst-italic">Projet pro non défini</span>
+                                {% endif %}
+                                </span>
+                            </button>
+                            <button type="button"
+                                    class="btn btn-primary py-2 px-4 rounded-start-0 d-inline-flex align-items-center gap-2"
+                                    data-bs-toggle="modal" data-bs-target="#projet-modal"
+                                    aria-label="Affiner la recherche (projet professionnel)">
+                                <i class="ri-search-eye-line fw-medium" aria-hidden="true"></i>
+                                <span>Affiner la recherche</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-4">
                 <div class="s-section__row row">
                     <div class="s-section__col col-12">
                         {% if projet_pro and projet_pro.nom_metier %}
@@ -811,19 +814,12 @@ function _activateTabFromHash() {
             sol.classList.add('show', 'active');
         }
     }
-    var fa = document.getElementById('filters-actions');
-    var fp = document.getElementById('filters-projet');
-    if (fa && fp) {
-        if (hash === '#projet') { fa.style.display = 'none'; fp.style.display = ''; }
-        else { fp.style.display = 'none'; fa.style.display = ''; }
-    }
     // Toggle active class on header tabs based on current URL
     var current = window.location.pathname + window.location.hash;
     document.querySelectorAll('section.s-title-02 ul.nav-tabs .nav-link').forEach(function(link) {
         link.classList.toggle('active', link.getAttribute('href') === current);
     });
 }
-_activateTabFromHash();
 window.addEventListener('load', function() {
     _activateTabFromHash();
     document.querySelectorAll('.s-tabs-01__nav [data-bs-toggle="tab"]').forEach(function(el) {
