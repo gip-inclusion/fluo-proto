@@ -33,8 +33,8 @@
                         </button>
                         <ul class="dropdown-menu p-2" style="min-width: 240px;">
                             {% for section_label, section_types in beneficiary_type_sections %}
-                            {% if not loop.first %}<li><hr class="dropdown-divider my-2"></li>{% endif %}
-                            <li><h6 class="dropdown-header px-1 pt-1 pb-1 small text-uppercase text-muted">{{ section_label }}</h6></li>
+                            {% if not loop.first %}<li><hr class="dropdown-divider my-1"></li>{% endif %}
+                            <li><h6 class="dropdown-header px-1 pt-2 pb-0 mb-0 fs-xs text-uppercase text-muted">{{ section_label }}</h6></li>
                             {% for t in section_types %}
                             <li>
                                 <div class="form-check">
