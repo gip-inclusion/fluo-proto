@@ -1,0 +1,41 @@
+version: 2
+updates:
+  - package-ecosystem: "uv"
+    directories:
+      - "/prototypes/demandes"
+      - "/prototypes/flux"
+      - "/prototypes/recos"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    cooldown:
+      default-days: 5
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "docker"
+    directories:
+      - "/prototypes/demandes"
+      - "/prototypes/flux"
+      - "/prototypes/recos"
+    schedule:
+      interval: "daily"
+    cooldown:
+      default-days: 5
+    groups:
+      docker:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    cooldown:
+      default-days: 5
+    groups:
+      actions:
+        patterns:
+          - "*"
