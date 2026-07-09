@@ -30,7 +30,7 @@
     <div class="s-section__container container">
         <div class="s-section__row row">
             {# ---- Form column ---- #}
-            <div class="s-section__col col-12 col-xl-8 order-2 order-xl-1">
+            <div class="s-section__col col-12 col-lg-8 order-2 order-lg-1">
                 <form id="profile-form">
                     {# Coordonnées #}
                     <div class="c-box mb-3 mb-md-4">
@@ -121,7 +121,7 @@
             </div>
 
             {# ---- Live preview column ---- #}
-            <div class="s-section__col col-12 col-xl-4 order-1 order-xl-2">
+            <div class="s-section__col col-12 col-lg-4 order-1 order-lg-2">
                 <div class="profile-preview">
                     <p class="fw-bold mb-2">Aperçu de votre carte dans l'annuaire</p>
                     <div class="c-box">
@@ -164,8 +164,8 @@
 
 {% block head_extra %}
 <style>
-    /* On desktop the preview becomes a right column that follows on scroll. */
-    @media (min-width: 1200px) {
+    /* From lg up the preview becomes a right column that follows on scroll. */
+    @media (min-width: 992px) {
         .profile-preview { position: sticky; top: 1rem; }
     }
 </style>
