@@ -134,9 +134,17 @@ def build():
         }
     )
 
-    request = SimpleNamespace(url=SimpleNamespace(path="/annuaire"))
-    html = env.get_template("directory.html").render(
-        request=request,
+    def postprocess(html):
+        # Absolute paths -> relative + inter-page links, so the site works
+        # under https://user.github.io/<repo>/ with no server-side routing.
+        html = html.replace('"/static/', '"static/')
+        html = re.sub(r'(href|action)="/annuaire"', r'\1="index.html"', html)
+        html = html.replace('href="/mon-espace/profil"', 'href="profil.html"')
+        return html
+
+    # Annuaire (home)
+    directory_html = env.get_template("directory.html").render(
+        request=SimpleNamespace(url=SimpleNamespace(path="/annuaire")),
         people=professionals,
         structures=structures,
         all_professionals=professionals,
@@ -149,14 +157,22 @@ def build():
         active_tab="personnes",
     )
 
-    # Absolute paths -> relative, so the site works under https://user.github.io/<repo>/
-    html = html.replace('"/static/', '"static/')
-    html = re.sub(r'(href|action)="/annuaire"', r'\1="index.html"', html)
+    # Mon espace > Modifier mon profil
+    me = next((p for p in professionals if p.id == cfg.CURRENT_PROFESSIONAL_ID), professionals[0])
+    profile_html = env.get_template("profile.html").render(
+        request=SimpleNamespace(url=SimpleNamespace(path="/mon-espace/profil")),
+        me=me,
+        structure=me._structure,
+        structures=structures,
+        share_info_options=cfg.SHARE_INFO_OPTIONS,
+        share_audiences=cfg.SHARE_AUDIENCES,
+    )
 
     if DIST.exists():
         shutil.rmtree(DIST)
     DIST.mkdir(parents=True)
-    (DIST / "index.html").write_text(html, encoding="utf-8")
+    (DIST / "index.html").write_text(postprocess(directory_html), encoding="utf-8")
+    (DIST / "profil.html").write_text(postprocess(profile_html), encoding="utf-8")
     shutil.copytree(WEB / "static", DIST / "static")
     # Disable Jekyll so folders like vendor/ are served untouched.
     (DIST / ".nojekyll").write_text("", encoding="utf-8")
