@@ -59,7 +59,7 @@ jobs:
           SCW_REGISTRY: ${{ secrets.SCW_REGISTRY }}
         run: |
           set -euo pipefail
-          existing=$(scw container container list name=rea -o json | jq -r '.[0].id // empty')
+          existing=$(scw container container list -o json | jq -r '.[] | select(.name=="rea") | .id' | head -n1)
           if [ -z "$existing" ]; then
             echo "Creating new REA container..."
             namespace_id=$(scw container container list name=recos -o json | jq -r '.[0].namespace_id')
@@ -78,7 +78,7 @@ jobs:
               environment-variables.DATABASE_URL="$DATABASE_URL" \
               environment-variables.UI_VARIANT=rea \
               -o json
-            existing=$(scw container container list name=rea -o json | jq -r '.[0].id')
+            existing=$(scw container container list -o json | jq -r '.[] | select(.name=="rea") | .id' | head -n1)
           fi
           echo "Deploying REA container $existing..."
-          scw container container deploy "$existing" region=fr-par
+          scw container container redeploy "$existing" region=fr-par
