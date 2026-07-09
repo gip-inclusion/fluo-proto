@@ -20,6 +20,33 @@ NAV_ITEMS = [
         "active_prefix": "/annuaire",
         "badge": "Bêta",
     },
+    {
+        "icon": "ri-account-circle-line",
+        "label": "Mon espace",
+        "slug": "mon-espace",
+        "subitems": [
+            {"href": "/mon-espace/profil", "label": "Modifier mon profil", "active_prefix": "/mon-espace/profil"},
+        ],
+    },
+]
+
+# The "logged-in" professional whose profile the "Mon espace" page edits.
+CURRENT_PROFESSIONAL_ID = 1
+
+# Profile page — which coordinates to expose in the directory (key, label).
+SHARE_INFO_OPTIONS = [
+    ("phone", "Téléphone"),
+    ("email", "Email"),
+    ("form", "Activer le formulaire de contact"),
+    ("agenda", "Activer la prise de rendez-vous"),
+]
+
+# Profile page — who the coordinates are shared with (key, label).
+SHARE_AUDIENCES = [
+    ("tous", "Tout le monde"),
+    ("mes-structures", "Ma ou mes structures"),
+    ("quelques-structures", "Quelques structures"),
+    ("operateurs-etat", "Opérateurs de l'État (FT, CD, ML, CE, etc.)"),
 ]
 
 # Structure types and their theme-inclusion colour token. The tag renders as the

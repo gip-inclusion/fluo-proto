@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% import "includes/macros.html" as m %}
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block content %}
+<section class="s-title-02">
+    <div class="s-title-02__container container">
+        <div class="s-title-02__row row">
+            <div class="s-title-02__col col-12">
+                <div class="c-prevstep">
+                    <a href="/annuaire" class="btn btn-ico btn-link ps-0">
+                        <i class="ri-arrow-drop-left-line ri-xl fw-medium" aria-hidden="true"></i>
+                        <span>Retour à l'annuaire</span>
+                    </a>
+                </div>
+                <div class="c-title">
+                    <div class="c-title__main">
+                        <h1>Modifier mon profil</h1>
+                        <p class="mb-0 text-muted">
+                            {{ me.first_name }} {{ me.last_name }} · {{ me.role }}{% if structure %} · {{ structure.name }}{% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="s-section">
+    <div class="s-section__container container">
+        <div class="s-section__row row">
+            {# ---- Form column ---- #}
+            <div class="s-section__col col-12 col-xl-8 order-2 order-xl-1">
+                <form id="profile-form">
+                    {# Coordonnées #}
+                    <div class="c-box mb-3 mb-md-4">
+                        <h2 class="h4">Mes coordonnées</h2>
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Téléphone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone"
+                                   value="{{ me.phone or '' }}" placeholder="Ex. 05 56 00 12 01">
+                            <div class="form-text">Ajoutez ou modifiez le numéro affiché aux professionnels autorisés.</div>
+                        </div>
+                        <ul class="list-data mb-0">
+                            <li>
+                                <small>Courriel</small>
+                                <strong>{% if me.email %}{{ me.email }}{% else %}<i class="text-disabled">Non renseigné</i>{% endif %}</strong>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {# Agenda — read-only status #}
+                    <div class="c-box mb-3 mb-md-4">
+                        <h2 class="h4">Je connecte mon agenda</h2>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge rounded-pill bg-success-lighter text-success">
+                                <i class="ri-checkbox-circle-line fw-medium" aria-hidden="true"></i> Connecté
+                            </span>
+                            <span class="text-muted fs-sm">Synchronisation à jour</span>
+                        </div>
+                    </div>
+
+                    {# Options de partage #}
+                    <div class="c-box mb-3 mb-md-4">
+                        <h2 class="h4">Options de partage</h2>
+
+                        <fieldset class="mb-2">
+                            <legend class="form-label mb-1">Quelles informations souhaitez-vous afficher dans l'annuaire des pro ?</legend>
+                            <p class="form-text mt-0 mb-2">Accessible uniquement aux professionnels connectés.</p>
+                            {% for key, label in share_info_options %}
+                            <div class="form-check">
+                                <input class="form-check-input js-info" type="checkbox" name="info"
+                                       value="{{ key }}" id="info-{{ key }}" checked>
+                                <label class="form-check-label" for="info-{{ key }}">{{ label }}</label>
+                            </div>
+                            {% endfor %}
+                            <div class="form-check mt-2">
+                                <input class="form-check-input js-info-none" type="checkbox" name="info"
+                                       value="none" id="info-none">
+                                <label class="form-check-label" for="info-none">Aucune coordonnée</label>
+                            </div>
+                        </fieldset>
+
+                        <div id="audience-block">
+                            <hr class="my-3">
+                            <fieldset>
+                                <legend class="form-label mb-1">Vous souhaitez partager vos informations de contact avec :</legend>
+                                {% for key, label in share_audiences %}
+                                <div class="form-check">
+                                    <input class="form-check-input js-audience" type="checkbox" name="audience"
+                                           value="{{ key }}" id="aud-{{ key }}"{% if key == 'tous' %} checked{% endif %}>
+                                    <label class="form-check-label" for="aud-{{ key }}">{{ label }}</label>
+                                </div>
+                                {% if key == 'quelques-structures' %}
+                                <div class="d-none ms-4 mb-2" id="structures-picker">
+                                    <input type="search" class="form-control form-control-sm mb-2" id="struct-search"
+                                           placeholder="Rechercher une structure...">
+                                    <div class="border rounded p-2" style="max-height: 190px; overflow-y: auto;">
+                                        {% for s in structures %}
+                                        <div class="form-check js-struct-row" data-name="{{ s.name|lower }}">
+                                            <input class="form-check-input" type="checkbox" name="structure"
+                                                   value="{{ s.id }}" id="struct-{{ s.id }}">
+                                            <label class="form-check-label" for="struct-{{ s.id }}">{{ s.name }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </fieldset>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-ico js-save">
+                        <i class="ri-save-line fw-medium" aria-hidden="true"></i><span>Enregistrer</span>
+                    </button>
+                    <div class="js-save-confirm alert alert-success mt-3 d-none" role="status">
+                        <i class="ri-check-line fw-medium" aria-hidden="true"></i> Vos préférences ont été enregistrées.
+                    </div>
+                </form>
+            </div>
+
+            {# ---- Live preview column ---- #}
+            <div class="s-section__col col-12 col-xl-4 order-1 order-xl-2">
+                <div class="profile-preview">
+                    <p class="fw-bold mb-2">Aperçu de votre carte dans l'annuaire</p>
+                    <div class="c-box">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <div>
+                                <strong class="d-block">{{ me.first_name }} {{ me.last_name }}</strong>
+                                <span class="text-muted d-block fs-sm">{{ me.role }}</span>
+                            </div>
+                            {% if structure %}{{ m.structure_tag(structure.type) }}{% endif %}
+                        </div>
+                        {% if structure %}
+                        <div class="mt-2">
+                            <div class="fw-bold fs-sm">{{ structure.name }}</div>
+                            <div class="text-muted fs-sm">
+                                <i class="ri-map-pin-2-line" aria-hidden="true"></i> {{ structure.address }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <hr class="my-3">
+                        <div id="preview-means" class="d-flex align-items-center gap-2 text-muted fs-lg">
+                            <i class="ri-phone-line js-prev-icon" data-key="phone" aria-hidden="true"></i>
+                            <i class="ri-mail-line js-prev-icon" data-key="email" aria-hidden="true"></i>
+                            <i class="ri-file-text-line js-prev-icon" data-key="form" aria-hidden="true"></i>
+                            <i class="ri-calendar-2-line js-prev-icon" data-key="agenda" aria-hidden="true"></i>
+                        </div>
+                        <span id="preview-none" class="text-muted fst-italic fs-sm d-none">Cette personne ne souhaite pas partager ses coordonnées.</span>
+                        <div class="mt-3">
+                            <span class="btn btn-outline-primary btn-sm btn-ico w-100 disabled">
+                                <i class="ri-eye-line fw-medium" aria-hidden="true"></i><span>Voir ses coordonnées</span>
+                            </span>
+                        </div>
+                    </div>
+                    <p class="text-muted fs-xs mt-2">Visible uniquement par les professionnels autorisés selon vos choix de partage.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block head_extra %}
+<style>
+    /* On desktop the preview becomes a right column that follows on scroll. */
+    @media (min-width: 1200px) {
+        .profile-preview { position: sticky; top: 1rem; }
+    }
+</style>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var infos = [].slice.call(document.querySelectorAll('.js-info'));
+    var noneBox = document.querySelector('.js-info-none');
+    var audienceBlock = document.getElementById('audience-block');
+    var prevIcons = [].slice.call(document.querySelectorAll('.js-prev-icon'));
+    var prevMeans = document.getElementById('preview-means');
+    var prevNone = document.getElementById('preview-none');
+
+    function refresh() {
+        var active = {};
+        infos.forEach(function (c) { active[c.value] = c.checked; });
+        var any = false;
+        prevIcons.forEach(function (icon) {
+            var on = !!active[icon.dataset.key];
+            icon.classList.toggle('d-none', !on);
+            if (on) any = true;
+        });
+        prevMeans.classList.toggle('d-none', !any);
+        prevNone.classList.toggle('d-none', any);
+        audienceBlock.classList.toggle('d-none', !any);
+    }
+
+    infos.forEach(function (c) {
+        c.addEventListener('change', function () {
+            if (c.checked && noneBox.checked) noneBox.checked = false;
+            refresh();
+        });
+    });
+    noneBox.addEventListener('change', function () {
+        if (noneBox.checked) infos.forEach(function (c) { c.checked = false; });
+        refresh();
+    });
+
+    // "Quelques structures" reveals a searchable structure list.
+    var quelques = document.getElementById('aud-quelques-structures');
+    var picker = document.getElementById('structures-picker');
+    if (quelques && picker) {
+        quelques.addEventListener('change', function () { picker.classList.toggle('d-none', !quelques.checked); });
+    }
+    var search = document.getElementById('struct-search');
+    if (search) {
+        search.addEventListener('input', function () {
+            var q = search.value.trim().toLowerCase();
+            document.querySelectorAll('.js-struct-row').forEach(function (row) {
+                row.classList.toggle('d-none', q && row.dataset.name.indexOf(q) === -1);
+            });
+        });
+    }
+
+    // Save — no persistence, just a confirmation.
+    var save = document.querySelector('.js-save');
+    var confirm = document.querySelector('.js-save-confirm');
+    if (save) save.addEventListener('click', function () {
+        confirm.classList.remove('d-none');
+        setTimeout(function () { confirm.classList.add('d-none'); }, 3000);
+    });
+
+    refresh();
+});
+</script>
+{% endblock %}

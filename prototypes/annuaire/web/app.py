@@ -16,7 +16,7 @@ from .config import (
     STRUCTURE_TYPES,
 )
 from .database import init_db
-from .routes import directory_router
+from .routes import directory_router, profile_router
 
 _dir = Path(__file__).parent
 
@@ -47,3 +47,4 @@ async def root():
 
 
 app.include_router(directory_router)
+app.include_router(profile_router)
