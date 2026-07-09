@@ -42,7 +42,7 @@ deploy: ## Build, push, and deploy one proto — usage: make deploy <name>
 	container_id=$$(scw container container list name="$$proto" -o json | jq -r '.[0].id'); \
 	test -n "$$container_id" && test "$$container_id" != "null" || { echo "error: no Scaleway container named $$proto"; exit 1; }; \
 	echo "Deploying container $$container_id..."; \
-	scw container container deploy "$$container_id" region=fr-par
+	scw container container redeploy "$$container_id" region=fr-par
 
 dev: ## Run a proto locally with hot reload — usage: make dev <name>
 	@proto=$(firstword $(ARGS)); \
