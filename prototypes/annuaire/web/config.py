@@ -1,9 +1,6 @@
 import os
 
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+psycopg://annuaire:annuaire@localhost:5432/annuaire",
-)
+DATABASE_URL = os.environ["DATABASE_URL"]
 
 SERVICE_NAME = "France Travail Bordeaux Mériadeck"
 
