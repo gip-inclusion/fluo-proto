@@ -3,7 +3,6 @@ updates:
   - package-ecosystem: "uv"
     directories:
       - "/prototypes/demandes"
-      - "/prototypes/flux"
       - "/prototypes/recos"
     schedule:
       interval: "daily"
@@ -18,7 +17,6 @@ updates:
   - package-ecosystem: "docker"
     directories:
       - "/prototypes/demandes"
-      - "/prototypes/flux"
       - "/prototypes/recos"
     schedule:
       interval: "daily"
