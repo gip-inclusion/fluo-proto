@@ -81,4 +81,4 @@ jobs:
             existing=$(scw container container list name=recos-intensif -o json | jq -r '.[0].id')
           fi
           echo "Deploying RECOS-INTENSIF container $existing..."
-          scw container container deploy "$existing" region=fr-par
+          scw container container redeploy "$existing" region=fr-par
