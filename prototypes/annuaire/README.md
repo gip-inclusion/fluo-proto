@@ -26,21 +26,3 @@ Toutes les données sont **fictives** (voir `web/seed.py`).
 make dev annuaire      # http://localhost:8002
 make reseed annuaire   # réinitialise + reseed la base locale
 ```
-
-## Export statique (GitHub Pages)
-
-La recherche et les filtres tournent **côté client** (JS dans `directory.html`), ce qui
-permet de publier le proto en site statique, sans backend ni base de données.
-
-```bash
-cd prototypes/annuaire
-pip install jinja2
-python build_static.py        # génère ./dist/ (index.html + assets en chemins relatifs)
-```
-
-Le déploiement sur GitHub Pages est automatisé par `.github/workflows/pages.yml`
-(build à chaque push touchant `prototypes/annuaire/**`). Pour l'activer sur un fork :
-
-1. Pousser cette branche sur `main` du fork.
-2. Repo → **Settings → Pages → Build and deployment → Source : GitHub Actions**.
-3. Le site est publié sur `https://<utilisateur>.github.io/<repo>/`.
