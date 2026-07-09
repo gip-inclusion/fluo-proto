@@ -22,14 +22,14 @@
                         <a class="nav-link{% if active_tab == 'personnes' %} active{% endif %}" id="personnes-tab"
                            data-bs-toggle="tab" href="#personnes" role="tab"
                            aria-controls="personnes" aria-selected="{{ 'true' if active_tab == 'personnes' else 'false' }}">
-                            <i class="ri-user-line fw-medium" aria-hidden="true"></i> Personnes ({{ people_count }})
+                            <i class="ri-user-line fw-medium" aria-hidden="true"></i> Personnes (<span id="count-personnes-tab">{{ people_count }}</span>)
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link{% if active_tab == 'structures' %} active{% endif %}" id="structures-tab"
                            data-bs-toggle="tab" href="#structures" role="tab"
                            aria-controls="structures" aria-selected="{{ 'true' if active_tab == 'structures' else 'false' }}">
-                            <i class="ri-building-line fw-medium" aria-hidden="true"></i> Structures ({{ structures_count }})
+                            <i class="ri-building-line fw-medium" aria-hidden="true"></i> Structures (<span id="count-structures-tab">{{ structures_count }}</span>)
                         </a>
                     </li>
                 </ul>
@@ -47,7 +47,7 @@
                  role="tabpanel" aria-labelledby="personnes-tab">
                 <div class="s-section__row row">
                     <div class="col-12">
-                        <form method="get" action="/annuaire" class="c-box c-box--note mb-3 mb-md-4">
+                        <form method="get" action="/annuaire" id="form-personnes" class="c-box c-box--note mb-3 mb-md-4">
                             <input type="hidden" name="tab" value="personnes">
                             <div class="row g-2 align-items-end">
                                 <div class="col-12 col-lg">
@@ -104,21 +104,24 @@
                                     <button type="submit" class="btn btn-primary btn-ico">
                                         <i class="ri-search-line fw-medium" aria-hidden="true"></i><span>Rechercher</span>
                                     </button>
-                                    {% if q or selected_types or selected_contacts %}
-                                    <a href="/annuaire?tab=personnes" class="btn btn-outline-primary btn-ico" aria-label="Effacer les filtres">
+                                    <button type="button" class="btn btn-outline-primary btn-ico js-reset" aria-label="Effacer les filtres">
                                         <i class="ri-eraser-line fw-medium" aria-hidden="true"></i><span>Effacer</span>
-                                    </a>
-                                    {% endif %}
+                                    </button>
                                 </div>
                             </div>
                         </form>
 
-                        <p class="mb-3">{{ people_count }} personne{{ "s" if people_count != 1 else "" }}</p>
+                        <p class="mb-3" id="count-personnes">{{ people_count }} personne{{ "s" if people_count != 1 else "" }}</p>
 
-                        {% if people %}
                         <div class="row">
                             {% for p in people %}
-                            <div class="col-12 col-md-6 col-xxl-4 mb-3 mb-md-4 d-flex">
+                            <div class="col-12 col-md-6 col-xxl-4 mb-3 mb-md-4 d-flex js-person-card"
+                                 data-name="{{ (p.first_name ~ ' ' ~ p.last_name)|lower }}"
+                                 data-role="{{ p.role|lower }}"
+                                 data-structure="{{ (p._structure.name if p._structure else '')|lower }}"
+                                 data-city="{{ (p._structure.city if p._structure else '')|lower }}"
+                                 data-type="{{ p._structure.type if p._structure else '' }}"
+                                 data-means="{{ p._mean_keys|join(' ') }}">
                                 <div class="c-box w-100 d-flex flex-column">
                                     <div class="d-flex justify-content-between align-items-start gap-2">
                                         <div>
@@ -150,11 +153,9 @@
                             </div>
                             {% endfor %}
                         </div>
-                        {% else %}
-                        <div class="c-box mb-3 mb-md-4">
+                        <div class="c-box mb-3 mb-md-4 d-none" id="empty-personnes">
                             <p class="text-muted mb-0">Aucune personne ne correspond à votre recherche.</p>
                         </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -164,7 +165,7 @@
                  role="tabpanel" aria-labelledby="structures-tab">
                 <div class="s-section__row row">
                     <div class="col-12">
-                        <form method="get" action="/annuaire" class="c-box c-box--note mb-3 mb-md-4">
+                        <form method="get" action="/annuaire" id="form-structures" class="c-box c-box--note mb-3 mb-md-4">
                             <input type="hidden" name="tab" value="structures">
                             <div class="row g-2 align-items-end">
                                 <div class="col-12 col-lg">
@@ -199,22 +200,22 @@
                                     <button type="submit" class="btn btn-primary btn-ico">
                                         <i class="ri-search-line fw-medium" aria-hidden="true"></i><span>Rechercher</span>
                                     </button>
-                                    {% if q or selected_types %}
-                                    <a href="/annuaire?tab=structures" class="btn btn-outline-primary btn-ico" aria-label="Effacer les filtres">
+                                    <button type="button" class="btn btn-outline-primary btn-ico js-reset" aria-label="Effacer les filtres">
                                         <i class="ri-eraser-line fw-medium" aria-hidden="true"></i><span>Effacer</span>
-                                    </a>
-                                    {% endif %}
+                                    </button>
                                 </div>
                             </div>
                         </form>
 
-                        <p class="mb-3">{{ structures_count }} structure{{ "s" if structures_count != 1 else "" }}</p>
+                        <p class="mb-3" id="count-structures">{{ structures_count }} structure{{ "s" if structures_count != 1 else "" }}</p>
 
-                        {% if structures %}
                         <div class="row">
                             {% for s in structures %}
                             {% set contacts = contacts_by_structure.get(s.id, []) %}
-                            <div class="col-12 mb-3 mb-md-4 d-flex">
+                            <div class="col-12 mb-3 mb-md-4 d-flex js-structure-card"
+                                 data-name="{{ s.name|lower }}"
+                                 data-type="{{ s.type }}"
+                                 data-city="{{ s.city|lower }}">
                                 <div class="c-box w-100 d-flex flex-column">
                                     <div>
                                         {{ m.structure_tag(s.type) }}
@@ -249,11 +250,9 @@
                             </div>
                             {% endfor %}
                         </div>
-                        {% else %}
-                        <div class="c-box mb-3 mb-md-4">
+                        <div class="c-box mb-3 mb-md-4 d-none" id="empty-structures">
                             <p class="text-muted mb-0">Aucune structure ne correspond à votre recherche.</p>
                         </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -367,6 +366,48 @@ document.addEventListener('DOMContentLoaded', function () {
         target.addEventListener('shown.bs.collapse', function () { btn.textContent = 'Masquer les ' + count + ' autres personnes'; });
         target.addEventListener('hidden.bs.collapse', function () { btn.textContent = 'Voir les ' + count + ' autres personnes'; });
     });
+
+    // ---- Client-side search & filters (runs with or without a backend) ----
+    function annuaireFilter(form, cards, fields, kind) {
+        var q = (form.querySelector('input[name="q"]').value || '').trim().toLowerCase();
+        var types = [].slice.call(form.querySelectorAll('input[name="type"]:checked')).map(function (i) { return i.value; });
+        var contacts = [].slice.call(form.querySelectorAll('input[name="contact"]:checked')).map(function (i) { return i.value; });
+        var shown = 0;
+        cards.forEach(function (card) {
+            var okType = !types.length || types.indexOf(card.dataset.type) !== -1;
+            var means = (card.dataset.means || '').split(' ');
+            var okContact = !contacts.length || contacts.every(function (c) { return means.indexOf(c) !== -1; });
+            var hay = fields.map(function (f) { return card.dataset[f] || ''; }).join(' ').toLowerCase();
+            var okQ = !q || hay.indexOf(q) !== -1;
+            var show = okType && okContact && okQ;
+            card.classList.toggle('d-none', !show);
+            if (show) shown++;
+        });
+        var word = kind === 'personnes' ? 'personne' : 'structure';
+        document.getElementById('count-' + kind).textContent = shown + ' ' + word + (shown !== 1 ? 's' : '');
+        document.getElementById('count-' + kind + '-tab').textContent = shown;
+        var empty = document.getElementById('empty-' + kind);
+        if (empty) empty.classList.toggle('d-none', shown !== 0);
+    }
+
+    function wireFilter(formId, selector, fields, kind) {
+        var form = document.getElementById(formId);
+        if (!form) return;
+        var cards = [].slice.call(document.querySelectorAll(selector));
+        var run = function () { annuaireFilter(form, cards, fields, kind); };
+        form.addEventListener('submit', function (e) { e.preventDefault(); run(); });
+        form.addEventListener('input', run);
+        form.addEventListener('change', run);
+        var reset = form.querySelector('.js-reset');
+        if (reset) reset.addEventListener('click', function () {
+            form.querySelector('input[name="q"]').value = '';
+            form.querySelectorAll('input[type="checkbox"]').forEach(function (c) { c.checked = false; });
+            run();
+        });
+    }
+
+    wireFilter('form-personnes', '.js-person-card', ['name', 'role', 'structure', 'city'], 'personnes');
+    wireFilter('form-structures', '.js-structure-card', ['name', 'type', 'city'], 'structures');
 });
 </script>
 {% endblock %}

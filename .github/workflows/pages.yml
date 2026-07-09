@@ -1,0 +1,50 @@
+name: Deploy annuaire to Pages
+
+# Builds the static export of the `annuaire` proto and publishes it to GitHub
+# Pages. Enable it once per fork: Settings → Pages → Build and deployment →
+# Source: "GitHub Actions". The site is then served at
+# https://<user>.github.io/<repo>/
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'prototypes/annuaire/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install build dependency
+        run: pip install jinja2
+      - name: Build static site
+        run: python build_static.py
+        working-directory: prototypes/annuaire
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: prototypes/annuaire/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

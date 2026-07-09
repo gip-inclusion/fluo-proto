@@ -1,6 +1,0 @@
-{
-  "version": "0.0.1",
-  "configurations": [
-    { "name": "annuaire", "runtimeExecutable": "/private/tmp/claude-501/-Users-andreibocan-Documents-PROTO-PDI-fluo-proto/91909bbd-0122-4c1e-806c-1a08ae979e8c/scratchpad/run-annuaire.sh", "runtimeArgs": [], "port": 8002 }
-  ]
-}
