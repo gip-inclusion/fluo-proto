@@ -102,9 +102,7 @@ async def directory(request: Request):
         structs = [s for s in structs if s.type in selected_types]
     if q_lower:
         structs = [
-            s
-            for s in structs
-            if q_lower in s.name.lower() or q_lower in s.type.lower() or q_lower in s.city.lower()
+            s for s in structs if q_lower in s.name.lower() or q_lower in s.type.lower() or q_lower in s.city.lower()
         ]
     contacts_by_structure = {s.id: [] for s in structs}
     for p in professionals:
