@@ -54,11 +54,11 @@ scw container container create \
   namespace-id="$SCW_NAMESPACE_ID" \
   region=fr-par \
   name="$proto" \
-  registry-image="$SCW_REGISTRY/$proto:latest" \
+  image="$SCW_REGISTRY/$proto:latest" \
   min-scale=1 \
   max-scale=1 \
-  memory-limit=256 \
-  cpu-limit=140 \
+  memory-limit-bytes=0.256GB \
+  mvcpu-limit=140 \
   privacy=public \
   port=8080 \
   protocol=http1 \
