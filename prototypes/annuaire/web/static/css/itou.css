@@ -1,0 +1,405 @@
+.container-messages div.alert {
+    margin-top: 1rem;
+}
+
+.container-breadcrumb:empty {
+    background-color: var(--bs-red);
+    display: none !important;
+}
+
+/* Spacing.
+--------------------------------------------------------------------------- */
+.h1-hero-c1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .h1-hero-c1 {
+        margin-bottom: 3rem;
+    }
+}
+
+/* Cards.
+--------------------------------------------------------------------------- */
+
+.card-deck-itou {
+    text-align: center;
+    justify-content: space-between;
+}
+
+.card-deck-itou > .card {
+    /* flex: 0 0 26%; */
+    position: relative;
+    padding: 1.5rem;
+}
+
+.card-deck-itou > .card > .card-body {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.card-deck-itou > .card > .card-footer {
+    background: transparent;
+}
+
+/* Forms.
+--------------------------------------------------------------------------- */
+
+.select2-dropdown {
+    z-index: 4051 !important;
+}
+
+.select2-selection__choice__remove {
+    float: right;
+    margin-left: 2px;
+}
+
+/*
+Force the display of `.invalid-feedback` for Duet Date Picker with Bootstrap 4.
+See also `duet_date_picker.html`.
+https://getbootstrap.com/docs/4.6/components/forms/#server-side
+*/
+duet-date-picker.is-invalid ~ .invalid-feedback,
+duet-date-picker.is-invalid ~ div > .invalid-feedback {
+    display: block;
+}
+
+/*
+Force the display of `.invalid-feedback` for django-bootstrap5 25.2.
+*/
+.was-validated :invalid ~ div > .invalid-feedback,
+.was-validated :invalid ~ div > .invalid-tooltip,
+.is-invalid ~ div > .invalid-feedback,
+.is-invalid ~ div > .invalid-tooltip {
+    display: block;
+}
+/* Also fix the inline positioning of the div[id$=_error] */
+.was-validated :invalid ~ div[id$=_error],
+.was-validated :invalid ~ div[id$=_error],
+.is-invalid ~ div[id$=_error],
+.is-invalid ~ div[id$=_error] {
+    width: 100%;
+}
+
+.form-group.is-invalid > .file-dropzone {
+    border: 2px dashed var(--bs-danger);
+}
+
+.form-group > .select2-container--bootstrap-5 {
+    width: 100% !important;
+}
+
+.file-dropzone {
+    width: 100%;
+    border: 2px dashed var(--bs-gray-700);
+    border-radius: 0.25rem;
+    text-align: center;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.file-dropzone.highlighted {
+    opacity: 0.5;
+}
+
+input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+
+    /*
+     Limit the width the input so that it does not overflow its container.
+     Avoids using a zero width as this would remove it from screen readers.
+     */
+    width: 1px;
+}
+
+/* Dropdown menus.
+--------------------------------------------------------------------------- */
+
+/*
+Make dropdown menus scrollable in case there are too many items.
+Credits go to https://stackoverflow.com/a/19229738
+*/
+
+.dropdown-menu {
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.select2-selection__rendered {
+    white-space: break-spaces !important;
+}
+
+/* Missing Boostrap utilities.
+--------------------------------------------------------------------------- */
+
+@media (min-width: 768px) {
+    .fixed-sm-bottom {
+        position: fixed !important;
+        right: 0;
+        bottom: 0;
+        z-index: 1030;
+    }
+}
+
+.border-dashed {
+    border-style: dashed !important;
+}
+
+/* Overrides opacity for disabled button (search cities) */
+
+.js-search-button {
+    opacity: 100% !important;
+}
+
+/* Browser-specific issues.
+--------------------------------------------------------------------------- */
+
+/* Firefox applies `:-moz-ui-invalid` as soon as it considers
+an input field being invalid, generating an uncontrolled red box-shadow. */
+
+.home-search :not(output):-moz-ui-invalid:not(:focus) {
+    box-shadow: none;
+}
+
+.home-search :not(output):-moz-ui-invalid:-moz-focusring:not(:focus) {
+    box-shadow: none;
+}
+
+/* CSS for js-shroud.
+---------------------------------------------------------------------------- */
+
+.js-shroud {
+    position: relative;
+    opacity: 50%;
+}
+
+.js-shroud::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* Bootstrap components scale from 0 to 3: https://getbootstrap.com/docs/4.6/extend/approach/#z-index-scales */
+    z-index: 4;
+}
+
+/* Dropzone component used to upload files to an S3 bucket.
+--------------------------------------------------------------------------- */
+
+/* By default, an error message is displayed only on hover */
+
+.dropzone .dz-preview.dz-error .dz-error-message {
+    opacity: 1;
+    pointer-events: auto;
+    top: -15px;
+    background: var(--bs-red);
+}
+
+.dz-error-mark {
+    background: var(--bs-red);
+    border-radius: 50%;
+}
+
+.dropzone .dz-preview .dz-error-message::after {
+    border-top: 6px solid var(--bs-red);
+    border-bottom: 0 solid var(--bs-danger) !important;
+    bottom: -5px !important;
+    top: auto !important;
+}
+
+/* To be integrated to the global theme.
+--------------------------------------------------------------------------- */
+
+.list-group-item {
+    background-color: transparent;
+}
+
+/* To be discussed.
+--------------------------------------------------------------------------- */
+
+.employee-records-list .badge {
+    white-space: normal;
+    margin: 0;
+}
+
+.itou-france-connect {
+    display: inline-block;
+    height: 56px !important;
+    width: 209px;
+    margin: auto;
+    /*margin-bottom: 8px;*/
+    background-image: url(../img/franceconnect-bouton.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+}
+
+.itou-france-connect:hover {
+    background-image: url(../img/franceconnect-bouton-hover.svg);
+}
+
+.job-appellation-nb_open_positions {
+    width: 80px;
+    margin: 0 auto;
+}
+
+.approval-left-border {
+    border-left-width: 3px !important;
+}
+
+/* step 1/5 */
+.progress-bar-20 {
+    width: 20%;
+}
+
+/* step 1/4 */
+.progress-bar-25 {
+    width: 25%;
+}
+
+/* step 1/3 */
+.progress-bar-33 {
+    width: 33%;
+}
+
+/* step 2/5 */
+.progress-bar-40 {
+    width: 40%;
+}
+
+/* step 2/4 */
+.progress-bar-50 {
+    width: 50%;
+}
+
+/* step 3/5 */
+.progress-bar-60 {
+    width: 60%;
+}
+
+/* step 2/3 */
+.progress-bar-66 {
+    width: 66%;
+}
+
+/* step 3/4 */
+.progress-bar-75 {
+    width: 75%;
+}
+
+/* step 4/5 */
+.progress-bar-80 {
+    width: 80%;
+}
+
+/* final step */
+.progress-bar-100 {
+    width: 100%;
+}
+
+.edit-siae-header-image {
+    width: 100px;
+}
+
+/* Dashboard
+--------------------------------------------------------------------------- */
+.c-box__header--dora {
+    background-image: url("../img/dashboard/card-header-bg-dora.png");
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: contain;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.c-box__header--diagoriente {
+    background-image: url("../img/dashboard/card-header-bg-diagoriente.png");
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: contain;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.c-box__header--gps {
+    background-image: url("../img/dashboard/card-header-bg-gps.png");
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: contain;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+/* Fiche salarié */
+.c-box__header--immersion-facile {
+    background-image: url("../img/dashboard/card-header-bg-immersion-facile.png");
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: contain;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.c-banner--pilotage {
+    background-image: url("../img/dashboard/banner-statistiques-pilotage-bg.jpg");
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: cover;
+}
+
+/* Fix for form.company and form.job_seeker width */
+.w-lg-400px .select2-selection__rendered {
+    white-space: nowrap !important;
+}
+
+/* Fix for form.job_seeker width */
+.w-lg-400px select + .select2-container--bootstrap-5 {
+   width: 100% !important;
+}
+
+/* Fix for .modal-content than inherit style rules from td parent */
+table.table td > .modal .modal-content {
+    text-align: left;
+    font-size: var(--bs-body-font-size);
+}
+
+.form-checkbox-greater-spacing > .form-check {
+    margin-bottom: .75rem;
+}
+
+/* Pro Connect button theme */
+.proconnect-button {
+  background-color: transparent !important;
+  background-image: url("../img/pro_connect_bouton.svg");
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  width: 214px;
+  height: 56px;
+  display: inline-block;
+}
+
+.proconnect-button:hover {
+  background-image: url("../img/pro_connect_bouton_hover.svg");
+}
+
+/* Fix tooltip z-index depths under specific conditions */
+.c-box--action-tooltip {
+  z-index: 1050 !important;
+}
+
+.modal-tooltip {
+  z-index: 3055 !important;
+}
+
+
+/* offcanvasNav Menu */
+#offcanvasNav .offcanvas-body .nav-link[aria-expanded=true] {
+    .badge.bg-important {
+        display: none !important;
+    }
+}

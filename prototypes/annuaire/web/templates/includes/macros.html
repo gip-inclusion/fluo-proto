@@ -1,0 +1,232 @@
+{# ---- Structure type tag -------------------------------------------------- #}
+{% macro structure_tag(stype) %}
+{% set color = structure_type_colors.get(stype, 'bg-secondary') %}
+{% set light = color ~ '-lighter' %}
+{% set text = color.replace('bg-', 'text-') %}
+<span class="badge rounded-pill text-nowrap badge-sm {{ light }} {{ text }}">{{ stype }}</span>
+{% endmacro %}
+
+{# ---- Contact means as icons (or the opt-out note) ------------------------ #}
+{% macro contact_icons(means, size='') %}
+{% if means %}
+<div class="d-flex align-items-center gap-2 text-muted {{ size }}">
+    {% for m in means %}
+    <i class="{{ m.icon }} fw-medium" aria-hidden="true" data-bs-toggle="tooltip" data-bs-title="{{ m.label }}"></i>
+    <span class="visually-hidden">{{ m.label }}</span>
+    {% endfor %}
+</div>
+{% else %}
+<span class="text-muted fst-italic fs-sm">Cette personne ne souhaite pas partager ses coordonnées.</span>
+{% endif %}
+{% endmacro %}
+
+{# ---- Contact row inside a structure card -------------------------------- #}
+{% macro contact_row(c) %}
+<div class="d-flex align-items-center justify-content-between py-2 border-top">
+    <div class="me-2">
+        <strong class="d-block">{{ c.first_name }} {{ c.last_name }}</strong>
+        <span class="text-muted fs-sm d-block">{{ c.role }}</span>
+        {{ contact_icons(c._means) }}
+    </div>
+    {% if c._means %}
+    <button type="button" class="btn btn-sm btn-link btn-ico-only flex-shrink-0"
+            data-bs-toggle="offcanvas" data-bs-target="#person-panel-{{ c.id }}"
+            aria-controls="person-panel-{{ c.id }}" aria-label="Voir {{ c.first_name }} {{ c.last_name }}">
+        <i class="ri-arrow-drop-right-line fs-lg" aria-hidden="true"></i>
+    </button>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# ---- Side panel (offcanvas) for one professional ------------------------ #}
+{% macro person_panel(p) %}
+<div class="offcanvas offcanvas-end" tabindex="-1" id="person-panel-{{ p.id }}"
+     style="width: 560px; max-width: 94vw;"
+     aria-labelledby="person-panel-{{ p.id }}-label">
+    <div class="offcanvas-header align-items-start">
+        <div>
+            <h2 class="offcanvas-title h4 mb-1" id="person-panel-{{ p.id }}-label">{{ p.first_name }} {{ p.last_name }}</h2>
+            <div class="text-muted">{{ p.role }}</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% if p._structure %}
+        <div class="mb-3">
+            {{ structure_tag(p._structure.type) }}
+            <div class="fw-bold mt-2">{{ p._structure.name }}</div>
+            <div class="text-muted fs-sm">
+                <i class="ri-map-pin-2-line fw-medium" aria-hidden="true"></i> {{ p._structure.address }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if p._means %}
+        <ul class="list-data mb-3">
+            {% if p.phone %}
+            <li>
+                <small>Téléphone</small>
+                <strong class="d-flex align-items-center gap-2">
+                    <span>{{ p.phone }}</span>
+                    <button type="button" class="btn btn-sm btn-outline-primary btn-ico-only bg-white js-copy"
+                            data-copy="{{ p.phone }}" aria-label="Copier le numéro">
+                        <i class="ri-file-copy-line" aria-hidden="true"></i>
+                    </button>
+                </strong>
+            </li>
+            {% endif %}
+            {% if p.email %}
+            <li>
+                <small>Courriel</small>
+                <strong class="d-flex align-items-center gap-2">
+                    <span class="text-break">{{ p.email }}</span>
+                    <button type="button" class="btn btn-sm btn-outline-primary btn-ico-only bg-white js-copy"
+                            data-copy="{{ p.email }}" aria-label="Copier le courriel">
+                        <i class="ri-file-copy-line" aria-hidden="true"></i>
+                    </button>
+                </strong>
+            </li>
+            {% endif %}
+            <li>
+                <small>Moyens de contact</small>
+                <strong>{{ contact_icons(p._means) }}</strong>
+            </li>
+        </ul>
+        {% else %}
+        <div class="c-box c-box--note mb-3">
+            <span class="text-muted fst-italic">Cette personne ne souhaite pas partager ses coordonnées.</span>
+        </div>
+        {% endif %}
+
+        {% if p.email or p.has_form or p.has_agenda %}
+        <div class="accordion" id="accordion-{{ p.id }}">
+            {% if p.email or p.has_form %}
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#msg-{{ p.id }}"
+                            aria-expanded="false" aria-controls="msg-{{ p.id }}">
+                        <i class="ri-mail-send-line fw-medium me-2" aria-hidden="true"></i> Envoyer un message
+                    </button>
+                </h3>
+                <div id="msg-{{ p.id }}" class="accordion-collapse collapse" data-bs-parent="#accordion-{{ p.id }}">
+                    <div class="accordion-body">
+                        <div class="js-message-success alert alert-success d-none" role="status">
+                            <i class="ri-check-line fw-medium" aria-hidden="true"></i>
+                            Votre message a bien été envoyé à {{ p.first_name }} {{ p.last_name }}.
+                        </div>
+                        <form class="js-message-form" data-person="{{ p.first_name }} {{ p.last_name }}">
+                            <div class="form-group">
+                                <label class="form-label" for="subject-{{ p.id }}">Objet</label>
+                                <select class="form-select js-subject-select" id="subject-{{ p.id }}"
+                                        data-target="#custom-subject-{{ p.id }}">
+                                    {% for subject in message_subjects %}
+                                    <option value="{{ subject }}">{{ subject }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group d-none" id="custom-subject-{{ p.id }}">
+                                <label class="form-label" for="custom-input-{{ p.id }}">Précisez l'objet</label>
+                                <input type="text" class="form-control" id="custom-input-{{ p.id }}"
+                                       placeholder="Saisissez l'objet de votre message">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="message-{{ p.id }}">Message</label>
+                                <textarea class="form-control" id="message-{{ p.id }}" rows="4"
+                                          placeholder="Votre message..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-ico">
+                                <i class="ri-send-plane-line fw-medium" aria-hidden="true"></i>
+                                <span>Envoyer</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if p.has_agenda %}
+            <div class="accordion-item">
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#rdv-{{ p.id }}"
+                            aria-expanded="false" aria-controls="rdv-{{ p.id }}">
+                        <i class="ri-calendar-2-line fw-medium me-2" aria-hidden="true"></i> Réserver un rendez-vous
+                    </button>
+                </h3>
+                <div id="rdv-{{ p.id }}" class="accordion-collapse collapse" data-bs-parent="#accordion-{{ p.id }}">
+                    <div class="accordion-body">
+                        {# Confirmation, shown after "Confirmer" #}
+                        <div class="js-slot-success alert alert-success d-none" role="status">
+                            <i class="ri-check-line fw-medium" aria-hidden="true"></i>
+                            <span class="js-slot-label"></span>
+                        </div>
+
+                        {# Step 1 — pick a slot #}
+                        <div class="js-slot-list">
+                            <p class="text-muted fs-sm">Créneaux disponibles cette semaine.</p>
+                            {% for day in p._week_slots %}
+                            <div class="mb-2">
+                                <div class="fw-bold fs-sm">{{ day.weekday }} {{ day.day_label }}</div>
+                                {% if day.slots %}
+                                <div class="d-flex flex-wrap gap-2 mt-1">
+                                    {% for slot in day.slots %}
+                                    <button type="button" class="btn btn-sm btn-outline-primary js-slot"
+                                            data-slot="{{ day.weekday }} {{ day.day_label }} à {{ slot }}">{{ slot }}</button>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <div class="text-muted fs-sm fst-italic">Aucun créneau</div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        {# Step 2 — confirm the chosen slot #}
+                        <form class="js-slot-form d-none">
+                            <div class="c-box c-box--note mb-3 py-2 px-3">
+                                <div class="fs-xs text-muted">Créneau choisi</div>
+                                <strong class="d-flex align-items-center gap-2">
+                                    <i class="ri-calendar-check-line fw-medium" aria-hidden="true"></i>
+                                    <span class="js-slot-chosen"></span>
+                                </strong>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label d-block">Type de rendez-vous</label>
+                                <input type="hidden" class="js-rdvtype-value" name="rdv-type-{{ p.id }}" value="{{ rdv_types[0] }}">
+                                <div class="d-flex flex-wrap gap-2 js-rdvtype">
+                                    {% for t in rdv_types %}
+                                    <button type="button" data-value="{{ t }}"
+                                            class="btn btn-sm {{ 'btn-primary' if loop.first else 'btn-outline-primary' }} js-rdvtype-btn">{{ t }}</button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="rdv-subject-{{ p.id }}">Objet</label>
+                                <select class="form-select" id="rdv-subject-{{ p.id }}">
+                                    {% for subject in rdv_subjects %}
+                                    <option value="{{ subject }}">{{ subject }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="rdv-message-{{ p.id }}">Message</label>
+                                <textarea class="form-control" id="rdv-message-{{ p.id }}" rows="3"
+                                          placeholder="Précisez votre demande de rendez-vous..."></textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-ico">
+                                    <i class="ri-check-line fw-medium" aria-hidden="true"></i><span>Confirmer</span>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary js-slot-cancel">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
