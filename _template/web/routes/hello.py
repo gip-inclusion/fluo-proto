@@ -7,6 +7,7 @@ router = APIRouter()
 @router.get("/", response_class=HTMLResponse)
 async def hello(request: Request):
     return request.app.state.templates.TemplateResponse(
+        request,
         "hello.html",
-        {"request": request},
+        {},
     )

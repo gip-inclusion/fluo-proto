@@ -30,9 +30,9 @@ async def beneficiaires_list(request: Request):
     with Session(engine) as session:
         beneficiaires = session.exec(select(Beneficiaire).order_by(Beneficiaire.person_last_name)).all()
     return _templates(request).TemplateResponse(
+        request,
         "prescripteur/beneficiaires.html",
         {
-            "request": request,
             "beneficiaires": beneficiaires,
             "result_count": len(beneficiaires),
             "prefix": PREFIX,
@@ -56,9 +56,9 @@ async def beneficiaire_detail(request: Request, beneficiaire_id: int):
         ).all()
         diagnostic_data = json.loads(b.diagnostic_data) if b.diagnostic_data else None
     return _templates(request).TemplateResponse(
+        request,
         "prescripteur/beneficiaire_detail.html",
         {
-            "request": request,
             "o": b,
             "o_diagnostic_data": diagnostic_data,
             "messages": messages,
@@ -85,9 +85,9 @@ async def orienter(request: Request, beneficiaire_id: int):
     contraintes = [c["libelle"] for c in (diagnostic_data or {}).get("contraintes", []) if c.get("est_prioritaire")]
 
     return _templates(request).TemplateResponse(
+        request,
         "prescripteur/orienter.html",
         {
-            "request": request,
             "o": b,
             "o_diagnostic_data": diagnostic_data,
             "age": age,
@@ -190,9 +190,9 @@ async def orientations_envoyees(request: Request, status: list[str] = Query(defa
             .order_by(SentOrientation.created_at.desc())
         ).all()
     return _templates(request).TemplateResponse(
+        request,
         "prescripteur/orientations_envoyees.html",
         {
-            "request": request,
             "orientations": results,
             "active_filters": status,
             "all_sent_statuses": ALL_SENT_STATUSES,
@@ -223,9 +223,9 @@ async def sent_orientation_detail(request: Request, orientation_id: int):
             break
     status_label, status_class = SENT_STATUS_LABELS.get(so.status, ("Inconnu", "bg-secondary"))
     return _templates(request).TemplateResponse(
+        request,
         "prescripteur/orientation_detail.html",
         {
-            "request": request,
             "so": so,
             "o": b,
             "o_diagnostic_data": diagnostic_data,

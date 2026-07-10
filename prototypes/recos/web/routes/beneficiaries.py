@@ -31,16 +31,18 @@ def _templates(request: Request):
 @router.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     return _templates(request).TemplateResponse(
+        request,
         "dashboard.html",
-        {"request": request},
+        {},
     )
 
 
 @router.get("/search", response_class=HTMLResponse)
 async def search(request: Request):
     return _templates(request).TemplateResponse(
+        request,
         "search.html",
-        {"request": request},
+        {},
     )
 
 
@@ -55,9 +57,9 @@ async def flux_entrant(request: Request):
         if selected_types:
             beneficiaries = [b for b in beneficiaries if any(t in b._types for t in selected_types)]
     return _templates(request).TemplateResponse(
+        request,
         "flux_entrant.html",
         {
-            "request": request,
             "beneficiaries": beneficiaries,
             "result_count": len(beneficiaries),
             "beneficiary_types": BENEFICIARY_TYPES,
@@ -97,9 +99,9 @@ async def list_beneficiaries(request: Request):
             if over5_only:
                 beneficiaries = [b for b in beneficiaries if b._modalite_months is not None and b._modalite_months > 5]
     return _templates(request).TemplateResponse(
+        request,
         "beneficiary_list.html",
         {
-            "request": request,
             "beneficiaries": beneficiaries,
             "result_count": len(beneficiaries),
             "beneficiary_types": BENEFICIARY_TYPES,
@@ -234,9 +236,9 @@ async def detail_beneficiary(request: Request, id: int):
         for s in auteuil_services:
             _add_point(s, "Apprentis d'Auteuil")
     return _templates(request).TemplateResponse(
+        request,
         "beneficiary_detail.html",
         {
-            "request": request,
             "b": b,
             "structure": structure,
             "referent": referent,
@@ -279,9 +281,9 @@ async def profil_beneficiary(request: Request, id: int):
                 referent._structure = None
         diagnostic = json.loads(b.diagnostic_data) if b.diagnostic_data else None
     return _templates(request).TemplateResponse(
+        request,
         "beneficiary_profil.html",
         {
-            "request": request,
             "b": b,
             "structure": structure,
             "referent": referent,
@@ -301,9 +303,9 @@ async def solution_detail(request: Request, id: int):
         if from_id:
             beneficiary = session.get(Beneficiary, int(from_id))
     return _templates(request).TemplateResponse(
+        request,
         "solution_detail.html",
         {
-            "request": request,
             "solution": solution,
             "b": beneficiary,
         },
@@ -340,9 +342,9 @@ async def prescription_detail(request: Request, id: int):
         beneficiary = session.get(Beneficiary, p.beneficiary_id)
         solution = session.get(Solution, p.solution_id)
     return _templates(request).TemplateResponse(
+        request,
         "prescription_detail.html",
         {
-            "request": request,
             "prescription": p,
             "beneficiary": beneficiary,
             "solution": solution,
@@ -368,9 +370,9 @@ async def prescriptions_sent(request: Request):
             p._beneficiary = beneficiaries_map.get(p.beneficiary_id)
             p._solution = solutions_map.get(p.solution_id)
     return _templates(request).TemplateResponse(
+        request,
         "prescriptions_sent.html",
         {
-            "request": request,
             "prescriptions": prescriptions,
         },
     )

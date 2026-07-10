@@ -18,9 +18,9 @@ async def edit_profile(request: Request):
         structure = session.get(Structure, me.structure_id) if me.structure_id else None
         structures = session.exec(select(Structure).order_by(Structure.name)).all()
     return request.app.state.templates.TemplateResponse(
+        request,
         "profile.html",
         {
-            "request": request,
             "me": me,
             "structure": structure,
             "structures": structures,

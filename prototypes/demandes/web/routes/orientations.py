@@ -37,9 +37,9 @@ async def orientation_list(request: Request, status: list[str] = Query(default=N
         orientations = session.exec(statement).all()
     prefix = _prefix(request)
     return _templates(request).TemplateResponse(
+        request,
         "orientation_list.html",
         {
-            "request": request,
             "orientations": orientations,
             "active_filters": status,
             "all_statuses": ALL_STATUSES,
@@ -72,9 +72,9 @@ async def orientation_detail(request: Request, orientation_id: int):
             if pb:
                 plie_beneficiaire_url = f"{prefix}/beneficiaire/{pb.id}"
     return _templates(request).TemplateResponse(
+        request,
         "orientation_detail.html",
         {
-            "request": request,
             "o": orientation,
             "o_diagnostic_data": diagnostic_data,
             "messages": messages,
@@ -202,9 +202,9 @@ async def orienteur_reply(request: Request, orientation_id: int):
         status_label, status_class = STATUS_LABELS.get(orientation.status, ("Inconnu", "bg-secondary"))
     prefix = _prefix(request)
     return _templates(request).TemplateResponse(
+        request,
         "orienteur_reply.html",
         {
-            "request": request,
             "o": orientation,
             "messages": messages,
             "status_label": status_label,
@@ -220,9 +220,9 @@ async def plie_beneficiaires_list(request: Request):
         beneficiaires = session.exec(select(PlieBeneficiaire).order_by(PlieBeneficiaire.person_last_name)).all()
     prefix = _prefix(request)
     return _templates(request).TemplateResponse(
+        request,
         "beneficiaire_list.html",
         {
-            "request": request,
             "beneficiaires": beneficiaires,
             "result_count": len(beneficiaires),
             "prefix": prefix,
@@ -247,9 +247,9 @@ async def plie_beneficiaire_detail(request: Request, beneficiaire_id: int):
             ).all()
     prefix = _prefix(request)
     return _templates(request).TemplateResponse(
+        request,
         "beneficiaire_detail.html",
         {
-            "request": request,
             "o": pb,
             "o_diagnostic_data": diagnostic_data,
             "orientation": orientation,

@@ -11,6 +11,7 @@ def _templates(request: Request):
 @router.get("/prescriptions-received", response_class=HTMLResponse)
 async def prescriptions_received(request: Request):
     return _templates(request).TemplateResponse(
+        request,
         "placeholder.html",
-        {"request": request, "page_title": "Demandes reçues"},
+        {"page_title": "Demandes reçues"},
     )

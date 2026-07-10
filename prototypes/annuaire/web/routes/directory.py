@@ -110,9 +110,9 @@ async def directory(request: Request):
             contacts_by_structure[p.structure_id].append(p)
 
     return _templates(request).TemplateResponse(
+        request,
         "directory.html",
         {
-            "request": request,
             "people": people,
             "structures": structs,
             "all_professionals": professionals,
