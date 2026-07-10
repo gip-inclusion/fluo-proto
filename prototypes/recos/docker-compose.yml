@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_DB: recos
       POSTGRES_USER: recos
-      POSTGRES_PASSWORD: recos
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
     volumes:

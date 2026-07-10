@@ -1,8 +1,5 @@
 import os
 
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+psycopg://{{ proto_name }}:{{ proto_name }}@localhost:5432/{{ proto_name }}",
-)
+DATABASE_URL = os.environ["DATABASE_URL"]
 
 SERVICE_NAME = "{{ proto_name }}"

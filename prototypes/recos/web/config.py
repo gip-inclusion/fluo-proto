@@ -1,9 +1,6 @@
 import os
 
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+psycopg://recos:recos@localhost:5432/recos",
-)
+DATABASE_URL = os.environ["DATABASE_URL"]
 
 UI_VARIANT = os.environ.get("UI_VARIANT", "recos")
 

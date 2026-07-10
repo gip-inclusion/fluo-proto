@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_DB: demandes
       POSTGRES_USER: demandes
-      POSTGRES_PASSWORD: demandes
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
     volumes:
