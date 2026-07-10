@@ -66,13 +66,13 @@ scw container container create \
   -o json > "/tmp/proto-container-$proto.json"
 
 container_id=$(jq -r '.id' "/tmp/proto-container-$proto.json")
-domain_name=$(jq -r '.domain_name' "/tmp/proto-container-$proto.json")
+public_url=$(jq -r '.public_endpoint' "/tmp/proto-container-$proto.json")
 rm "/tmp/proto-container-$proto.json"
 
 echo
 echo "Provisioned:"
 echo "  container_id: $container_id"
-echo "  public URL:   https://$domain_name"
+echo "  public URL:   $public_url"
 echo "  DB:           $proto"
 echo
 echo "Run 'make deploy $proto' to trigger the first real deploy."

@@ -81,7 +81,7 @@ reseed-remote: ## Drop + reseed a proto's Scaleway DB — usage: make reseed-rem
 	DATABASE_URL="$$db_url" uv run python -m web.seed
 
 urls: ## Print all proto names and their Scaleway URLs
-	@scw container container list -o json | jq -r '.[] | "\(.name)\t\(.domain_name)"'
+	@scw container container list -o json | jq -r '.[] | "\(.name)\t\(.public_endpoint)"'
 
 lint: ## Run ruff lint + format check on all protos and the template
 	@uvx ruff check prototypes/ _template/
