@@ -8,10 +8,10 @@ dependencies = [
     "psycopg[binary]>=3.3.4",
     "python-multipart>=0.0.32",
     "sqlmodel>=0.0.38",
-    "uvicorn>=0.52.1",
+    "uvicorn>=0.52.4",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.16.1",
+    "ruff>=0.16.5",
 ]
